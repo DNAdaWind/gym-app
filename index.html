@@ -563,7 +563,9 @@ let state = {
   measurements: [],   // {date, weight, chest} — nhật ký cân nặng theo ngày
   settings: {unit:'kg'},
   exerciseProgress: {},// exId -> {weight, reps, sinceDate, timesCompleted}
-  restCheckins: []     // ['toDateString', ...] — tick ngày nghỉ để giữ chuỗi
+  restCheckins: [],    // ['toDateString', ...] — tick ngày nghỉ để giữ chuỗi (ngày nghỉ KHÔNG cố định)
+  streakSaveDates: [],  // ['toDateString', ...] — những ngày bị hổng được "khôi phục chuỗi" bù vào
+  streakSaveLog: []     // [isoString, ...] — mỗi lần dùng "khôi phục chuỗi" ghi 1 mốc thời gian, để tính giới hạn 3 lần/tháng
 };
 let view = {name:'home', params:{}};
 
@@ -617,14 +619,32 @@ function parseRepRange(reps){
   return [null,null];
 }
 
-/* --- streak --- */
+/* --- streak ---
+   "covered" = 1 ngày được tính vào chuỗi, gồm: có buổi tập kết thúc trong ngày,
+   ngày nghỉ đã tick thủ công, ngày nghỉ CỐ ĐỊNH (Thứ 5 & Chủ Nhật — tự động, không cần mở app),
+   hoặc ngày đã được bù bằng "khôi phục chuỗi". */
+const FIXED_REST_DOW = [4, 0]; // Thứ 5 (Thu=4) và Chủ Nhật (Sun=0) theo Date.getDay()
+function isFixedRestDOW(dow){ return FIXED_REST_DOW.includes(dow); }
+function isFixedRestDate(date){ return isFixedRestDOW(date.getDay()); }
+
+function coveredDateSet(){
+  const s = new Set(state.sessions.map(x=> new Date(x.endedAt).toDateString()));
+  (state.restCheckins||[]).forEach(d=> s.add(d));
+  (state.streakSaveDates||[]).forEach(d=> s.add(d));
+  return s;
+}
+function isDayCovered(date, coveredSet){
+  const set = coveredSet || coveredDateSet();
+  if(set.has(date.toDateString())) return true;
+  return isFixedRestDate(date);
+}
+
 function computeStreak(){
-  const dates = new Set(state.sessions.map(s=> new Date(s.endedAt).toDateString()));
-  state.restCheckins.forEach(d=> dates.add(d));
+  const covered = coveredDateSet();
   let streak=0; let d = new Date();
   // if no session today yet, still count backwards from yesterday
-  if(!dates.has(d.toDateString())) d.setDate(d.getDate()-1);
-  while(dates.has(d.toDateString())){ streak++; d.setDate(d.getDate()-1); }
+  if(!isDayCovered(d, covered)) d.setDate(d.getDate()-1);
+  while(isDayCovered(d, covered)){ streak++; d.setDate(d.getDate()-1); }
   return streak;
 }
 
@@ -633,6 +653,43 @@ function checkInRest(){
   const t = new Date().toDateString();
   if(!state.restCheckins.includes(t)) state.restCheckins.push(t);
   saveState(); render(); showToast('Đã tick ngày nghỉ 🌙');
+}
+
+/* --- khôi phục chuỗi (streak save), tối đa 3 lần / tháng --- */
+const STREAK_SAVE_LIMIT = 3;
+function monthKeyOf(d){ return d.getFullYear()+'-'+d.getMonth(); }
+function streakSavesUsedThisMonth(){
+  const mk = monthKeyOf(new Date());
+  return (state.streakSaveLog||[]).filter(iso=> monthKeyOf(new Date(iso))===mk).length;
+}
+function streakSavesRemaining(){ return Math.max(0, STREAK_SAVE_LIMIT - streakSavesUsedThisMonth()); }
+// tìm ngày hổng gần nhất ngay trước chuỗi hiện tại (đi lùi từ hôm nay/hôm qua)
+function findStreakGap(){
+  const covered = coveredDateSet();
+  let d = new Date(); d.setHours(0,0,0,0);
+  if(!isDayCovered(d, covered)) d.setDate(d.getDate()-1);
+  while(isDayCovered(d, covered)) d.setDate(d.getDate()-1);
+  const gapDate = new Date(d);
+  const dayBeforeGap = new Date(d); dayBeforeGap.setDate(dayBeforeGap.getDate()-1);
+  const reconnectsStreak = isDayCovered(dayBeforeGap, covered);
+  return {gapDate, reconnectsStreak};
+}
+function canUseStreakSave(){
+  if(streakSavesRemaining()<=0) return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const {gapDate, reconnectsStreak} = findStreakGap();
+  if(gapDate.getTime()>=today.getTime()) return false; // hôm nay chưa "trôi qua" thì chưa tính là hổng
+  return reconnectsStreak;
+}
+function useStreakSave(){
+  if(!canUseStreakSave()){ showToast('Không thể khôi phục chuỗi lúc này'); return; }
+  const {gapDate} = findStreakGap();
+  state.streakSaveDates = state.streakSaveDates||[];
+  state.streakSaveDates.push(gapDate.toDateString());
+  state.streakSaveLog = state.streakSaveLog||[];
+  state.streakSaveLog.push(new Date().toISOString());
+  saveState(); render();
+  showToast(`Đã khôi phục chuỗi 🔥 · còn ${streakSavesRemaining()} lần trong tháng này`);
 }
 
 /* --- recovery engine ---
@@ -848,7 +905,10 @@ function renderHome(){
   <div class="screen">
     <div class="topbar">
       <div><h1>Xin chào${state.profile? ', '+state.profile.name.split(' ').pop():''} 👋</h1><div class="sub">${dateStr}</div></div>
-      <div class="icon-btn" onclick="goTo('settings')">${ICONS.settings}</div>
+      <div style="display:flex;gap:8px;">
+        <div class="icon-btn" onclick="goTo('backfill')" title="Hoàn thành bài tập hôm qua">${ICONS.today}</div>
+        <div class="icon-btn" onclick="goTo('settings')">${ICONS.settings}</div>
+      </div>
     </div>
 
     <div class="card glass" style="display:flex;align-items:center;gap:12px;">
@@ -883,6 +943,7 @@ function renderHome(){
       <div class="stat-tile"><div class="n">🔥 ${streak}</div><div class="l">Ngày liên tiếp</div></div>
       <div class="stat-tile"><div class="n">${lastMeasurement? lastMeasurement.weight+'kg':'—'}</div><div class="l">Cân nặng gần nhất</div></div>
     </div>
+    ${canUseStreakSave()? `<div class="ghost-btn" style="margin:4px 20px 12px;" onclick="useStreakSave()">🧊 Khôi phục chuỗi đã đứt · còn ${streakSavesRemaining()} lần trong tháng</div>` : ''}
 
     <div class="card">
       <div class="card-title">Recovery — Nhóm cơ ưu tiên</div>
@@ -919,11 +980,14 @@ function renderToday(){
   const isRest = dayTemplate==='Rest';
 
   if(isRest && !state.activeSession){
+    const fixedRest = isFixedRestDate(new Date());
     const checked = isRestCheckedToday();
     return `<div class="screen">
       <div class="topbar"><div><h1>Hôm nay</h1><div class="sub">Ngày nghỉ</div></div></div>
       <div class="empty"><div class="e-icon">🌙</div><p>Hôm nay là ngày nghỉ theo lịch tập của bạn.<br>Cơ bắp đang hồi phục để phát triển.</p></div>
-      <button class="hero-cta" style="margin:0 20px;width:calc(100% - 40px);" ${checked?'disabled':''} onclick="checkInRest()">${checked? '✓ Đã tick ngày nghỉ hôm nay' : 'Tick đã nghỉ hôm nay'}</button>
+      ${fixedRest
+        ? `<div class="info-block" style="margin:0 20px;color:var(--text-secondary);">Thứ 5 & Chủ Nhật là ngày nghỉ cố định — chuỗi 🔥 của bạn tự động được giữ, không cần mở app để tick.</div>`
+        : `<button class="hero-cta" style="margin:0 20px;width:calc(100% - 40px);" ${checked?'disabled':''} onclick="checkInRest()">${checked? '✓ Đã tick ngày nghỉ hôm nay' : 'Tick đã nghỉ hôm nay'}</button>`}
     </div>`;
   }
 
@@ -1243,6 +1307,92 @@ function resetAllData(){
   saveState(); goTo('home');
 }
 
+/* ============ RENDER: HOÀN THÀNH BÀI TẬP HÔM QUA (backfill) ============ */
+function maxBackfillDateStr(){
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return d.toISOString().slice(0,10);
+}
+function defaultBackfillDateStr(){ return maxBackfillDateStr(); }
+function renderBackfill(){
+  const sel = (view.params && view.params.date) || defaultBackfillDateStr();
+  const dateObj = new Date(sel+'T12:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const cmpDate = new Date(dateObj); cmpDate.setHours(0,0,0,0);
+  const isPast = cmpDate.getTime() < today.getTime();
+
+  const dow = dateObj.getDay();
+  const dayKey = DAY_KEYS[dow];
+  const template = state.split[dayKey] || 'Rest';
+  const fixedRest = isFixedRestDOW(dow);
+  const isRestDay = template==='Rest' || fixedRest;
+  const dateStrDisplay = dateObj.toLocaleDateString('vi-VN', {weekday:'long', day:'numeric', month:'long'});
+
+  const alreadySession = state.sessions.find(s=> new Date(s.endedAt).toDateString()===dateObj.toDateString());
+  const alreadyRestChecked = (state.restCheckins||[]).includes(dateObj.toDateString()) || (state.streakSaveDates||[]).includes(dateObj.toDateString());
+
+  let body;
+  if(!isPast){
+    body = `<div class="empty"><p>Chỉ áp dụng cho ngày đã qua (trước hôm nay). Chọn ngày khác ở trên.</p></div>`;
+  } else if(alreadySession){
+    body = `<div class="empty"><p>Ngày này đã có buổi tập được ghi nhận rồi ✔</p></div>
+      <button class="ghost-btn" style="margin:0 20px;" onclick="goTo('summary',{sessionId:'${alreadySession.id}'})">Xem lại buổi tập này</button>`;
+  } else if(isRestDay){
+    if(fixedRest){
+      body = `<div class="empty"><p>Đây là ngày nghỉ cố định (Thứ 5/Chủ Nhật) — đã tự động tính vào chuỗi, không cần làm gì thêm.</p></div>`;
+    } else if(alreadyRestChecked){
+      body = `<div class="empty"><p>Ngày nghỉ này đã được tính vào chuỗi rồi.</p></div>`;
+    } else {
+      body = `<button class="hero-cta" style="margin:12px 20px;width:calc(100% - 40px);" onclick="backfillRest('${dateObj.toISOString()}')">Tick đã nghỉ ngày này</button>`;
+    }
+  } else {
+    const exs = exercisesForDay(template);
+    body = `
+      <div class="section-label">Bài tập của ngày này (${template})</div>
+      ${exs.map(ex=>`<div class="ex-item" style="cursor:default;"><div class="ex-main"><div class="ex-name">${ex.vi}</div><div class="ex-name-en">${ex.en}</div></div></div>`).join('')}
+      <button class="hero-cta" style="margin:12px 20px;width:calc(100% - 40px);" onclick="backfillComplete('${dateObj.toISOString()}','${template}')">✔ Hoàn thành nhanh cả buổi</button>
+      <div class="info-block" style="margin:4px 20px;color:var(--text-tertiary);font-size:12px;">Dùng mức tạ/số rep gần nhất đã lưu cho từng bài (nếu có). Buổi tập này sẽ được tính đúng vào ngày đã chọn — hồi phục cơ và chuỗi 🔥 sẽ tự cập nhật lại theo ngày đó.</div>`;
+  }
+
+  return `<div class="screen">
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('home')">${ICONS.back} Trang chủ</div></div>
+    <div style="padding:4px 20px;">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Hoàn thành bài tập hôm qua</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Bù lại ngày quên tick để theo dõi hồi phục đúng hơn</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Chọn ngày</div>
+      <input class="set-input" type="date" id="backfillDateInput" value="${sel}" max="${maxBackfillDateStr()}" onchange="pickBackfillDate(this.value)" style="width:100%;">
+      <div class="info-block" style="margin:10px 0 0;"><b>${dateStrDisplay}</b> · ${fixedRest? 'Ngày nghỉ cố định' : template}</div>
+    </div>
+    ${body}
+  </div>`;
+}
+function pickBackfillDate(val){ if(val) goTo('backfill', {date:val}); }
+function backfillRest(iso){
+  const d = new Date(iso);
+  const key = d.toDateString();
+  state.restCheckins = state.restCheckins||[];
+  if(!state.restCheckins.includes(key)) state.restCheckins.push(key);
+  saveState(); render();
+  showToast('Đã tick ngày nghỉ cho '+d.toLocaleDateString('vi-VN'));
+}
+function backfillComplete(iso, template){
+  const d = new Date(iso);
+  if(state.sessions.some(s=> new Date(s.endedAt).toDateString()===d.toDateString())){
+    showToast('Ngày này đã có buổi tập'); render(); return;
+  }
+  const exs = exercisesForDay(template);
+  const sets = exs.map(ex=>{
+    const prog = state.exerciseProgress[ex.id];
+    return {exerciseId: ex.id, weight: prog? prog.weight : null, reps: prog? prog.reps : null, sets: ex.sets, completedAt: iso};
+  });
+  const session = {id:'s_'+Date.now(), dayLabel: template, startedAt: iso, endedAt: iso, sets, backfilled: true};
+  state.sessions.push(session);
+  saveState();
+  showToast('Đã hoàn thành buổi tập ngày trước ✔ — chuỗi & hồi phục đã cập nhật lại');
+  goTo('summary', {sessionId: session.id});
+}
+
 /* ============ MAIN RENDER ============ */
 function render(){
   const el = document.getElementById('app');
@@ -1260,6 +1410,7 @@ function render(){
   else if(view.name==='library') el.innerHTML = renderLibrary();
   else if(view.name==='recovery') el.innerHTML = renderRecovery();
   else if(view.name==='settings') el.innerHTML = renderSettings();
+  else if(view.name==='backfill') el.innerHTML = renderBackfill();
 }
 
 /* ============ INIT ============ */
