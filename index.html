@@ -561,7 +561,9 @@ let state = {
   sessions: [],       // finished sessions
   activeSession: null,// {dayLabel, startedAt, sets:[]}
   measurements: [],   // {date, weight, chest} — nhật ký cân nặng theo ngày
-  settings: {unit:'kg'}
+  settings: {unit:'kg'},
+  exerciseProgress: {},// exId -> {weight, reps, sinceDate, timesCompleted}
+  restCheckins: []     // ['toDateString', ...] — tick ngày nghỉ để giữ chuỗi
 };
 let view = {name:'home', params:{}};
 
@@ -618,11 +620,19 @@ function parseRepRange(reps){
 /* --- streak --- */
 function computeStreak(){
   const dates = new Set(state.sessions.map(s=> new Date(s.endedAt).toDateString()));
+  state.restCheckins.forEach(d=> dates.add(d));
   let streak=0; let d = new Date();
   // if no session today yet, still count backwards from yesterday
   if(!dates.has(d.toDateString())) d.setDate(d.getDate()-1);
   while(dates.has(d.toDateString())){ streak++; d.setDate(d.getDate()-1); }
   return streak;
+}
+
+function isRestCheckedToday(){ return state.restCheckins.includes(new Date().toDateString()); }
+function checkInRest(){
+  const t = new Date().toDateString();
+  if(!state.restCheckins.includes(t)) state.restCheckins.push(t);
+  saveState(); render(); showToast('Đã tick ngày nghỉ 🌙');
 }
 
 /* --- recovery engine ---
@@ -631,16 +641,16 @@ function computeStreak(){
 function roleWeight(role){ return role==='primary'?1:role==='secondary'?0.5:0.25; }
 
 function muscleTouchesInSession(session, muscleId){
-  // returns list of {role, weight(kg), reps, rpe} for sets in session touching this muscle
+  // returns list of {role, rpe, count} for exercises in session touching this muscle
   const out = [];
-  session.sets.forEach(set=>{
-    const ex = findExercise(set.exerciseId);
+  session.sets.forEach(entry=>{
+    const ex = findExercise(entry.exerciseId);
     if(!ex) return;
     let role = null;
     if(ex.primary===muscleId) role='primary';
     else if(ex.secondary.includes(muscleId)) role='secondary';
     else if(ex.stabilizer.includes(muscleId)) role='stabilizer';
-    if(role) out.push({role, rpe:set.rpe||7});
+    if(role) out.push({role, rpe:7, count:entry.sets||1});
   });
   return out;
 }
@@ -656,7 +666,7 @@ function getMuscleRecovery(muscleId){
   }
   if(!latest) return {status:'inactive', percent:100, etaHours:0, lastAt:null};
 
-  const volumeScore = latestTouches.reduce((sum,t)=> sum + roleWeight(t.role), 0);
+  const volumeScore = latestTouches.reduce((sum,t)=> sum + roleWeight(t.role)*t.count, 0);
   const avgRpe = latestTouches.reduce((sum,t)=> sum + t.rpe, 0) / latestTouches.length;
   const baselineSets = 8;
   const volumeMultiplier = Math.min(1.5, Math.max(0.7, volumeScore / baselineSets));
@@ -685,37 +695,64 @@ function recoveryLabel(status){
   return {stimulated:'Vừa tập hôm nay', recovering:'Đang hồi phục', fresh:'Đã hồi phục', inactive:'Chưa tập gần đây'}[status];
 }
 
-/* --- progressive overload suggestion --- */
-function getSuggestion(exerciseId){
-  const ex = findExercise(exerciseId);
-  const past = state.sessions
-    .filter(s=> s.sets.some(set=>set.exerciseId===exerciseId))
-    .sort((a,b)=> new Date(b.endedAt)-new Date(a.endedAt));
-  if(past.length===0) return {previousWeight:null, suggestedWeight:null, note:'Chưa có dữ liệu — bắt đầu với mức tạ bạn cảm thấy kiểm soát tốt ở đúng số rep mục tiêu.'};
-
-  const lastSets = past[0].sets.filter(s=>s.exerciseId===exerciseId);
-  const lastWeight = Math.max(...lastSets.map(s=>s.weight||0));
+/* --- chọn nhanh mức tạ: không ghi log từng set, chỉ chọn 1 trong 2 gợi ý --- */
+const BODYWEIGHT_EQUIP = ['Không dụng cụ','Tường'];
+function weightStep(ex){ return ex.compound ? 2.5 : 1.25; }
+function isBodyweight(ex){ return BODYWEIGHT_EQUIP.some(e=> ex.equipment.includes(e)); }
+function baseSeedWeight(ex){
+  // ước lượng khởi điểm hợp lý theo loại dụng cụ — chỉ là điểm bắt đầu, người dùng tự chọn mức phù hợp
+  if(ex.equipment.includes('Thanh đòn')) return ex.compound ? 20 : 10;
+  if(ex.equipment.includes('Tạ đơn')) return 8;
+  if(ex.equipment.includes('Máy')) return 15;
+  if(ex.equipment.includes('Cáp')) return 10;
+  return 10;
+}
+// 2 lựa chọn gợi ý: nặng hơn/ít rep hơn, hoặc nhẹ hơn/nhiều rep hơn — đều nằm trong khoảng rep mục tiêu
+function getOptions(exId){
+  const ex = findExercise(exId);
+  const prog = state.exerciseProgress[exId];
   const [repMin, repMax] = parseRepRange(ex.reps);
-  const hitTop = repMax && lastSets.every(s => (s.reps||0) >= repMax);
-  const failedMin = repMin && lastSets.some(s => (s.reps||0) < repMin);
-  const avgRpe = lastSets.reduce((sum,s)=>sum+(s.rpe||7),0)/lastSets.length;
-  const step = ex.compound ? 2.5 : 1.25;
-
-  let suggested = lastWeight, note = '';
-  if(failedMin){
-    suggested = lastWeight;
-    note = `Buổi trước chưa đạt ${repMin} reps ở mọi set — giữ nguyên ${lastWeight}kg, tập trung hoàn thành đủ reps trước.`;
-  } else if(hitTop && avgRpe<=8){
-    suggested = lastWeight + step;
-    note = `Buổi trước đạt trọn ${ex.reps} reps với RPE ổn — tăng lên ${suggested}kg lần này.`;
-  } else if(hitTop && avgRpe>8){
-    suggested = lastWeight;
-    note = `Đạt reps mục tiêu nhưng RPE cao (~${avgRpe.toFixed(1)}) — giữ ${lastWeight}kg, ưu tiên làm chủ trước khi tăng.`;
-  } else {
-    suggested = lastWeight;
-    note = `Giữ nguyên ${lastWeight}kg, mục tiêu buổi này là chạm mốc ${repMax||''} reps ở mọi set.`;
+  const step = weightStep(ex);
+  if(isBodyweight(ex)){
+    return [
+      {label:`${ex.sets} set × ${repMin||ex.reps} cái`, weight:null, reps:repMin||null},
+      {label:`${ex.sets} set × ${repMax||ex.reps} cái`, weight:null, reps:repMax||null},
+    ];
   }
-  return {previousWeight:lastWeight, suggestedWeight:suggested, note};
+  const base = prog ? prog.weight : baseSeedWeight(ex);
+  const light = prog ? Math.max(step, base-step) : base;
+  const heavy = base+step;
+  return [
+    {label:`${ex.sets} set × ${repMax||ex.reps} cái · ${light}kg`, weight:light, reps:repMax||null, note:'nhẹ hơn, nhiều rep hơn'},
+    {label:`${ex.sets} set × ${repMin||ex.reps} cái · ${heavy}kg`, weight:heavy, reps:repMin||null, note:'nặng hơn, ít rep hơn'},
+  ];
+}
+const OVERLOAD_THRESHOLD_DAYS = 21; // ~3 tuần ở cùng 1 mức mới gợi ý tăng — phù hợp mục tiêu thon gọn, không cần tăng nhanh
+function daysSince(iso){ return Math.floor((Date.now()-new Date(iso).getTime())/86400000); }
+function pendingBump(exId){
+  const prog = state.exerciseProgress[exId];
+  if(!prog || prog.weight==null) return false;
+  return daysSince(prog.sinceDate) >= OVERLOAD_THRESHOLD_DAYS;
+}
+function chooseOption(exId, opt){
+  state.exerciseProgress[exId] = {weight:opt.weight, reps:opt.reps, sinceDate:new Date().toISOString(), timesCompleted:0};
+  saveState();
+}
+function acceptBump(exId){
+  const ex = findExercise(exId);
+  const prog = state.exerciseProgress[exId];
+  const step = weightStep(ex);
+  prog.weight = (prog.weight||0) + step;
+  prog.sinceDate = new Date().toISOString();
+  prog.timesCompleted = 0;
+  saveState();
+  return prog;
+}
+function declineBump(exId){
+  // giữ nguyên sinceDate cũ -> lần tập kế tiếp của bài này sẽ hỏi lại
+  const prog = state.exerciseProgress[exId];
+  prog.timesCompleted = (prog.timesCompleted||0)+1;
+  saveState();
 }
 
 /* ============ ICONS ============ */
@@ -882,135 +919,133 @@ function renderToday(){
   const isRest = dayTemplate==='Rest';
 
   if(isRest && !state.activeSession){
+    const checked = isRestCheckedToday();
     return `<div class="screen">
       <div class="topbar"><div><h1>Hôm nay</h1><div class="sub">Ngày nghỉ</div></div></div>
       <div class="empty"><div class="e-icon">🌙</div><p>Hôm nay là ngày nghỉ theo lịch tập của bạn.<br>Cơ bắp đang hồi phục để phát triển.</p></div>
+      <button class="hero-cta" style="margin:0 20px;width:calc(100% - 40px);" ${checked?'disabled':''} onclick="checkInRest()">${checked? '✓ Đã tick ngày nghỉ hôm nay' : 'Tick đã nghỉ hôm nay'}</button>
     </div>`;
   }
 
-  const setsLogged = state.activeSession ? state.activeSession.sets : [];
-  const exStatus = (ex)=>{
-    const logged = setsLogged.filter(s=>s.exerciseId===ex.id).length;
-    if(logged===0) return 'notstarted';
-    if(logged>=ex.sets) return 'done';
-    return 'progress';
-  };
-  const allDone = exs.length>0 && exs.every(ex=>exStatus(ex)==='done');
+  const completed = state.activeSession ? state.activeSession.sets : [];
+  const isDone = (exId)=> completed.some(s=>s.exerciseId===exId);
+  const allDone = exs.length>0 && exs.every(ex=>isDone(ex.id));
 
   return `<div class="screen">
     <div class="topbar">
       <div><h1>${dayTemplate}</h1><div class="sub">${exs.length} bài tập · ~${estimateMinutes(dayTemplate)} phút</div></div>
     </div>
-    ${!state.activeSession? `<div style="margin:0 20px 4px;"><button class="hero-cta" onclick="startSession('${dayTemplate}')">Bắt đầu buổi tập</button></div>`:''}
     ${TIER_ORDER.map(tier=>{
       const group = exs.filter(ex=> (ex.tier||'main')===tier);
       if(group.length===0) return '';
       const t = TIER_INFO[tier];
       return `<div class="tier-label" style="color:${t.color}"><div class="sq" style="background:${t.color}"></div>${t.emoji} ${t.label}</div>
       ${group.map(ex=>{
-        const st = state.activeSession ? exStatus(ex) : 'notstarted';
-        return `<div class="ex-item ${st==='done'?'done':''}" onclick="${state.activeSession? `goTo('exercise',{id:'${ex.id}'})` : `showToast('Bắt đầu buổi tập trước để log bài tập')`}">
-          <div class="ex-status ${st}">${st==='done'? ICONS.check : ''}</div>
-          <div class="ex-main">
+        const done = isDone(ex.id);
+        const prog = state.exerciseProgress[ex.id];
+        const showBump = !done && pendingBump(ex.id);
+        const metaText = prog
+          ? `${ex.sets} set × ${prog.reps||ex.reps}${prog.weight!=null? ' · '+prog.weight+'kg':''}`
+          : `${ex.sets} set × ${ex.reps} reps`;
+        return `
+        ${showBump? `<div class="suggest-banner" style="margin:8px 20px;">
+            <span>Đã tập ổn ${OVERLOAD_THRESHOLD_DAYS}+ ngày ở ${prog.weight}kg — tăng lên ${(prog.weight+weightStep(ex))}kg?</span>
+          </div>
+          <div style="display:flex;gap:8px;margin:0 20px 8px;">
+            <div class="ghost-btn" style="flex:1;margin:0;" onclick="event.stopPropagation();respondBump('${ex.id}',false)">Chưa, giữ nguyên</div>
+            <div class="ghost-btn" style="flex:1;margin:0;background:var(--text-primary);color:#0A0A0B;" onclick="event.stopPropagation();respondBump('${ex.id}',true)">Đồng ý, tăng</div>
+          </div>` : ''}
+        <div class="ex-item ${done?'done':''}">
+          <div class="ex-status ${done?'done':''}" onclick="event.stopPropagation();toggleExerciseDone('${ex.id}')">${done? ICONS.check : ''}</div>
+          <div class="ex-main" onclick="goTo('exerciseInfo',{id:'${ex.id}'})">
             <div class="ex-name">${ex.vi}</div>
             <div class="ex-name-en">${ex.en}</div>
-            <div class="ex-meta">${ex.sets} set × ${ex.reps} reps · nghỉ ${ex.rest}s</div>
+            <div class="ex-meta">${metaText}</div>
           </div>
-          <div class="chev">${ICONS.chev}</div>
+          <div class="chev" onclick="goTo('exerciseInfo',{id:'${ex.id}'})">${ICONS.chev}</div>
         </div>`;
       }).join('')}`;
     }).join('')}
-    ${state.activeSession? `<div style="margin-top:8px;"><button class="primary-btn" ${!allDone?'':''} onclick="finishSession()">Kết thúc buổi tập</button></div>`:''}
+    ${state.activeSession && !allDone? `<div style="margin-top:8px;"><button class="ghost-btn" onclick="finishSession()">Kết thúc buổi tập sớm</button></div>`:''}
   </div>`;
 }
 
-function startSession(dayTemplate){
-  state.activeSession = {dayLabel:dayTemplate, startedAt:new Date().toISOString(), sets:[]};
-  saveState();
+function toggleExerciseDone(exId){
+  if(!state.activeSession){
+    state.activeSession = {dayLabel: todayTemplate(), startedAt:new Date().toISOString(), sets:[]};
+  }
+  const idx = state.activeSession.sets.findIndex(s=>s.exerciseId===exId);
+  if(idx>=0){
+    // bỏ tick
+    state.activeSession.sets.splice(idx,1);
+    saveState(); render();
+    return;
+  }
+  const ex = findExercise(exId);
+  let prog = state.exerciseProgress[exId];
+  if(!prog || prog.weight===undefined){
+    // chưa từng chọn mức tạ/rep cho bài này -> mở trang chọn nhanh
+    goTo('pickOption', {id:exId});
+    return;
+  }
+  if(pendingBump(exId)){
+    // đang chờ quyết định tăng tạ -> hỏi trước khi tick
+    const step = weightStep(ex);
+    const yes = confirm(`Đã tập ổn định ${OVERLOAD_THRESHOLD_DAYS}+ ngày ở ${prog.weight||''}kg. Tăng lên ${(prog.weight||0)+step}kg?`);
+    if(yes) prog = acceptBump(exId); else declineBump(exId);
+  }
+  completeExercise(exId, prog);
+}
+function respondBump(exId, accept){
+  let prog = state.exerciseProgress[exId];
+  if(accept) prog = acceptBump(exId); else declineBump(exId);
   render();
 }
+function completeExercise(exId, prog){
+  const ex = findExercise(exId);
+  state.activeSession.sets.push({exerciseId:exId, weight:prog?prog.weight:null, reps:prog?prog.reps:null, sets:ex.sets, completedAt:new Date().toISOString()});
+  saveState();
+  const exs = exercisesForDay(state.activeSession.dayLabel);
+  const allDone = exs.every(e=> state.activeSession.sets.some(s=>s.exerciseId===e.id));
+  if(allDone){ finishSession(); return; }
+  render();
+  showToast('Đã hoàn thành ✔');
+}
 
-/* ============ RENDER: EXERCISE DETAIL ============ */
-let draftSet = {weight:null, reps:null, rpe:7};
-
-function renderExercise(exId){
+/* ============ RENDER: CHỌN NHANH MỨC TẠ (chỉ hiện lần đầu chọn cho 1 bài) ============ */
+function renderPickOption(exId){
   const ex = findExercise(exId);
   if(!ex) return `<div class="screen"><div class="empty">Không tìm thấy bài tập.</div></div>`;
-  const loggedSets = state.activeSession ? state.activeSession.sets.filter(s=>s.exerciseId===exId) : [];
-  const suggestion = getSuggestion(exId);
-  const [repMin,repMax] = parseRepRange(ex.reps);
-
-  const muscleBadges = [
-    {role:'primary', id:ex.primary},
-    ...ex.secondary.map(id=>({role:'secondary', id})),
-    ...ex.stabilizer.map(id=>({role:'stabilizer', id})),
-  ];
-
+  const opts = getOptions(exId);
   return `<div class="screen">
-    <div class="sheet-header">
-      <div class="back-btn" onclick="goTo('today')">${ICONS.back} Hôm nay</div>
-    </div>
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('today')">${ICONS.back} Hôm nay</div></div>
     <div style="padding:4px 20px;">
       <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">${ex.vi}</div>
       <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">${ex.en} · ${ex.equipment}</div>
-      <div class="tier-badge" style="background:${TIER_INFO[ex.tier||'main'].color}22;color:${TIER_INFO[ex.tier||'main'].color};">${TIER_INFO[ex.tier||'main'].emoji} ${TIER_INFO[ex.tier||'main'].label}</div>
-      <div class="badge-row">
-        ${muscleBadges.map(b=>`<div class="badge"><div class="dot dot-${b.role}"></div>${findMuscle(b.id).vi}</div>`).join('')}
-      </div>
     </div>
-
-    <div class="suggest-banner">
-      <span>${suggestion.previousWeight? `Buổi trước: <b>${suggestion.previousWeight}kg</b>` : 'Chưa có lịch sử'}</span>
-      ${suggestion.suggestedWeight? `<span>Gợi ý: <b>${suggestion.suggestedWeight}kg</b></span>`:''}
-    </div>
-    <div class="info-block" style="margin-top:-4px;">${suggestion.note}</div>
-
-    <div class="section-label">Ghi log — mục tiêu ${ex.sets} set × ${ex.reps}</div>
-    ${loggedSets.map((s,i)=>`
-      <div class="set-row">
-        <div class="n">#${i+1}</div>
-        <div><div class="set-input" style="opacity:0.6;">${s.weight}</div><div class="set-hint">kg</div></div>
-        <div><div class="set-input" style="opacity:0.6;">${s.reps}</div><div class="set-hint">reps</div></div>
-        <div><div class="set-input" style="opacity:0.6;">${s.rpe}</div><div class="set-hint">RPE</div></div>
+    <div class="section-label">Chọn mức phù hợp với bạn</div>
+    ${opts.map((o,i)=>`
+      <div class="ex-item" onclick="pickAndComplete('${exId}', ${i})">
+        <div class="ex-main">
+          <div class="ex-name">${o.label}</div>
+          ${o.note? `<div class="ex-meta">${o.note}</div>`:''}
+        </div>
+        <div class="chev">${ICONS.chev}</div>
       </div>`).join('')}
-
-    ${loggedSets.length < ex.sets ? `
-      <div class="set-row">
-        <div class="n">#${loggedSets.length+1}</div>
-        <div><input class="set-input" id="draftWeight" type="number" inputmode="decimal" placeholder="${suggestion.suggestedWeight||''}" value="${draftSet.weight??''}"><div class="set-hint">kg</div></div>
-        <div><input class="set-input" id="draftReps" type="number" inputmode="numeric" placeholder="${repMax||''}" value="${draftSet.reps??''}"><div class="set-hint">reps</div></div>
-        <div><div class="set-input" id="draftRpeDisplay" style="pointer-events:none;">${draftSet.rpe}</div><div class="set-hint">RPE</div></div>
-      </div>
-      <div class="rpe-row">
-        ${[6,7,8,9,10].map(v=>`<div class="rpe-chip ${draftSet.rpe===v?'active':''}" onclick="setRpe(${v})">${v}</div>`).join('')}
-      </div>
-      <div class="add-set-btn" onclick="logSet('${exId}', ${ex.sets})">+ Lưu set này</div>
-    ` : `<div class="info-block" style="text-align:center;color:var(--recovery-fresh);">✓ Đã hoàn thành đủ set cho bài này.</div>`}
-
-    <div class="section-label">Chuẩn bị (Setup)</div>
-    <div class="info-block">${ex.setup}</div>
-
-    <div class="section-label">Kỹ thuật</div>
-    <div class="info-block"><b>Tempo:</b> ${ex.tempo} · <b>RPE/RIR mục tiêu:</b> ${ex.rpe}</div>
-    <div class="info-block"><b>Cue:</b> ${ex.cue}</div>
-    <div class="info-block"><b>Lỗi thường gặp:</b> ${ex.mistakes}</div>
-    <div class="info-block"><b>Tips:</b> ${ex.tips}</div>
-    <div class="info-block"><b>Bài thay thế (nếu máy bận/không có thiết bị):</b><br>${ex.alt.map((a,i)=>`${i+1}. ${a}`).join('<br>')}</div>
-    <div class="info-block" style="color:var(--text-tertiary);font-size:12px;">Video/GIF minh họa sẽ được bổ sung ở bản cập nhật kế tiếp.</div>
-
-    <button class="ghost-btn" onclick="goTo('today')">Xong, quay lại danh sách</button>
+    <div class="info-block" style="margin-top:8px;">Chọn 1 mức để bắt đầu — lần sau app sẽ tự nhớ và chỉ hỏi lại khi đến lúc nên tăng tạ.</div>
+    <button class="ghost-btn" onclick="goTo('exerciseInfo',{id:'${exId}'})">Xem kỹ thuật / cách tập bài này</button>
   </div>`;
 }
-function setRpe(v){ draftSet.rpe=v; render(); }
-function logSet(exId, targetSets){
-  const w = parseFloat(document.getElementById('draftWeight').value);
-  const r = parseInt(document.getElementById('draftReps').value);
-  if(isNaN(w) || isNaN(r)){ showToast('Nhập đầy đủ mức tạ và số reps'); return; }
-  state.activeSession.sets.push({exerciseId:exId, weight:w, reps:r, rpe:draftSet.rpe, completedAt:new Date().toISOString()});
-  draftSet = {weight:null, reps:null, rpe:7};
-  saveState();
-  render();
-  showToast('Đã lưu set 💪');
+function pickAndComplete(exId, optIndex){
+  const opts = getOptions(exId);
+  const opt = opts[optIndex];
+  chooseOption(exId, opt);
+  const prog = state.exerciseProgress[exId];
+  if(!state.activeSession){
+    state.activeSession = {dayLabel: todayTemplate(), startedAt:new Date().toISOString(), sets:[]};
+  }
+  completeExercise(exId, prog);
+  goTo('today');
 }
 
 /* ============ FINISH SESSION -> SUMMARY ============ */
@@ -1028,12 +1063,14 @@ function renderSummary(sessionId){
   if(!session) return `<div class="screen"><div class="empty">Không có dữ liệu buổi tập.</div></div>`;
 
   const muscleRoles = {}; // muscleId -> best role
+  const muscleCount = {}; // muscleId -> số bài tập chạm tới
   session.sets.forEach(set=>{
     const ex = findExercise(set.exerciseId);
     if(!ex) return;
     const assign = (id,role)=>{
       const rank = {primary:3,secondary:2,stabilizer:1};
       if(!muscleRoles[id] || rank[role]>rank[muscleRoles[id]]) muscleRoles[id]=role;
+      muscleCount[id] = (muscleCount[id]||0)+1;
     };
     assign(ex.primary,'primary');
     ex.secondary.forEach(id=>assign(id,'secondary'));
@@ -1043,8 +1080,10 @@ function renderSummary(sessionId){
     const rank = {primary:3,secondary:2,stabilizer:1};
     return rank[b[1]]-rank[a[1]];
   });
-  const totalVolume = session.sets.reduce((sum,s)=> sum + (s.weight*s.reps||0), 0);
-  const durationMin = Math.round((new Date(session.endedAt)-new Date(session.startedAt))/60000);
+  const durationMin = Math.max(1, Math.round((new Date(session.endedAt)-new Date(session.startedAt))/60000) || estimateMinutes(session.dayLabel));
+  const bw = state.measurements.length? state.measurements[state.measurements.length-1].weight : (state.profile? 65 : 65);
+  const MET = 6; // cường độ tập kháng lực vừa-cao
+  const calories = Math.round(MET * bw * (durationMin/60));
   const roleColor = {primary:'#E24A4A', secondary:'#E8A33D', stabilizer:'#D9C24A'};
   const roleLabel = {primary:'Primary', secondary:'Secondary', stabilizer:'Stabilizer'};
 
@@ -1052,18 +1091,18 @@ function renderSummary(sessionId){
     <div class="summary-hero">
       <div class="check">${ICONS.check}</div>
       <h2>Buổi tập hoàn thành</h2>
-      <p>${session.dayLabel} · ${durationMin} phút · ${session.sets.length} set</p>
+      <p>${session.dayLabel} · ${session.sets.length} bài tập</p>
     </div>
     <div class="stat-grid">
-      <div class="stat-tile"><div class="n">${Math.round(totalVolume)}kg</div><div class="l">Tổng volume</div></div>
-      <div class="stat-tile"><div class="n">${sorted.length}</div><div class="l">Nhóm cơ được kích thích</div></div>
+      <div class="stat-tile"><div class="n">🔥 ${calories}</div><div class="l">Calo ước tính</div></div>
+      <div class="stat-tile"><div class="n">${sorted.length}</div><div class="l">Nhóm cơ được tác động</div></div>
     </div>
     <div class="section-label">Muscle Stimulation</div>
     ${sorted.map(([id,role])=>`
       <div class="stim-item">
         <div class="dot" style="background:${roleColor[role]}"></div>
         <div class="stim-name">${findMuscle(id).vi}</div>
-        <div class="stim-role">${roleLabel[role]}</div>
+        <div class="stim-role">${roleLabel[role]} · ${muscleCount[id]} bài</div>
       </div>`).join('')}
     <button class="primary-btn" onclick="goTo('home')">Về trang chủ</button>
   </div>`;
@@ -1215,7 +1254,7 @@ function render(){
   renderNavbar();
   if(view.name==='home') el.innerHTML = renderHome();
   else if(view.name==='today') el.innerHTML = renderToday();
-  else if(view.name==='exercise') el.innerHTML = renderExercise(view.params.id);
+  else if(view.name==='pickOption') el.innerHTML = renderPickOption(view.params.id);
   else if(view.name==='exerciseInfo') el.innerHTML = renderExerciseInfo(view.params.id);
   else if(view.name==='summary') el.innerHTML = renderSummary(view.params.sessionId);
   else if(view.name==='library') el.innerHTML = renderLibrary();
