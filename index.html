@@ -155,15 +155,17 @@ body{
   display:flex;gap:2px;background:rgba(20,20,22,0.85);backdrop-filter:blur(24px);
   border:1px solid var(--border-subtle);border-radius:22px;padding:6px;
   box-shadow:0 12px 30px rgba(0,0,0,0.5);
+  max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none;
 }
+.navbar-inner::-webkit-scrollbar{display:none;}
 .nav-btn{
-  width:64px;height:52px;border-radius:16px;display:flex;flex-direction:column;
+  width:58px;height:52px;border-radius:16px;display:flex;flex-direction:column;flex-shrink:0;
   align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--text-tertiary);
   transition:background .2s, color .2s;
 }
 .nav-btn.active{background:var(--glass);color:var(--text-primary);}
-.nav-btn svg{width:20px;height:20px;}
-.nav-btn span{font-size:10px;font-weight:600;}
+.nav-btn svg{width:19px;height:19px;}
+.nav-btn span{font-size:9.5px;font-weight:600;}
 
 /* sheet / detail screen */
 .sheet-header{
@@ -261,6 +263,75 @@ body{
   color:var(--text-secondary);gap:3px;
 }
 .day-cell b{font-size:13px;color:var(--text-primary);}
+
+/* calendar / history */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;}
+.cal-nav-btn{
+  width:34px;height:34px;border-radius:50%;background:var(--glass);border:1px solid var(--border-subtle);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);
+}
+.cal-nav-btn.disabled{opacity:0.3;pointer-events:none;}
+.cal-nav-btn svg{width:14px;height:14px;}
+.cal-nav-title{font-size:15px;font-weight:650;letter-spacing:-0.2px;text-transform:capitalize;}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:0 0 6px;}
+.cal-weekdays div{text-align:center;font-size:10.5px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-cell{
+  aspect-ratio:1;border-radius:12px;background:var(--glass);border:1px solid var(--border-subtle);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:13px;font-weight:600;color:var(--text-primary);cursor:pointer;position:relative;
+}
+.cal-cell:active{transform:scale(0.94);}
+.cal-cell.empty{background:transparent;border-color:transparent;cursor:default;}
+.cal-cell.future{color:var(--text-tertiary);cursor:default;opacity:0.5;}
+.cal-cell.today{border-color:var(--text-primary);border-width:1.5px;}
+.cal-cell .cal-dot{width:6px;height:6px;border-radius:50%;}
+.cal-cell.trained{background:rgba(74,144,226,0.12);border-color:rgba(74,144,226,0.35);}
+.cal-cell.trained .cal-dot{background:var(--recovery-fresh);}
+.cal-cell.rest .cal-dot{background:var(--text-tertiary);}
+.cal-cell.missed .cal-dot{background:var(--recovery-stimulated);}
+.cal-legend{display:flex;flex-wrap:wrap;gap:14px;margin:16px 20px 4px;}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);}
+.cal-legend-item .cal-dot{width:7px;height:7px;border-radius:50%;}
+
+/* nutrition */
+.nutri-hero{margin:12px 20px;border-radius:20px;padding:22px;background:linear-gradient(145deg,#1a1a1d,#101011);border:1px solid var(--border-strong);text-align:center;}
+.nutri-hero .kcal-num{font-size:38px;font-weight:750;letter-spacing:-0.8px;}
+.nutri-hero .kcal-range{font-size:12.5px;color:var(--text-tertiary);margin-top:2px;}
+.nutri-macro-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px;}
+.nutri-macro-tile{background:var(--glass);border:1px solid var(--border-subtle);border-radius:12px;padding:10px 6px;}
+.nutri-macro-tile .m-n{font-size:16px;font-weight:700;}
+.nutri-macro-tile .m-l{font-size:10.5px;color:var(--text-secondary);margin-top:1px;}
+.nutri-macro-tile .m-r{font-size:9.5px;color:var(--text-tertiary);margin-top:1px;}
+.nutrient-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border-subtle);}
+.nutrient-row:last-child{border-bottom:none;}
+.nutrient-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;margin-top:1px;}
+.nutrient-info{flex:1;min-width:0;}
+.nutrient-top{display:flex;justify-content:space-between;font-size:13px;}
+.nutrient-name{font-weight:600;color:var(--text-primary);}
+.nutrient-val{font-weight:600;color:var(--text-secondary);}
+.nutrient-track{height:6px;border-radius:4px;background:var(--glass);border:1px solid var(--border-subtle);overflow:hidden;margin-top:6px;}
+.nutrient-fill{height:100%;border-radius:4px;transition:width .3s;}
+.nutrient-sub{font-size:11px;margin-top:4px;font-weight:600;}
+.warn-card{margin:12px 20px;padding:14px 16px;border-radius:14px;background:rgba(226,74,74,0.08);border:1px solid rgba(226,74,74,0.3);}
+.warn-line{font-size:12.5px;color:#F0A0A0;font-weight:600;line-height:1.5;}
+.warn-line + .warn-line{margin-top:6px;}
+.insight-card{margin:12px 20px;padding:18px;border-radius:18px;background:linear-gradient(145deg,#1a1a1d,#101011);border:1px solid var(--border-strong);}
+.insight-eyebrow{font-size:11.5px;color:var(--text-tertiary);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.insight-title{font-size:17px;font-weight:700;margin:6px 0 4px;letter-spacing:-0.2px;}
+.insight-body{font-size:13px;color:var(--text-secondary);line-height:1.55;}
+.insight-tag{display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;margin-top:10px;letter-spacing:0.02em;}
+.food-item{display:flex;align-items:center;gap:10px;padding:12px 14px;margin:6px 20px;border-radius:14px;background:var(--glass);border:1px solid var(--border-subtle);cursor:pointer;}
+.food-item:active{transform:scale(0.98);}
+.food-main{flex:1;min-width:0;}
+.food-name{font-size:14.5px;font-weight:600;}
+.food-sub{font-size:11.5px;color:var(--text-tertiary);margin-top:1px;}
+.food-add{width:28px;height:28px;border-radius:50%;background:var(--glass);border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;color:var(--text-primary);font-size:16px;flex-shrink:0;}
+.logged-item{display:flex;align-items:center;gap:10px;padding:11px 14px;margin:6px 20px;border-radius:14px;background:rgba(74,144,226,0.06);border:1px solid rgba(74,144,226,0.2);}
+.logged-main{flex:1;min-width:0;}
+.logged-name{font-size:14px;font-weight:600;}
+.logged-sub{font-size:11.5px;color:var(--text-tertiary);margin-top:1px;}
+.logged-del{width:24px;height:24px;border-radius:50%;background:var(--glass);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:13px;cursor:pointer;flex-shrink:0;}
 
 .tier-label{
   display:flex;align-items:center;gap:7px;
@@ -646,6 +717,180 @@ const DEFAULT_SPLIT = {
 const DAY_KEYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const DAY_LABEL_VI = {Sun:'CN',Mon:'T2',Tue:'T3',Wed:'T4',Thu:'T5',Fri:'T6',Sat:'T7'};
 
+/* ============ NUTRITION DB ============
+   "per" = giá trị ước lượng cho MỖI 1 đơn vị (1 gram / 1 ml / 1 trái-quả-tô-ổ-chén-dĩa-ly),
+   dạng [min,max] để nhân với số lượng người dùng nhập -> ra khoảng ước lượng cho phần đã ăn.
+   Số liệu tham khảo từ dữ liệu dinh dưỡng phổ biến (USDA & nguồn dinh dưỡng Việt Nam),
+   mang tính ước lượng gần đúng, không thay thế tư vấn dinh dưỡng chuyên môn.
+   Đơn vị vi chất: sugar/fiber/satFat/unsatFat = g, sodium/potassium/calcium/magnesium = mg,
+   vitD = mcg, iron/zinc = mg, omega3 = mg, water = ml (nước có trong thực phẩm/đồ uống đó). */
+const NUTRITION_DB = [
+  {id:'protein', label:'Nguồn đạm', items:[
+    {id:'chicken_breast', vi:'Ức gà (không xương, không da)', unit:'g', defaultQty:150,
+      per:{cal:[1.65,1.9], protein:[0.31,0.35], fat:[0.03,0.06], carb:[0,0],
+        sugar:[0,0], fiber:[0,0], sodium:[0.6,0.9], potassium:[2.5,3.0], satFat:[0.008,0.015], unsatFat:[0.018,0.04],
+        calcium:[0.1,0.2], vitD:[0,0.001], iron:[0.003,0.005], magnesium:[0.25,0.32], zinc:[0.008,0.012], omega3:[0.005,0.01], water:[0.6,0.68]}},
+    {id:'chicken_breast_bone', vi:'Ức gà có xương', unit:'g', defaultQty:200,
+      per:{cal:[1.5,1.75], protein:[0.24,0.28], fat:[0.05,0.08], carb:[0,0],
+        sugar:[0,0], fiber:[0,0], sodium:[0.55,0.85], potassium:[2.2,2.7], satFat:[0.014,0.022], unsatFat:[0.02,0.045],
+        calcium:[0.15,0.3], vitD:[0,0.001], iron:[0.004,0.006], magnesium:[0.22,0.28], zinc:[0.007,0.011], omega3:[0.005,0.01], water:[0.58,0.65]}},
+    {id:'pork_belly', vi:'Thịt ba rọi heo', unit:'g', defaultQty:150,
+      per:{cal:[4.8,5.5], protein:[0.09,0.14], fat:[0.45,0.53], carb:[0,0],
+        sugar:[0,0], fiber:[0,0], sodium:[0.3,0.5], potassium:[1.5,2.0], satFat:[0.15,0.20], unsatFat:[0.20,0.28],
+        calcium:[0.05,0.1], vitD:[0.001,0.003], iron:[0.005,0.008], magnesium:[0.1,0.15], zinc:[0.015,0.02], omega3:[0.02,0.05], water:[0.3,0.4]}},
+  ]},
+  {id:'carb', label:'Tinh bột', items:[
+    {id:'rice_bowl', vi:'Cơm', unit:'tô', defaultQty:1,
+      per:{cal:[260,330], protein:[5,6], fat:[0.4,0.6], carb:[56,68],
+        sugar:[0,1], fiber:[1,2], sodium:[1,5], potassium:[50,80], satFat:[0.1,0.2], unsatFat:[0.2,0.4],
+        calcium:[10,20], vitD:[0,0], iron:[0.4,0.8], magnesium:[20,30], zinc:[0.4,0.7], omega3:[5,10], water:[120,150]}},
+    {id:'plain_bread', vi:'Bánh mì không', unit:'ổ', defaultQty:1,
+      per:{cal:[220,270], protein:[7,9], fat:[1.5,3], carb:[42,50],
+        sugar:[3,6], fiber:[2,4], sodium:[400,550], potassium:[90,120], satFat:[0.5,1], unsatFat:[1,2],
+        calcium:[50,80], vitD:[0,0], iron:[1.5,2.5], magnesium:[20,30], zinc:[0.6,1], omega3:[10,20], water:[25,35]}},
+  ]},
+  {id:'veggie', label:'Rau củ', items:[
+    {id:'cucumber', vi:'Dưa leo', unit:'quả', defaultQty:1,
+      per:{cal:[30,45], protein:[1.2,1.5], fat:[0.2,0.3], carb:[6,8],
+        sugar:[3,5], fiber:[1,2], sodium:[4,8], potassium:[280,350], satFat:[0,0.05], unsatFat:[0.05,0.15],
+        calcium:[30,40], vitD:[0,0], iron:[0.4,0.6], magnesium:[24,30], zinc:[0.3,0.5], omega3:[5,10], water:[190,196]}},
+    {id:'cabbage', vi:'Bắp cải', unit:'g', defaultQty:150,
+      per:{cal:[0.2,0.28], protein:[0.01,0.015], fat:[0.001,0.002], carb:[0.04,0.06],
+        sugar:[0.02,0.03], fiber:[0.02,0.03], sodium:[0.15,0.2], potassium:[1.7,2.0], satFat:[0,0], unsatFat:[0.001,0.002],
+        calcium:[0.4,0.5], vitD:[0,0], iron:[0.004,0.006], magnesium:[0.1,0.15], zinc:[0.01,0.02], omega3:[0.02,0.05], water:[0.9,0.93]}},
+  ]},
+  {id:'fruitfat', label:'Trái cây & chất béo tốt', items:[
+    {id:'banana', vi:'Chuối', unit:'trái', defaultQty:1,
+      per:{cal:[100,121], protein:[1.1,1.3], fat:[0.3,0.4], carb:[23,27],
+        sugar:[12,15], fiber:[2.5,3.5], sodium:[1,3], potassium:[400,450], satFat:[0.1,0.15], unsatFat:[0.05,0.1],
+        calcium:[5,8], vitD:[0,0], iron:[0.3,0.4], magnesium:[30,35], zinc:[0.15,0.2], omega3:[30,50], water:[85,95]}},
+    {id:'avocado', vi:'Bơ', unit:'trái', defaultQty:1,
+      per:{cal:[240,320], protein:[3,4], fat:[22,29], carb:[12,17],
+        sugar:[1,2], fiber:[10,14], sodium:[10,15], potassium:[700,900], satFat:[4,6], unsatFat:[16,22],
+        calcium:[20,25], vitD:[0,0], iron:[1,1.5], magnesium:[50,60], zinc:[1.2,1.5], omega3:[300,400], water:[140,150]}},
+  ]},
+  {id:'dish', label:'Món mặn khác', items:[
+    {id:'soup', vi:'Canh', unit:'chén', defaultQty:1,
+      per:{cal:[40,100], protein:[2,6], fat:[1,4], carb:[3,6],
+        sugar:[1,3], fiber:[0.5,1.5], sodium:[400,700], potassium:[150,250], satFat:[0.3,1], unsatFat:[0.3,1],
+        calcium:[15,30], vitD:[0,0.2], iron:[0.3,0.6], magnesium:[10,20], zinc:[0.2,0.4], omega3:[10,30], water:[220,240]}},
+    {id:'stirfry', vi:'Đồ xào', unit:'dĩa', defaultQty:1,
+      per:{cal:[180,320], protein:[8,15], fat:[10,20], carb:[8,15],
+        sugar:[2,5], fiber:[2,4], sodium:[500,800], potassium:[200,350], satFat:[2,5], unsatFat:[4,8],
+        calcium:[30,50], vitD:[0,0.3], iron:[1,2], magnesium:[20,35], zinc:[0.8,1.5], omega3:[30,60], water:[120,160]}},
+  ]},
+  {id:'drink', label:'Đồ uống', items:[
+    {id:'fresh_milk', vi:'Sữa tươi', unit:'ml', defaultQty:200,
+      per:{cal:[0.42,0.64], protein:[0.030,0.034], fat:[0.010,0.035], carb:[0.045,0.050],
+        sugar:[0.04,0.05], fiber:[0,0], sodium:[0.4,0.5], potassium:[1.4,1.6], satFat:[0.006,0.02], unsatFat:[0.003,0.01],
+        calcium:[1.1,1.3], vitD:[0.005,0.012], iron:[0,0.001], magnesium:[0.1,0.12], zinc:[0.004,0.005], omega3:[0.005,0.01], water:[0.87,0.89]}},
+    {id:'avocado_smoothie', vi:'Sinh tố bơ', unit:'ly', defaultQty:1,
+      per:{cal:[300,450], protein:[4,7], fat:[15,25], carb:[35,55],
+        sugar:[25,40], fiber:[4,6], sodium:[30,60], potassium:[500,700], satFat:[3,6], unsatFat:[8,14],
+        calcium:[80,140], vitD:[0.2,0.5], iron:[0.5,1], magnesium:[30,50], zinc:[0.5,0.8], omega3:[150,250], water:[180,250]}},
+    {id:'cacao_ice', vi:'Cacao đá', unit:'ly', defaultQty:1,
+      per:{cal:[90,150], protein:[2,4], fat:[2,5], carb:[18,28],
+        sugar:[20,35], fiber:[1,2], sodium:[20,40], potassium:[150,250], satFat:[1,3], unsatFat:[0.5,1.5],
+        calcium:[20,40], vitD:[0,0], iron:[0.5,1], magnesium:[20,40], zinc:[0.3,0.6], omega3:[5,15], water:[220,260]}},
+    {id:'cacao_milk_ice', vi:'Cacao sữa đá', unit:'ly', defaultQty:1,
+      per:{cal:[180,280], protein:[5,8], fat:[6,11], carb:[28,40],
+        sugar:[25,40], fiber:[1,2], sodium:[50,90], potassium:[200,300], satFat:[3,5], unsatFat:[1,3],
+        calcium:[100,160], vitD:[0.1,0.3], iron:[0.5,1], magnesium:[25,45], zinc:[0.4,0.7], omega3:[10,20], water:[200,250]}},
+    {id:'black_coffee_ice', vi:'Cà phê đá', unit:'ly', defaultQty:1,
+      per:{cal:[15,60], protein:[0.2,0.5], fat:[0,0.5], carb:[3,14],
+        sugar:[0,15], fiber:[0,0], sodium:[5,15], potassium:[50,100], satFat:[0,0.2], unsatFat:[0,0.2],
+        calcium:[2,5], vitD:[0,0], iron:[0,0.2], magnesium:[5,10], zinc:[0,0.1], omega3:[0,0], water:[180,195]}},
+    {id:'milk_coffee_ice', vi:'Cà phê sữa', unit:'ly', defaultQty:1,
+      per:{cal:[140,220], protein:[3,5], fat:[5,9], carb:[20,30],
+        sugar:[15,30], fiber:[0,0], sodium:[40,70], potassium:[150,220], satFat:[2,4], unsatFat:[0.5,1.5],
+        calcium:[70,110], vitD:[0.05,0.15], iron:[0.1,0.3], magnesium:[15,25], zinc:[0.2,0.4], omega3:[3,8], water:[190,220]}},
+  ]},
+];
+/* Danh sách khoá vi chất để tổng hợp/lặp cho gọn ở các hàm tính toán */
+const NUTRIENT_KEYS = ['sugar','fiber','sodium','potassium','satFat','unsatFat','calcium','vitD','iron','magnesium','zinc','omega3','water'];
+function findFoodItem(id){
+  for(const cat of NUTRITION_DB){ const it = cat.items.find(i=>i.id===id); if(it) return it; }
+  return null;
+}
+
+/* ============ MỤC TIÊU DINH DƯỠNG (RDA & mục tiêu tăng cân nhẹ nhàng) ============
+   Người dùng: mục tiêu tối thượng là tăng cân từ từ (lean gain), đạt ~75kg trong 1 năm,
+   giữ thân hình slimfit — KHÔNG bulk thô như vận động viên thể hình.
+   -> Chiến lược: mức thặng dư calo nhỏ (theo tổng cân cần tăng / số ngày còn lại),
+   đạm cao để ưu tiên phát triển cơ thay vì mỡ, cảnh báo nếu ăn dư quá đà. */
+function bmrFor(weightKg, heightCm, age, gender){
+  // Mifflin-St Jeor
+  const base = 10*weightKg + 6.25*heightCm - 5*age;
+  return gender==='female' ? base-161 : base+5;
+}
+const ACTIVITY_MULT = {low:1.375, moderate:1.55, high:1.725};
+const ACTIVITY_LABEL = {low:'Ít vận động (văn phòng, ít tập)', moderate:'Vừa phải (tập gym đều 3-5 buổi/tuần)', high:'Nhiều (tập nặng + vận động nhiều)'};
+function currentWeight(){
+  return state.measurements.length? state.measurements[state.measurements.length-1].weight : null;
+}
+function tdeeToday(){
+  if(!state.profile) return null;
+  const w = currentWeight() || state.profile.startWeight || 65;
+  const gender = state.profile.gender || 'male';
+  const activity = state.profile.activityLevel || 'moderate';
+  const bmr = bmrFor(w, state.profile.height, state.profile.age, gender);
+  return Math.round(bmr * (ACTIVITY_MULT[activity]||1.55));
+}
+function goalDailySurplus(){
+  // Thặng dư calo/ngày để tăng cân đều đặn tới goalWeight vào goalDate, dàn trải cho êm & lean (không nhồi nhét)
+  if(!state.profile) return 250;
+  const w = currentWeight() || state.profile.startWeight || 65;
+  const goalW = state.profile.goalWeight || 75;
+  const goalDate = state.profile.goalDate ? new Date(state.profile.goalDate) : null;
+  const daysLeft = goalDate ? Math.max(30, Math.round((goalDate-new Date())/86400000)) : 365;
+  const kgToGain = Math.max(0, goalW - w);
+  if(kgToGain<=0) return 0; // đã đạt/vượt mục tiêu -> không cần dư calo nữa
+  const raw = Math.round((kgToGain*7700)/daysLeft);
+  return Math.min(raw, 400); // chặn trần 400kcal/ngày để tránh tăng nhanh -> thô, chỉ nên lean & từ từ
+}
+function dailyCalorieTarget(){
+  const t = tdeeToday();
+  if(t==null) return null;
+  return t + goalDailySurplus();
+}
+function dailyProteinTargetG(){
+  const w = currentWeight() || (state.profile? state.profile.startWeight : 65) || 65;
+  return {min: Math.round(w*1.6), max: Math.round(w*2.2)}; // g/kg — mức khuyến nghị cho lean gain, ưu tiên cơ hơn mỡ
+}
+function nutrientTargets(){
+  const w = currentWeight() || (state.profile? state.profile.startWeight : 65) || 65;
+  const cal = dailyCalorieTarget() || 2400;
+  const protein = dailyProteinTargetG();
+  const fatMaxG = Math.round(cal*0.30/9);
+  return {
+    calorie: {target: cal, type:'range'},
+    protein: {min: protein.min, max: protein.max, unit:'g', type:'min'},
+    fat: {max: fatMaxG, unit:'g', type:'max'},
+    carb: {max: Math.round((cal - protein.min*4 - fatMaxG*9)/4), unit:'g', type:'max'},
+    sugar: {max: Math.round(cal*0.10/4), unit:'g', type:'max', warn:'Đường tự do nên dưới 10% tổng calo (WHO)'},
+    fiber: {min: 28, unit:'g', type:'min', warn:'Người trưởng thành nên ăn tối thiểu ~25-30g chất xơ/ngày'},
+    sodium: {max: 2000, unit:'mg', type:'max', warn:'WHO khuyến nghị dưới 2000mg Natri/ngày (~5g muối)'},
+    potassium: {min: 3500, unit:'mg', type:'min'},
+    satFat: {max: Math.round(cal*0.10/9), unit:'g', type:'max', warn:'Chất béo bão hoà nên dưới 10% tổng calo'},
+    unsatFat: {min: Math.round(fatMaxG*0.5), unit:'g', type:'min'},
+    calcium: {min: 1000, unit:'mg', type:'min'},
+    vitD: {min: 15, unit:'mcg', type:'min'},
+    iron: {min: 8, unit:'mg', type:'min'},
+    magnesium: {min: 400, unit:'mg', type:'min'},
+    zinc: {min: 11, unit:'mg', type:'min'},
+    omega3: {min: 1300, unit:'mg', type:'min'},
+    water: {min: Math.round(w*35), unit:'ml', type:'min'}
+  };
+}
+const NUTRIENT_META = {
+  sugar:{label:'Đường', icon:'🍬'}, fiber:{label:'Chất xơ', icon:'🌾'},
+  sodium:{label:'Natri', icon:'🧂'}, potassium:{label:'Kali', icon:'🍌'},
+  satFat:{label:'Béo bão hoà', icon:'🧈'}, unsatFat:{label:'Béo không bão hoà', icon:'🫒'},
+  calcium:{label:'Canxi', icon:'🦴'}, vitD:{label:'Vitamin D', icon:'☀️'},
+  iron:{label:'Sắt', icon:'🩸'}, magnesium:{label:'Magie', icon:'⚡'},
+  zinc:{label:'Kẽm', icon:'🛡️'}, omega3:{label:'Omega-3', icon:'🐟'}
+};
+
 /* ============ STATE & STORAGE ============ */
 const STORAGE_KEY = 'stimulus-app-data';
 let state = {
@@ -660,7 +905,10 @@ let state = {
   streakSaveDates: [],  // ['toDateString', ...] — những ngày bị hổng được "khôi phục chuỗi" bù vào
   streakSaveLog: [],    // [isoString, ...] — mỗi lần dùng "khôi phục chuỗi" ghi 1 mốc thời gian, để tính giới hạn 3 lần/tháng
   extraFinisherByDate: {}, // {'toDateString': exerciseId} — bài finisher phụ (bụng) người dùng tự chọn thêm mỗi ngày tập
-  sleepLogs: {} // {'toDateString của ĐÊM đó': số giờ ngủ} — nhập hôm nay cho giấc ngủ đêm qua, nên khoá lưu theo ngày HÔM QUA
+  sleepLogs: {}, // {'toDateString của ĐÊM đó': số giờ ngủ} — nhập hôm nay cho giấc ngủ đêm qua, nên khoá lưu theo ngày HÔM QUA
+  nutritionLogs: {}, // {'toDateString': [{id, foodId, qty, addedAt}, ...]} — nhật ký ăn uống theo ngày
+  waterLogs: {}, // {'toDateString': tổng ml nước uống trực tiếp đã log (chưa gồm nước trong món ăn)}
+  weeklyInsight: null // {computedAt, calAvg, tdee, targetCal, diffAvg, weightDelta, tendency, recommendation, warnings:[...]}
 };
 let view = {name:'home', params:{}};
 
@@ -889,9 +1137,53 @@ function useStreakSave(){
   showToast(`Đã khôi phục chuỗi 🔥 · còn ${streakSavesRemaining()} lần trong tháng này`);
 }
 
+/* --- điều chỉnh tốc độ hồi phục theo giấc ngủ ---
+   Cơ sở lý thuyết: thiếu ngủ làm giảm tổng hợp protein cơ (muscle protein synthesis) và
+   giảm tiết GH/testosterone ban đêm, khiến tốc độ hồi phục thực tế chậm hơn so với hồi phục
+   chỉ tính theo thời gian trôi qua. Ngủ đủ 7-9h là mốc chuẩn (hệ số 1.0). Áp dụng liên tục
+   theo TỪNG NGÀY DƯƠNG LỊCH đã trôi qua kể từ buổi tập — kể cả những ngày đó là ngày nghỉ,
+   vì hồi phục cơ diễn ra suốt ngày/đêm chứ không riêng gì ngày tập. */
+const SLEEP_EFFICIENCY_POINTS = [
+  [0, 0.25], [4, 0.35], [5, 0.5], [6, 0.7], [7, 0.88], [8, 1.0], [9, 1.08], [10, 1.12], [12, 1.12]
+];
+function sleepEfficiencyMultiplier(hours){
+  if(hours==null || isNaN(hours)) return 1.0; // chưa có dữ liệu đêm đó -> coi như trung tính, không phạt cũng không thưởng
+  const h = Math.max(0, Math.min(12, hours));
+  const pts = SLEEP_EFFICIENCY_POINTS;
+  for(let i=0;i<pts.length-1;i++){
+    const [h0,e0] = pts[i], [h1,e1] = pts[i+1];
+    if(h>=h0 && h<=h1){
+      const t = (h-h0)/(h1-h0);
+      return e0 + (e1-e0)*t;
+    }
+  }
+  return 1.0;
+}
+/* Tính số "giờ hồi phục hiệu quả" giữa 2 mốc thời gian, chia theo từng ngày dương lịch,
+   mỗi ngày dùng hệ số hiệu quả riêng dựa trên giấc ngủ ĐÊM TRƯỚC ngày đó. */
+function effectiveRecoveryHours(fromDate, toDate){
+  let total = 0;
+  let cursor = new Date(fromDate);
+  const end = new Date(toDate);
+  if(cursor >= end) return 0;
+  while(cursor < end){
+    const dayStart = new Date(cursor); dayStart.setHours(0,0,0,0);
+    const nextMidnight = new Date(dayStart); nextMidnight.setDate(nextMidnight.getDate()+1);
+    const segmentEnd = nextMidnight < end ? nextMidnight : end;
+    const hoursInSegment = (segmentEnd - cursor) / 3600000;
+    const nightBefore = new Date(dayStart); nightBefore.setDate(nightBefore.getDate()-1);
+    const sh = sleepHoursForNightOf(nightBefore);
+    const eff = sleepEfficiencyMultiplier(sh);
+    total += hoursInSegment * eff;
+    cursor = segmentEnd;
+  }
+  return total;
+}
+
 /* --- recovery engine ---
    for each muscle: find most recent session touching it, compute volume_score & avg rpe,
-   derive recovery_hours_needed, then recovery_percent from time elapsed. */
+   derive recovery_hours_needed, then recovery_percent from EFFECTIVE elapsed hours (đã điều
+   chỉnh theo giấc ngủ, tính cả ngày nghỉ). */
 function roleWeight(role){ return role==='primary'?1:role==='secondary'?0.5:0.25; }
 
 function muscleTouchesInSession(session, muscleId){
@@ -929,10 +1221,13 @@ function getMuscleRecovery(muscleId){
   const hoursNeeded = baseHours * volumeMultiplier * rpeMultiplier;
 
   const lastAt = new Date(latest.endedAt);
-  const hoursElapsed = (Date.now() - lastAt.getTime()) / 3600000;
-  const percent = Math.min(100, Math.max(0, Math.round((hoursElapsed/hoursNeeded)*100)));
+  const now = new Date();
+  const hoursElapsed = (now.getTime() - lastAt.getTime()) / 3600000;
+  const effectiveHours = effectiveRecoveryHours(lastAt, now);
+  const percent = Math.min(100, Math.max(0, Math.round((effectiveHours/hoursNeeded)*100)));
   const isToday = lastAt.toDateString() === new Date().toDateString();
   const daysElapsed = hoursElapsed/24;
+  const avgEfficiency = hoursElapsed>0 ? (effectiveHours/hoursElapsed) : 1;
 
   let status;
   if(isToday) status='stimulated';
@@ -940,7 +1235,9 @@ function getMuscleRecovery(muscleId){
   else if(daysElapsed<=7) status='fresh';
   else status='inactive';
 
-  return {status, percent, etaHours: Math.max(0, Math.round(hoursNeeded-hoursElapsed)), lastAt};
+  const remainingEffectiveHours = Math.max(0, hoursNeeded-effectiveHours);
+  const etaHours = avgEfficiency>0 ? Math.round(remainingEffectiveHours/avgEfficiency) : Math.round(remainingEffectiveHours);
+  return {status, percent, etaHours, lastAt, avgEfficiency, sleepAdjusted: avgEfficiency<0.97 || avgEfficiency>1.03};
 }
 function recoveryColor(status){
   return {stimulated:'var(--recovery-stimulated)', recovering:'var(--recovery-recovering)', fresh:'var(--recovery-fresh)', inactive:'var(--recovery-inactive)'}[status];
@@ -1018,7 +1315,8 @@ const ICONS = {
   settings:'<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3-1.5 1.7 1.7 0 0 0-.3-1.5l1-1.7-1.7-1.7-1.7 1a1.7 1.7 0 0 0-1.5-.3l-.7-1.8h-2.4l-.7 1.8a1.7 1.7 0 0 0-1.5.3l-1.7-1-1.7 1.7 1 1.7a1.7 1.7 0 0 0-.3 1.5 1.7 1.7 0 0 0 .3 1.5l-1 1.7 1.7 1.7 1.7-1a1.7 1.7 0 0 0 1.5.3l.7 1.8h2.4l.7-1.8a1.7 1.7 0 0 0 1.5-.3l1.7 1 1.7-1.7-1-1.7Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
   back:'<svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  check:'<svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  check:'<svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  nutrition:'<svg viewBox="0 0 24 24" fill="none"><path d="M7 3v6.5a1.7 1.7 0 0 0 1.7 1.7V21M7 3v5.5M9.3 3v5.5M11.6 3v5.5M17 3c-2.2 0-3.3 2.2-3.3 5.2 0 2.5 1 4.2 3.3 4.5V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
 
 /* ============ RENDER: ONBOARDING (đăng nhập 1 lần) ============ */
@@ -1037,6 +1335,18 @@ function renderOnboarding(){
       <div class="set-row" style="grid-template-columns:1fr;padding:0 0 10px;">
         <div><input class="set-input" id="obWeight" type="number"><div class="set-hint">Cân nặng hiện tại (kg)</div></div>
       </div>
+      <div class="set-row" style="grid-template-columns:1fr 1fr;padding:0 0 10px;">
+        <div><select class="setting-select" id="obGender" style="width:100%;"><option value="male">Nam</option><option value="female">Nữ</option></select><div class="set-hint">Giới tính</div></div>
+        <div><select class="setting-select" id="obActivity" style="width:100%;">
+          <option value="low">Ít vận động</option>
+          <option value="moderate" selected>Vừa (tập gym đều)</option>
+          <option value="high">Nhiều</option>
+        </select><div class="set-hint">Mức vận động</div></div>
+      </div>
+      <div class="set-row" style="grid-template-columns:1fr 1fr;padding:0 0 10px;">
+        <div><input class="set-input" id="obGoalWeight" type="number" value="75"><div class="set-hint">Mục tiêu cân nặng (kg)</div></div>
+        <div><input class="set-input" id="obGoalMonths" type="number" value="12"><div class="set-hint">Trong (tháng)</div></div>
+      </div>
       <button class="hero-cta" onclick="saveProfile()">Bắt đầu</button>
     </div>
   </div>`;
@@ -1046,9 +1356,14 @@ function saveProfile(){
   const age = parseFloat(document.getElementById('obAge').value);
   const height = parseFloat(document.getElementById('obHeight').value);
   const weight = parseFloat(document.getElementById('obWeight').value);
+  const gender = document.getElementById('obGender').value;
+  const activityLevel = document.getElementById('obActivity').value;
+  const goalWeight = parseFloat(document.getElementById('obGoalWeight').value) || 75;
+  const goalMonths = parseFloat(document.getElementById('obGoalMonths').value) || 12;
   if(!name){ showToast('Vui lòng nhập tên'); return; }
   if(isNaN(age) || isNaN(height) || isNaN(weight)){ showToast('Vui lòng nhập đủ tuổi, chiều cao, cân nặng'); return; }
-  state.profile = {name, age, height, createdAt:new Date().toISOString()};
+  const goalDate = new Date(); goalDate.setMonth(goalDate.getMonth()+goalMonths);
+  state.profile = {name, age, height, gender, activityLevel, startWeight:weight, goalWeight, goalDate:goalDate.toISOString(), createdAt:new Date().toISOString()};
   if(state.measurements.length===0){
     state.measurements.push({date:new Date().toISOString(), weight, chest:null});
   }
@@ -1061,8 +1376,24 @@ function editProfile(){
   const age = parseFloat(prompt('Tuổi', state.profile.age));
   const height = parseFloat(prompt('Chiều cao (cm)', state.profile.height));
   if(!name.trim() || isNaN(age) || isNaN(height)){ showToast('Thông tin không hợp lệ'); return; }
-  state.profile = Object.assign({}, state.profile, {name:name.trim(), age, height});
+  const genderIn = prompt('Giới tính (nam/nữ)', state.profile.gender==='female'?'nữ':'nam');
+  const gender = (genderIn||'').trim().toLowerCase().startsWith('n') && (genderIn||'').toLowerCase().includes('ữ') ? 'female' : (state.profile.gender||'male');
+  state.profile = Object.assign({}, state.profile, {name:name.trim(), age, height, gender});
   saveState(); render(); showToast('Đã cập nhật hồ sơ');
+}
+function editGoal(){
+  const goalWeight = parseFloat(prompt('Mục tiêu cân nặng (kg)', state.profile.goalWeight||75));
+  if(isNaN(goalWeight)){ showToast('Số không hợp lệ'); return; }
+  const monthsIn = prompt('Còn lại bao nhiêu tháng để đạt mục tiêu?', state.profile.goalDate? Math.max(1,Math.round((new Date(state.profile.goalDate)-new Date())/2629800000)) : 12);
+  const months = parseFloat(monthsIn);
+  if(isNaN(months) || months<=0){ showToast('Số tháng không hợp lệ'); return; }
+  const goalDate = new Date(); goalDate.setMonth(goalDate.getMonth()+months);
+  const activityIn = prompt('Mức vận động (1=ít, 2=vừa, 3=nhiều)', state.profile.activityLevel==='low'?1:(state.profile.activityLevel==='high'?3:2));
+  const activityMap = {'1':'low','2':'moderate','3':'high'};
+  const activityLevel = activityMap[(activityIn||'').trim()] || state.profile.activityLevel || 'moderate';
+  state.profile = Object.assign({}, state.profile, {goalWeight, goalDate:goalDate.toISOString(), activityLevel});
+  state.weeklyInsight = null; // buộc tính lại vì mục tiêu đã đổi
+  saveState(); render(); showToast('Đã cập nhật mục tiêu');
 }
 
 /* ============ RENDER: NAVBAR ============ */
@@ -1072,6 +1403,7 @@ function renderNavbar(){
     {name:'today', label:'Hôm nay', icon:'today'},
     {name:'library', label:'Thư viện', icon:'library'},
     {name:'recovery', label:'Hồi phục', icon:'recovery'},
+    {name:'nutrition', label:'Dinh dưỡng', icon:'nutrition'},
     {name:'settings', label:'Cài đặt', icon:'settings'},
   ];
   document.getElementById('navbar').innerHTML = items.map(it=>`
@@ -1106,7 +1438,7 @@ function renderHome(){
     <div class="topbar">
       <div><h1>Xin chào${state.profile? ', '+state.profile.name.split(' ').pop():''} 👋</h1><div class="sub">${dateStr}</div></div>
       <div style="display:flex;gap:8px;">
-        <div class="icon-btn" onclick="goTo('backfill')" title="Lịch sử & hoàn thành bài tập hôm qua">${ICONS.today}</div>
+        <div class="icon-btn" onclick="goTo('history')" title="Lịch sử tập">${ICONS.today}</div>
         <div class="icon-btn" onclick="goTo('settings')">${ICONS.settings}</div>
       </div>
     </div>
@@ -1149,6 +1481,8 @@ function renderHome(){
         <button class="hero-cta" onclick="goTo('today')">${doneToday? 'Xem lại buổi tập' : (state.activeSession? 'Tiếp tục buổi tập' : 'Bắt đầu buổi tập')}</button>
       ` : `<div class="hero-meta"><div>Cơ bắp cần thời gian để hồi phục và phát triển.</div></div>`}
     </div>
+
+    ${renderWeeklyInsightCard()}
 
     <div class="stat-grid">
       <div class="stat-tile"><div class="n">🔥 ${streak}</div><div class="l">Ngày liên tiếp</div></div>
@@ -1471,15 +1805,16 @@ function renderExerciseInfo(exId){
 function renderRecovery(){
   const sorted = [...MUSCLES].sort((a,b)=>a.priority-b.priority);
   return `<div class="screen">
-    <div class="topbar"><div><h1>Hồi phục</h1><div class="sub">Trạng thái từng nhóm cơ</div></div></div>
+    <div class="topbar"><div><h1>Hồi phục</h1><div class="sub">Trạng thái từng nhóm cơ · có tính đến giấc ngủ</div></div></div>
     <div class="card">
       ${sorted.map(m=>{
         const r = getMuscleRecovery(m.id);
+        const sleepNote = r.sleepAdjusted ? (r.avgEfficiency>1 ? ' · nhanh hơn nhờ ngủ đủ' : ' · chậm hơn do ngủ thiếu') : '';
         return `<div class="rec-row" style="padding:12px 0;">
           <div class="rec-dot" style="background:${recoveryColor(r.status)}"></div>
           <div style="flex:1;">
             <div class="rec-name">${m.vi}</div>
-            <div style="font-size:11.5px;color:var(--text-tertiary);margin-top:1px;">${recoveryLabel(r.status)}${r.status==='recovering'? ` · còn ~${r.etaHours}h`:''}</div>
+            <div style="font-size:11.5px;color:var(--text-tertiary);margin-top:1px;">${recoveryLabel(r.status)}${r.status==='recovering'? ` · còn ~${r.etaHours}h`:''}${r.status==='recovering'?sleepNote:''}</div>
           </div>
           <div class="rec-track"><div class="rec-fill" style="width:${r.percent}%;background:${recoveryColor(r.status)}"></div></div>
           <div class="rec-pct">${r.percent}%</div>
@@ -1492,6 +1827,7 @@ function renderRecovery(){
       <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-recovering)"></div><div class="rec-name">Đang hồi phục</div></div>
       <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-fresh)"></div><div class="rec-name">Đã hồi phục (trong 7 ngày)</div></div>
       <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-inactive)"></div><div class="rec-name">Chưa tập gần đây (&gt;7 ngày)</div></div>
+      <div class="info-block" style="margin:10px 0 0;">Tốc độ hồi phục được điều chỉnh theo số giờ ngủ mỗi đêm (kể cả ngày nghỉ): ngủ đủ 7-9h giúp hồi phục đúng tiến độ, ngủ ít hơn sẽ làm % hồi phục tăng chậm hơn.</div>
     </div>
   </div>`;
 }
@@ -1536,8 +1872,18 @@ function renderSettings(){
     <div class="card">
       <div class="info-block" style="margin:0 0 6px;"><b>Tên:</b> ${state.profile? state.profile.name : '—'}</div>
       <div class="info-block" style="margin:0 0 6px;"><b>Tuổi:</b> ${state.profile? state.profile.age : '—'}</div>
-      <div class="info-block" style="margin:0;"><b>Chiều cao:</b> ${state.profile? state.profile.height+'cm' : '—'}</div>
+      <div class="info-block" style="margin:0 0 6px;"><b>Chiều cao:</b> ${state.profile? state.profile.height+'cm' : '—'}</div>
+      <div class="info-block" style="margin:0;"><b>Giới tính:</b> ${state.profile && state.profile.gender==='female'? 'Nữ' : 'Nam'}</div>
       <div class="ghost-btn" style="margin:12px 0 0;" onclick="editProfile()">Sửa hồ sơ</div>
+    </div>
+
+    <div class="section-label">Mục tiêu tăng cân (lean gain — không bulk thô)</div>
+    <div class="card">
+      <div class="info-block" style="margin:0 0 6px;"><b>Cân hiện tại:</b> ${currentWeight()!=null? currentWeight()+'kg' : '—'}</div>
+      <div class="info-block" style="margin:0 0 6px;"><b>Mục tiêu:</b> ${state.profile? (state.profile.goalWeight||75)+'kg' : '—'} ${state.profile && state.profile.goalDate? `· trước ${new Date(state.profile.goalDate).toLocaleDateString('vi-VN')}` : ''}</div>
+      <div class="info-block" style="margin:0 0 6px;"><b>Mức vận động:</b> ${ACTIVITY_LABEL[state.profile? (state.profile.activityLevel||'moderate') : 'moderate']}</div>
+      <div class="info-block" style="margin:0;"><b>TDEE ước tính hôm nay:</b> ${tdeeToday()||'—'} kcal · <b>Mục tiêu calo:</b> ~${dailyCalorieTarget()||'—'} kcal (dư ~${goalDailySurplus()} kcal/ngày để tăng cân từ từ)</div>
+      <div class="ghost-btn" style="margin:12px 0 0;" onclick="editGoal()">Sửa mục tiêu / mức vận động</div>
     </div>
 
     <div class="section-label">Lịch tập theo tuần (Split) — Chuẩn cố định</div>
@@ -1566,7 +1912,8 @@ function renderSettings(){
     <div class="section-label">Dữ liệu</div>
     <div class="card">
       <div class="info-block" style="margin:0;">Tổng số buổi tập đã hoàn thành: <b>${state.sessions.length}</b></div>
-      <div class="ghost-btn" style="margin:12px 0 0;color:var(--recovery-stimulated);" onclick="resetAllData()">Xoá toàn bộ dữ liệu</div>
+      <div class="ghost-btn" style="margin:12px 0 0;" onclick="goTo('history')">Xem lịch sử tập (cuốn lịch)</div>
+      <div class="ghost-btn" style="margin:8px 0 0;color:var(--recovery-stimulated);" onclick="resetAllData()">Xoá toàn bộ dữ liệu</div>
     </div>
   </div>`;
 }
@@ -1580,8 +1927,308 @@ function addMeasurement(){
 }
 function resetAllData(){
   if(!confirm('Xoá toàn bộ dữ liệu tập luyện? Không thể hoàn tác.')) return;
-  state = {profile:state.profile, split:DEFAULT_SPLIT, sessions:[], activeSession:null, measurements:[], settings:{unit:'kg'}, exerciseProgress:{}, restCheckins:[], streakSaveDates:[], streakSaveLog:[], extraFinisherByDate:{}, sleepLogs:{}};
+  state = {profile:state.profile, split:DEFAULT_SPLIT, sessions:[], activeSession:null, measurements:[], settings:{unit:'kg'}, exerciseProgress:{}, restCheckins:[], streakSaveDates:[], streakSaveLog:[], extraFinisherByDate:{}, sleepLogs:{}, nutritionLogs:{}, waterLogs:{}, weeklyInsight:null};
   saveState(); goTo('home');
+}
+
+/* ============ RENDER: LỊCH SỬ TẬP (calendar) ============ */
+function firstTrackedDate(){
+  const dates = [];
+  if(state.profile && state.profile.createdAt) dates.push(new Date(state.profile.createdAt));
+  state.sessions.forEach(s=> dates.push(new Date(s.endedAt)));
+  state.measurements.forEach(m=> dates.push(new Date(m.date)));
+  if(!dates.length) return new Date();
+  return new Date(Math.min(...dates.map(d=>d.getTime())));
+}
+function historyDayStatus(dateObj, coveredSet, todayObj, startObj){
+  const cmp = new Date(dateObj); cmp.setHours(0,0,0,0);
+  if(cmp.getTime() > todayObj.getTime()) return 'future';
+  if(cmp.getTime() === todayObj.getTime()) return state.sessions.some(s=> new Date(s.endedAt).toDateString()===dateObj.toDateString()) ? 'trained-today' : 'today';
+  if(state.sessions.some(s=> new Date(s.endedAt).toDateString()===dateObj.toDateString())) return 'trained';
+  if(isFixedRestDate(dateObj) || coveredSet.has(dateObj.toDateString())) return 'rest';
+  if(startObj && cmp.getTime() < startObj.getTime()) return 'before-tracking';
+  return 'missed';
+}
+function renderHistory(){
+  const now = new Date();
+  const y = (view.params && view.params.y!=null) ? view.params.y : now.getFullYear();
+  const m = (view.params && view.params.m!=null) ? view.params.m : now.getMonth();
+  const monthStart = new Date(y, m, 1);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const isCurrentMonth = (y===now.getFullYear() && m===now.getMonth());
+  const first = firstTrackedDate(); first.setHours(0,0,0,0);
+  const isFirstMonth = (y===first.getFullYear() && m===first.getMonth());
+  const covered = coveredDateSet();
+
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const startDow = monthStart.getDay(); // 0=CN
+  const cells = [];
+  for(let i=0;i<startDow;i++) cells.push(null);
+  for(let d=1; d<=daysInMonth; d++) cells.push(new Date(y, m, d));
+
+  const monthLabel = monthStart.toLocaleDateString('vi-VN', {month:'long', year:'numeric'});
+  const streak = computeStreak();
+  const startedLabel = first.toLocaleDateString('vi-VN', {day:'numeric', month:'long', year:'numeric'});
+  const trainedCount = state.sessions.length;
+
+  const gridCells = cells.map(d=>{
+    if(!d) return `<div class="cal-cell empty"></div>`;
+    const status = historyDayStatus(d, covered, today, first);
+    const cls = status==='trained-today' ? 'trained today' : status==='today' ? 'today' : status==='before-tracking' ? 'future' : status;
+    const clickable = (status!=='future' && status!=='before-tracking');
+    const showDot = (status==='trained' || status==='trained-today' || status==='rest' || status==='missed');
+    const ds = d.toISOString();
+    return `<div class="cal-cell ${cls}" ${clickable?`onclick="openHistoryDay('${ds}')"`:''}>
+      <span>${d.getDate()}</span>
+      ${showDot ? `<div class="cal-dot"></div>` : ''}
+    </div>`;
+  }).join('');
+
+  return `<div class="screen">
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('home')">${ICONS.back} Trang chủ</div></div>
+    <div style="padding:4px 20px;">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Lịch sử tập</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Bắt đầu tập từ <b style="color:var(--text-secondary);">${startedLabel}</b> · đã tập <b style="color:var(--text-secondary);">${trainedCount}</b> buổi · chuỗi hiện tại <b style="color:var(--text-secondary);">${streak}🔥</b></div>
+    </div>
+    <div class="card">
+      <div class="cal-nav">
+        <div class="cal-nav-btn ${isFirstMonth?'disabled':''}" onclick="shiftHistoryMonth(-1)">${ICONS.back}</div>
+        <div class="cal-nav-title">${monthLabel}</div>
+        <div class="cal-nav-btn ${isCurrentMonth?'disabled':''}" onclick="shiftHistoryMonth(1)">${ICONS.chev}</div>
+      </div>
+      <div class="cal-weekdays"><div>CN</div><div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div></div>
+      <div class="cal-grid">${gridCells}</div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-dot" style="background:var(--recovery-fresh);"></div>Đã tập</div>
+        <div class="cal-legend-item"><div class="cal-dot" style="background:var(--text-tertiary);"></div>Ngày nghỉ</div>
+        <div class="cal-legend-item"><div class="cal-dot" style="background:var(--recovery-stimulated);"></div>Đã bỏ lỡ</div>
+      </div>
+    </div>
+    <div class="info-block" style="margin:4px 20px 0;">Chạm vào một ngày để xem lại buổi tập, hoặc bù lại ngày đã quên tick.</div>
+  </div>`;
+}
+function shiftHistoryMonth(delta){
+  const now = new Date();
+  const y = (view.params && view.params.y!=null) ? view.params.y : now.getFullYear();
+  const m = (view.params && view.params.m!=null) ? view.params.m : now.getMonth();
+  const d = new Date(y, m+delta, 1);
+  goTo('history', {y:d.getFullYear(), m:d.getMonth()});
+}
+function openHistoryDay(iso){
+  const d = new Date(iso);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const cmp = new Date(d); cmp.setHours(0,0,0,0);
+  if(cmp.getTime()===today.getTime()){ goTo('today'); return; }
+  const session = state.sessions.find(s=> new Date(s.endedAt).toDateString()===d.toDateString());
+  if(session){ goTo('summary', {sessionId: session.id}); return; }
+  goTo('backfill', {date: d.toISOString().slice(0,10)});
+}
+
+/* ============ RENDER: DINH DƯỠNG ============ */
+function nutritionTotalsForDate(dateStr){
+  const entries = (state.nutritionLogs||{})[dateStr] || [];
+  let calMin=0,calMax=0,pMin=0,pMax=0,fMin=0,fMax=0,cMin=0,cMax=0;
+  const extra = {}; NUTRIENT_KEYS.forEach(k=> extra[k]={min:0,max:0});
+  entries.forEach(e=>{
+    const item = findFoodItem(e.foodId);
+    if(!item) return;
+    calMin+=item.per.cal[0]*e.qty; calMax+=item.per.cal[1]*e.qty;
+    pMin+=item.per.protein[0]*e.qty; pMax+=item.per.protein[1]*e.qty;
+    fMin+=item.per.fat[0]*e.qty; fMax+=item.per.fat[1]*e.qty;
+    cMin+=item.per.carb[0]*e.qty; cMax+=item.per.carb[1]*e.qty;
+    NUTRIENT_KEYS.forEach(k=>{
+      const v = item.per[k];
+      if(!v) return;
+      extra[k].min += v[0]*e.qty; extra[k].max += v[1]*e.qty;
+    });
+  });
+  const mid=(a,b)=> (a+b)/2;
+  const out = {
+    calMin:Math.round(calMin), calMax:Math.round(calMax), calMid:Math.round(mid(calMin,calMax)),
+    pMin:+pMin.toFixed(1), pMax:+pMax.toFixed(1), pMid:+mid(pMin,pMax).toFixed(1),
+    fMin:+fMin.toFixed(1), fMax:+fMax.toFixed(1), fMid:+mid(fMin,fMax).toFixed(1),
+    cMin:+cMin.toFixed(1), cMax:+cMax.toFixed(1), cMid:+mid(cMin,cMax).toFixed(1),
+    count: entries.length
+  };
+  NUTRIENT_KEYS.forEach(k=>{
+    out[k+'Min'] = +extra[k].min.toFixed(2);
+    out[k+'Max'] = +extra[k].max.toFixed(2);
+    out[k+'Mid'] = +mid(extra[k].min, extra[k].max).toFixed(2);
+  });
+  return out;
+}
+function waterTotalForDate(dateStr){
+  const t = nutritionTotalsForDate(dateStr);
+  const direct = (state.waterLogs||{})[dateStr] || 0;
+  return Math.round(t.waterMid + direct);
+}
+function nutrientStatus(key, value, targets){
+  const target = targets[key];
+  if(!target) return {pct:0, color:'var(--text-tertiary)', label:''};
+  if(target.type==='max'){
+    const pct = Math.min(140, Math.round(value/target.max*100));
+    let color = 'var(--recovery-fresh)', label='Ổn';
+    if(pct>100){ color='var(--recovery-stimulated)'; label='Vượt mức'; }
+    else if(pct>80){ color='var(--recovery-recovering)'; label='Gần mức trần'; }
+    return {pct:Math.min(100,pct), overPct:pct, color, label};
+  } else {
+    const pct = Math.min(140, Math.round(value/target.min*100));
+    let color = 'var(--recovery-fresh)', label='Đạt mục tiêu';
+    if(pct<50){ color='var(--recovery-stimulated)'; label='Quá thấp'; }
+    else if(pct<90){ color='var(--recovery-recovering)'; label='Còn thiếu'; }
+    return {pct:Math.min(100,pct), overPct:pct, color, label};
+  }
+}
+function nutrientRowHtml(key, midValue, targets){
+  const meta = NUTRIENT_META[key];
+  const target = targets[key];
+  if(!meta || !target) return '';
+  const st = nutrientStatus(key, midValue, targets);
+  const targetTxt = target.type==='max' ? `tối đa ${target.max}${target.unit}` : `tối thiểu ${target.min}${target.unit}`;
+  return `<div class="nutrient-row">
+    <div class="nutrient-icon">${meta.icon}</div>
+    <div class="nutrient-info">
+      <div class="nutrient-top"><span class="nutrient-name">${meta.label}</span><span class="nutrient-val">${midValue}${target.unit}</span></div>
+      <div class="nutrient-track"><div class="nutrient-fill" style="width:${st.pct}%;background:${st.color}"></div></div>
+      <div class="nutrient-sub" style="color:${st.color}">${st.label} · ${targetTxt}</div>
+    </div>
+  </div>`;
+}
+function renderNutrition(){
+  const todayStr = new Date().toDateString();
+  const entries = (state.nutritionLogs||{})[todayStr] || [];
+  const t = nutritionTotalsForDate(todayStr);
+  const targets = nutrientTargets();
+  const dateStr = new Date().toLocaleDateString('vi-VN', {weekday:'long', day:'numeric', month:'long'});
+  const waterDirect = (state.waterLogs||{})[todayStr] || 0;
+  const waterTotal = waterTotalForDate(todayStr);
+  const waterTarget = targets.water.min;
+  const waterPct = Math.min(100, Math.round(waterTotal/waterTarget*100));
+
+  const loggedList = entries.length ? `
+    <div class="section-label">Đã ghi nhận hôm nay</div>
+    ${entries.map(e=>{
+      const item = findFoodItem(e.foodId);
+      if(!item) return '';
+      const calMid = Math.round((item.per.cal[0]+item.per.cal[1])/2*e.qty);
+      return `<div class="logged-item">
+        <div class="logged-main">
+          <div class="logged-name">${item.vi} · ${e.qty}${item.unit}</div>
+          <div class="logged-sub">~${calMid} kcal</div>
+        </div>
+        <div class="logged-del" onclick="removeFoodEntry('${e.id}')">✕</div>
+      </div>`;
+    }).join('')}
+  ` : `<div class="empty"><p>Chưa ghi món nào hôm nay.<br>Chọn món bên dưới để bắt đầu ghi nhận.</p></div>`;
+
+  // Cảnh báo nếu vượt mức các nutrient loại "max" (đường, natri, béo bão hoà)
+  const overWarnings = ['sugar','sodium','satFat'].map(k=>{
+    if(!t.count) return null;
+    const st = nutrientStatus(k, t[k+'Mid'], targets);
+    return st.overPct>100 ? `${NUTRIENT_META[k].icon} ${NUTRIENT_META[k].label} đã vượt mức khuyến nghị hôm nay (${t[k+'Mid']}${targets[k].unit} / tối đa ${targets[k].max}${targets[k].unit})` : null;
+  }).filter(Boolean);
+
+  const calTarget = targets.calorie.target;
+  const calPct = t.count? Math.round(t.calMid/calTarget*100) : 0;
+
+  return `<div class="screen">
+    <div class="topbar"><div><h1>Dinh dưỡng</h1><div class="sub">${dateStr}</div></div></div>
+
+    <div class="nutri-hero">
+      <div class="kcal-num">${t.count? t.calMid : 0} kcal</div>
+      <div class="kcal-range">${t.count? `Ước tính khoảng ${t.calMin}–${t.calMax} kcal · Mục tiêu hôm nay ~${calTarget} kcal (${calPct}%)` : `Chưa nạp gì được ghi nhận · Mục tiêu hôm nay ~${calTarget} kcal`}</div>
+      <div class="nutri-macro-grid">
+        <div class="nutri-macro-tile"><div class="m-n">${t.count? t.pMid : 0}g</div><div class="m-l">Đạm</div><div class="m-r">${t.count? t.pMin+'–'+t.pMax+'g':'—'}</div></div>
+        <div class="nutri-macro-tile"><div class="m-n">${t.count? t.fMid : 0}g</div><div class="m-l">Chất béo</div><div class="m-r">${t.count? t.fMin+'–'+t.fMax+'g':'—'}</div></div>
+        <div class="nutri-macro-tile"><div class="m-n">${t.count? t.cMid : 0}g</div><div class="m-l">Carb</div><div class="m-r">${t.count? t.cMin+'–'+t.cMax+'g':'—'}</div></div>
+      </div>
+      <div class="nutri-macro-grid" style="margin-top:8px;">
+        <div class="nutri-macro-tile"><div class="m-n">${t.count? t.sugarMid : 0}g</div><div class="m-l">Đường</div></div>
+        <div class="nutri-macro-tile"><div class="m-n">${t.count? t.fiberMid : 0}g</div><div class="m-l">Chất xơ</div></div>
+        <div class="nutri-macro-tile"><div class="m-n">${waterTotal}ml</div><div class="m-l">Nước</div></div>
+      </div>
+    </div>
+
+    ${overWarnings.length? `<div class="warn-card">${overWarnings.map(w=>`<div class="warn-line">⚠️ ${w}</div>`).join('')}</div>` : ''}
+
+    <div class="section-label">Nước uống hôm nay</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+          <div style="font-size:20px;font-weight:700;">${waterTotal}ml <span style="font-size:12px;color:var(--text-tertiary);font-weight:500;">/ ${waterTarget}ml mục tiêu</span></div>
+          <div class="nutrient-track" style="margin-top:8px;"><div class="nutrient-fill" style="width:${waterPct}%;background:var(--recovery-fresh)"></div></div>
+          <div class="nutrient-sub" style="color:var(--text-tertiary);margin-top:4px;">Gồm ${Math.round(t.waterMid)}ml từ món ăn/đồ uống đã ghi + ${waterDirect}ml uống trực tiếp</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <div class="ghost-btn" style="flex:1;margin:0;" onclick="addWaterQuick(250)">+250ml</div>
+        <div class="ghost-btn" style="flex:1;margin:0;" onclick="addWaterQuick(500)">+500ml</div>
+        <div class="ghost-btn" style="flex:1;margin:0;" onclick="addWaterCustom()">Khác</div>
+      </div>
+      ${waterDirect>0? `<div class="ghost-btn" style="margin:8px 0 0;color:var(--recovery-stimulated);" onclick="resetTodayWater()">Xoá nước đã log hôm nay</div>` : ''}
+    </div>
+
+    <div class="section-label">Chi tiết vi chất hôm nay</div>
+    <div class="card">
+      ${['sodium','potassium','satFat','unsatFat','calcium','vitD','iron','magnesium','zinc','omega3'].map(k=> nutrientRowHtml(k, t.count? t[k+'Mid'] : 0, targets)).join('')}
+    </div>
+
+    ${loggedList}
+
+    ${NUTRITION_DB.map(cat=>`
+      <div class="section-label">${cat.label}</div>
+      ${cat.items.map(item=>`
+        <div class="food-item" onclick="promptAddFood('${item.id}')">
+          <div class="food-main">
+            <div class="food-name">${item.vi}</div>
+            <div class="food-sub">Theo ${item.unit} · ~${Math.round(item.per.cal[0]*item.defaultQty)}–${Math.round(item.per.cal[1]*item.defaultQty)} kcal / ${item.defaultQty}${item.unit}</div>
+          </div>
+          <div class="food-add">+</div>
+        </div>`).join('')}
+    `).join('')}
+
+    <div class="info-block" style="margin:16px 20px 0;">Số liệu chỉ mang tính ước lượng tham khảo (khoảng min–max), thực tế có thể lệch tuỳ cách chế biến & khẩu phần cụ thể. Mục tiêu calo/đạm được tính riêng theo cân nặng, giới tính & mức vận động của bạn trong Cài đặt.</div>
+  </div>`;
+}
+function promptAddFood(foodId){
+  const item = findFoodItem(foodId);
+  if(!item) return;
+  const val = prompt(`Số lượng (${item.unit}) — ${item.vi}`, item.defaultQty);
+  if(val===null) return;
+  const qty = parseFloat(val);
+  if(isNaN(qty) || qty<=0){ showToast('Số lượng không hợp lệ'); return; }
+  const todayStr = new Date().toDateString();
+  state.nutritionLogs = state.nutritionLogs || {};
+  state.nutritionLogs[todayStr] = state.nutritionLogs[todayStr] || [];
+  state.nutritionLogs[todayStr].push({id:'f_'+Date.now(), foodId, qty, addedAt:new Date().toISOString()});
+  saveState(); render();
+  const calMid = Math.round((item.per.cal[0]+item.per.cal[1])/2*qty);
+  showToast(`Đã thêm ${item.vi} · ~${calMid} kcal`);
+}
+function removeFoodEntry(entryId){
+  const todayStr = new Date().toDateString();
+  const list = (state.nutritionLogs||{})[todayStr] || [];
+  state.nutritionLogs[todayStr] = list.filter(e=>e.id!==entryId);
+  saveState(); render();
+}
+function addWaterQuick(ml){
+  const todayStr = new Date().toDateString();
+  state.waterLogs = state.waterLogs || {};
+  state.waterLogs[todayStr] = (state.waterLogs[todayStr]||0) + ml;
+  saveState(); render(); showToast(`Đã thêm ${ml}ml nước`);
+}
+function addWaterCustom(){
+  const val = prompt('Số ml nước đã uống', 300);
+  if(val===null) return;
+  const ml = parseFloat(val);
+  if(isNaN(ml) || ml<=0){ showToast('Số lượng không hợp lệ'); return; }
+  addWaterQuick(Math.round(ml));
+}
+function resetTodayWater(){
+  const todayStr = new Date().toDateString();
+  state.waterLogs = state.waterLogs || {};
+  state.waterLogs[todayStr] = 0;
+  saveState(); render();
 }
 
 /* ============ RENDER: HOÀN THÀNH BÀI TẬP HÔM QUA (backfill) ============ */
@@ -1633,17 +2280,19 @@ function renderBackfill(){
   const wm = measurementForDate(dateObj);
   const sh = sleepHoursForNightOf(dateObj);
   const rec = sleepRecoveryInfo(sh);
-  const healthCard = (isPast && (wm || sh!=null)) ? `
+  const nutri = nutritionTotalsForDate(dateObj.toDateString());
+  const healthCard = (isPast && (wm || sh!=null || nutri.count>0)) ? `
     <div class="card">
       <div class="card-title">Nhật ký sức khỏe ngày này</div>
       <div class="info-block" style="margin:0 0 6px;"><b>Cân nặng:</b> ${wm? wm.weight+'kg' : 'Chưa có dữ liệu'}</div>
-      <div class="info-block" style="margin:0;"><b>Giờ ngủ đêm đó:</b> ${sh!=null? sh+' tiếng' : 'Chưa có dữ liệu'}${rec? ` <span style="color:${rec.color};font-weight:600;">· ${rec.text}</span>`:''}</div>
+      <div class="info-block" style="margin:0 0 ${nutri.count>0?'6px':'0'};"><b>Giờ ngủ đêm đó:</b> ${sh!=null? sh+' tiếng' : 'Chưa có dữ liệu'}${rec? ` <span style="color:${rec.color};font-weight:600;">· ${rec.text}</span>`:''}</div>
+      ${nutri.count>0 ? `<div class="info-block" style="margin:0;"><b>Dinh dưỡng:</b> ~${nutri.calMid} kcal (${nutri.calMin}–${nutri.calMax}) · Đạm ${nutri.pMid}g · Béo ${nutri.fMid}g · Carb ${nutri.cMid}g</div>` : ''}
     </div>` : '';
 
   return `<div class="screen">
-    <div class="sheet-header"><div class="back-btn" onclick="goTo('home')">${ICONS.back} Trang chủ</div></div>
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('history')">${ICONS.back} Lịch sử tập</div></div>
     <div style="padding:4px 20px;">
-      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Lịch sử & hoàn thành bài tập hôm qua</div>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Hoàn thành bài tập ngày cũ</div>
       <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Xem lại buổi tập, cân nặng, giấc ngủ của từng ngày — hoặc bù lại ngày quên tick</div>
     </div>
     <div class="card">
@@ -1682,8 +2331,103 @@ function backfillComplete(iso, template){
 }
 
 /* ============ MAIN RENDER ============ */
+/* ============ WEEKLY INSIGHT (kiểm tra lại mỗi tuần) ============
+   Dựa trên 7 ngày gần nhất: lượng calo nạp trung bình so với mục tiêu (TDEE + thặng dư lean-gain),
+   xu hướng cân nặng, và các vi chất bị vượt/thiếu trung bình -> đưa ra 1 thẻ nhận xét nhẹ nhàng
+   (không phải popup) kèm gợi ý (giữ nguyên / giảm nhẹ khẩu phần / tăng nhẹ khẩu phần) và cảnh báo. */
+function last7DateStrings(){
+  const arr = [];
+  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); arr.push(d.toDateString()); }
+  return arr;
+}
+function computeWeeklyInsight(){
+  if(!state.profile) return null;
+  const days = last7DateStrings();
+  const targets = nutrientTargets();
+  const loggedDays = days.filter(d=> ((state.nutritionLogs||{})[d]||[]).length>0);
+  if(loggedDays.length < 3) return null; // chưa đủ dữ liệu để đánh giá đáng tin cậy
+
+  let calSum=0, sodiumSum=0, sugarSum=0, satFatSum=0, fiberSum=0;
+  loggedDays.forEach(d=>{
+    const t = nutritionTotalsForDate(d);
+    calSum += t.calMid; sodiumSum += t.sodiumMid; sugarSum += t.sugarMid; satFatSum += t.satFatMid; fiberSum += t.fiberMid;
+  });
+  const n = loggedDays.length;
+  const calAvg = Math.round(calSum/n);
+  const sodiumAvg = Math.round(sodiumSum/n);
+  const sugarAvg = Math.round(sugarSum/n);
+  const satFatAvg = Math.round(satFatSum/n);
+  const fiberAvg = Math.round(fiberSum/n);
+
+  const tdee = tdeeToday();
+  const targetCal = dailyCalorieTarget();
+  const diffAvg = calAvg - tdee; // dương = đang ăn dư so với mức duy trì cân nặng
+
+  // Xu hướng cân nặng: so đo gần nhất trong 7 ngày với đo gần nhất trước đó (nếu có đủ)
+  const sortedM = [...state.measurements].sort((a,b)=> new Date(a.date)-new Date(b.date));
+  let weightDelta = null;
+  if(sortedM.length>=2){
+    const latest = sortedM[sortedM.length-1];
+    const weekAgoTarget = new Date(latest.date); weekAgoTarget.setDate(weekAgoTarget.getDate()-7);
+    let ref = sortedM[0];
+    for(const m of sortedM){ if(new Date(m.date) <= weekAgoTarget) ref = m; }
+    if(new Date(ref.date) < new Date(latest.date)) weightDelta = +(latest.weight - ref.weight).toFixed(1);
+  }
+
+  const warnings = [];
+  if(sodiumAvg > targets.sodium.max) warnings.push(`Natri trung bình ${sodiumAvg}mg/ngày — vượt mức khuyến nghị ${targets.sodium.max}mg. Nên giảm bớt món mặn/chấm.`);
+  if(satFatAvg > targets.satFat.max) warnings.push(`Chất béo bão hoà trung bình ${satFatAvg}g/ngày — vượt mức khuyến nghị ${targets.satFat.max}g. Cân nhắc giảm đồ chiên/mỡ động vật.`);
+  if(sugarAvg > targets.sugar.max) warnings.push(`Đường trung bình ${sugarAvg}g/ngày — vượt mức khuyến nghị ${targets.sugar.max}g. Đồ uống có đường/sinh tố là nguồn chính cần để ý.`);
+  if(fiberAvg < targets.fiber.min*0.7) warnings.push(`Chất xơ trung bình chỉ ${fiberAvg}g/ngày — khá thấp so với mục tiêu ${targets.fiber.min}g. Nên ăn thêm rau củ.`);
+
+  // Xu hướng & khuyến nghị tổng thể — luôn hướng theo mục tiêu lean gain, tránh bulk thô
+  let tendency, recommendation, tag, tagColor;
+  const surplusTarget = goalDailySurplus();
+  if(diffAvg > surplusTarget + 250 || (weightDelta!=null && weightDelta > 0.5)){
+    tendency = 'gain_fast';
+    tag = 'Đang tăng cân khá nhanh'; tagColor = 'var(--recovery-recovering)';
+    recommendation = `Theo đà ăn uống & nghỉ ngơi tuần qua, cơ thể bạn đang có xu hướng dễ tăng cân hơn mức cần cho một lean-gain đều đặn (đang dư khoảng ${Math.max(0,diffAvg)} kcal/ngày so với mức duy trì). Nếu muốn giữ dáng slimfit thay vì to thô, nên giảm nhẹ khẩu phần tinh bột/chất béo mỗi bữa một chút, giữ đạm cao, và ưu tiên thêm rau/chất xơ.`;
+  } else if(diffAvg < surplusTarget - 250 || (weightDelta!=null && weightDelta < -0.3)){
+    tendency = 'under';
+    tag = 'Đang ăn thiếu so với mục tiêu'; tagColor = 'var(--recovery-stimulated)';
+    recommendation = `Lượng calo nạp trung bình đang thấp hơn mức cần để tăng cân đều đặn theo mục tiêu ${state.profile.goalWeight||75}kg. Nên bổ sung thêm 1 bữa phụ giàu đạm & tinh bột tốt (cơm, chuối, sữa) mỗi ngày để không bị hụt cân hoặc mất cơ.`;
+  } else {
+    tendency = 'on_track';
+    tag = 'Đang đúng hướng — lean gain'; tagColor = 'var(--recovery-fresh)';
+    recommendation = `Nhịp ăn uống 7 ngày qua khá cân bằng với mục tiêu tăng cân từ từ, giữ thân hình slimfit thay vì bulk thô. Cứ duy trì đạm cao, kiểm soát nhẹ tinh bột/chất béo như hiện tại.`;
+  }
+
+  const result = {
+    computedAt: new Date().toISOString(),
+    calAvg, tdee, targetCal, diffAvg, weightDelta, sodiumAvg, sugarAvg, satFatAvg, fiberAvg,
+    tendency, recommendation, tag, tagColor, warnings, daysUsed:n
+  };
+  return result;
+}
+function maybeRefreshWeeklyInsight(){
+  if(!state.profile) return;
+  const wi = state.weeklyInsight;
+  const needsRefresh = !wi || (new Date() - new Date(wi.computedAt)) >= 7*86400000;
+  if(!needsRefresh) return;
+  const fresh = computeWeeklyInsight();
+  if(fresh){ state.weeklyInsight = fresh; saveState(); }
+}
+function renderWeeklyInsightCard(){
+  const wi = state.weeklyInsight;
+  if(!wi) return '';
+  const dateTxt = new Date(wi.computedAt).toLocaleDateString('vi-VN',{day:'numeric', month:'numeric'});
+  return `<div class="insight-card">
+    <div class="insight-eyebrow">🗓️ Đánh giá hàng tuần · cập nhật ${dateTxt}</div>
+    <div class="insight-title">${wi.tag}</div>
+    <div class="insight-body">${wi.recommendation}</div>
+    ${wi.warnings.length? `<div style="margin-top:10px;">${wi.warnings.map(w=>`<div class="warn-line">⚠️ ${w}</div>`).join('')}</div>` : ''}
+    <div class="insight-tag" style="background:${wi.tagColor}22;color:${wi.tagColor};">~${wi.calAvg} kcal/ngày trung bình · mục tiêu ~${wi.targetCal} kcal</div>
+  </div>`;
+}
+
 function render(){
   const el = document.getElementById('app');
+  maybeRefreshWeeklyInsight();
   if(!state.profile){
     document.getElementById('navbar').innerHTML = '';
     el.innerHTML = renderOnboarding();
@@ -1699,6 +2443,8 @@ function render(){
   else if(view.name==='recovery') el.innerHTML = renderRecovery();
   else if(view.name==='settings') el.innerHTML = renderSettings();
   else if(view.name==='backfill') el.innerHTML = renderBackfill();
+  else if(view.name==='history') el.innerHTML = renderHistory();
+  else if(view.name==='nutrition') el.innerHTML = renderNutrition();
   else if(view.name==='chooseFinisher') el.innerHTML = renderChooseFinisher();
 }
 
