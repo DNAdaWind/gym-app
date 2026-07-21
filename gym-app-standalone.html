@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stimulus">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAFe0lEQVR4nO3dUZLTOhRFUUG9L5gIjIIeFwNgXM0oYDjvQ1WuVIfrOLF07znyXt/QkeVtyQlN/OnLl68N+JfP1QOALuJAiDgQIg6EiAMh4kCIOBAiDoSIAyHiQIg4ECIOhIgDIeJAiDgQIg6EiAMh4kCIOBAiDoSIAyHiQIg4ECIOhIgDIeJAiDgQIg6EiAOh/6oHUObt15/jf/j95/d5I5H16SJfwfBUCkdcIZeV4xgeRGTVUBaMI62Je4tVslQchVncWiaRFeIQaeKeeyXecchmccs3Edc4LLK45ZiI5YdgdmU0zzGbrRyOU/yB0RLiFMfYMp46SYUvXcgjjiHnZuApURvPJAZxnDwTU8+B8tjOU4/j5dlPnneXcT5FNw7H6XYc8w7ROF6YZan5dR9/p/g5xwIz+8J4BN+ly60cz86RWhYfWB+OVhyr/naW6XEJbSumM3hE4QduZ6jEsXAZnWMfEtvK8blwzOIDo4NVWTmOKJ+sIYyOoj6Og1eS0Zw+dPBYyjeX4jguWEZn0UdlHJcto9Pvo35b2bdqGZ340ZXFceSCEJ+7IY4cY9XiURMHZdyS7UN9W0Ghgg/BpJaNv28/9v/At/ffOSORmpYuOw6FKXgYRGR2KAqTc0tuW5l68H/ffrxcxvm//pDabVbql7dU3XWPPaPbT0vbcW69/fqT1pDWyjHjsOdd6zN+stTikRdH/rIxexfIeYl7aTMptHKMvWgyz9nY19JZPFTi8C1jxiuK9JEUR+aekl9G/uvmzKfKyjFKVRkKrz5cRhwPMx+1iiqcm1FjeDgnCYvHOiuHQhmdzkhOqo9jyLKhdj6GjKf8tnR6HAmrn1oZXcKoZs9t/coBWcVxnF85NZeN7vzYancW75VDuYxOf4Q75sZR/j8vljd1hitXjvK7cQuFs2S8rbis2C7jvGccB2ZzjcPrcvQa7cY1DiSYGMf+jTR3o8ftz9W8NyysHAhZxuG4hTuO2TIO5CAOhIgDIeJAiDgQIg6EiAMh4kCIOBAiDoQs4yj51pSTHMdsGQdyTIyj6h+a11P1yw+sHAi5xuG1hXuNduMaBxIYx+FyObqM857B81YubtnnrfBbxLNNnWHjbaU5rNj6I9zh8Yy3Hcqzf35s133GG8RNjyPhtkNz8UgY1ey5rV85hqycan0MGU/5u7n6OEbR6UNnJCdlxJH2fasKZ2XUGNK+2XfHOitHV9uHQp0DJcWR+WlY1RnKfN2c+VRZOcbefOX3MfYVy29FO5U4mnMfS5bRMuPI/3eWb++/ZyeS8BL3LvoAwBkXzbyTN+Mn6ywbLfnRoe8/v5cc/HYWh3yDSu1bkks/dHhqPSd3gdmbiNSy0XiWPc+y31EQR5OciFqaEyK3rUBHTRxHLgK1DXgezWWjFa4c9NHJltH0t5W1+xA/OoPnrYjP4MsOHtd1n7dy2T70y2jlcbRL9mFRRlOI47g1+jA6ipoPwe49NWXll9Rr7I5RZeV4ai6MLr6NXRlNJ462dB+OZTSdbWXz7FnXmcp/sj4cuTjaS6uC1Jx2CxyF0LayeWGO1HaZBcpomitH9/L5LpxlxzHv0I2jc5lul3E+RT2OdnrLmDr7ymM7zyCONuiWYuCZUBvPJB5xdGPvOgs/VtHPonOKo+m9K3mBSxnNLo7ONBGjLDrFzzkespvl5jlmy5VjY7GEOGbRecfRySbim0W3QhwbkUrcm9gsFUdXmMgyWXQLxrFJq2SxJjYrx3FreCirBnHrKnHcM/3trEzXjQMPWX4IhhzEgRBxIEQcCBEHQsSBEHEgRBwIEQdCxIEQcSBEHAgRB0LEgRBxIEQcCBEHQsSBEHEgRBwIEQdCxIEQcSBEHAgRB0LEgRBxIEQcCP0PdQoNPdwQv60AAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAFe0lEQVR4nO3dUZLTOhRFUUG9L5gIjIIeFwNgXM0oYDjvQ1WuVIfrOLF07znyXt/QkeVtyQlN/OnLl68N+JfP1QOALuJAiDgQIg6EiAMh4kCIOBAiDoSIAyHiQIg4ECIOhIgDIeJAiDgQIg6EiAMh4kCIOBAiDoSIAyHiQIg4ECIOhIgDIeJAiDgQIg6EiAOh/6oHUObt15/jf/j95/d5I5H16SJfwfBUCkdcIZeV4xgeRGTVUBaMI62Je4tVslQchVncWiaRFeIQaeKeeyXecchmccs3Edc4LLK45ZiI5YdgdmU0zzGbrRyOU/yB0RLiFMfYMp46SYUvXcgjjiHnZuApURvPJAZxnDwTU8+B8tjOU4/j5dlPnneXcT5FNw7H6XYc8w7ROF6YZan5dR9/p/g5xwIz+8J4BN+ly60cz86RWhYfWB+OVhyr/naW6XEJbSumM3hE4QduZ6jEsXAZnWMfEtvK8blwzOIDo4NVWTmOKJ+sIYyOoj6Og1eS0Zw+dPBYyjeX4jguWEZn0UdlHJcto9Pvo35b2bdqGZ340ZXFceSCEJ+7IY4cY9XiURMHZdyS7UN9W0Ghgg/BpJaNv28/9v/At/ffOSORmpYuOw6FKXgYRGR2KAqTc0tuW5l68H/ffrxcxvm//pDabVbql7dU3XWPPaPbT0vbcW69/fqT1pDWyjHjsOdd6zN+stTikRdH/rIxexfIeYl7aTMptHKMvWgyz9nY19JZPFTi8C1jxiuK9JEUR+aekl9G/uvmzKfKyjFKVRkKrz5cRhwPMx+1iiqcm1FjeDgnCYvHOiuHQhmdzkhOqo9jyLKhdj6GjKf8tnR6HAmrn1oZXcKoZs9t/coBWcVxnF85NZeN7vzYancW75VDuYxOf4Q75sZR/j8vljd1hitXjvK7cQuFs2S8rbis2C7jvGccB2ZzjcPrcvQa7cY1DiSYGMf+jTR3o8ftz9W8NyysHAhZxuG4hTuO2TIO5CAOhIgDIeJAiDgQIg6EiAMh4kCIOBAiDoQs4yj51pSTHMdsGQdyTIyj6h+a11P1yw+sHAi5xuG1hXuNduMaBxIYx+FyObqM857B81YubtnnrfBbxLNNnWHjbaU5rNj6I9zh8Yy3Hcqzf35s133GG8RNjyPhtkNz8UgY1ey5rV85hqycan0MGU/5u7n6OEbR6UNnJCdlxJH2fasKZ2XUGNK+2XfHOitHV9uHQp0DJcWR+WlY1RnKfN2c+VRZOcbefOX3MfYVy29FO5U4mnMfS5bRMuPI/3eWb++/ZyeS8BL3LvoAwBkXzbyTN+Mn6ywbLfnRoe8/v5cc/HYWh3yDSu1bkks/dHhqPSd3gdmbiNSy0XiWPc+y31EQR5OciFqaEyK3rUBHTRxHLgK1DXgezWWjFa4c9NHJltH0t5W1+xA/OoPnrYjP4MsOHtd1n7dy2T70y2jlcbRL9mFRRlOI47g1+jA6ipoPwe49NWXll9Rr7I5RZeV4ai6MLr6NXRlNJ462dB+OZTSdbWXz7FnXmcp/sj4cuTjaS6uC1Jx2CxyF0LayeWGO1HaZBcpomitH9/L5LpxlxzHv0I2jc5lul3E+RT2OdnrLmDr7ymM7zyCONuiWYuCZUBvPJB5xdGPvOgs/VtHPonOKo+m9K3mBSxnNLo7ONBGjLDrFzzkespvl5jlmy5VjY7GEOGbRecfRySbim0W3QhwbkUrcm9gsFUdXmMgyWXQLxrFJq2SxJjYrx3FreCirBnHrKnHcM/3trEzXjQMPWX4IhhzEgRBxIEQcCBEHQsSBEHEgRBwIEQdCxIEQcSBEHAgRB0LEgRBxIEQcCBEHQsSBEHEgRBwIEQdCxIEQcSBEHAgRB0LEgRBxIEQcCP0PdQoNPdwQv60AAAAASUVORK5CYII=">
+<title>Stimulus — Muscle Stimulation Tracker</title>
+<style>
+:root{
+  --bg-base:#0A0A0B;
+  --bg-surface:#131315;
+  --bg-elevated:#1C1C1F;
+  --glass:rgba(255,255,255,0.045);
+  --border-subtle:rgba(255,255,255,0.08);
+  --border-strong:rgba(255,255,255,0.14);
+  --text-primary:#F5F5F7;
+  --text-secondary:#9A9AA0;
+  --text-tertiary:#5C5C61;
+  --recovery-fresh:#4A90E2;
+  --recovery-recovering:#E8A33D;
+  --recovery-stimulated:#E24A4A;
+  --recovery-inactive:#4A4A4E;
+  --radius-card:16px;
+  --radius-sheet:24px;
+  --radius-pill:999px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--bg-base);
+  color:var(--text-primary);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+}
+#app{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  padding-bottom:96px;
+  position:relative;
+}
+.screen{animation:fadein .25s ease-out;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* header */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 20px 8px;
+}
+.topbar h1{font-size:22px;font-weight:650;margin:0;letter-spacing:-0.3px;}
+.topbar .sub{font-size:13px;color:var(--text-secondary);margin-top:2px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:var(--radius-pill);
+  background:var(--glass);border:1px solid var(--border-subtle);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--text-secondary);
+}
+.icon-btn:active{transform:scale(0.94);}
+
+/* card */
+.card{
+  background:linear-gradient(180deg,var(--bg-elevated),var(--bg-surface));
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius-card);
+  padding:18px;
+  margin:12px 20px;
+}
+.card.glass{background:var(--glass);backdrop-filter:blur(20px);}
+.card-title{font-size:13px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+
+/* today workout hero card */
+.hero-card{
+  margin:12px 20px;border-radius:20px;padding:22px;
+  background:linear-gradient(145deg,#1a1a1d,#101011);
+  border:1px solid var(--border-strong);
+  position:relative;overflow:hidden;
+}
+.hero-eyebrow{font-size:12px;color:var(--text-tertiary);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.hero-title{font-size:26px;font-weight:700;margin:4px 0 2px;letter-spacing:-0.4px;}
+.hero-meta{display:flex;gap:14px;margin-top:12px;font-size:13px;color:var(--text-secondary);}
+.hero-meta b{color:var(--text-primary);font-weight:600;}
+.hero-cta{
+  margin-top:18px;width:100%;padding:14px;border-radius:14px;border:none;
+  background:var(--text-primary);color:#0A0A0B;font-size:15px;font-weight:650;
+  cursor:pointer;letter-spacing:-0.1px;
+}
+.hero-cta:active{transform:scale(0.98);}
+.hero-cta.secondary{background:var(--glass);color:var(--text-primary);border:1px solid var(--border-subtle);}
+
+/* stat grid */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 20px;}
+.stat-tile{
+  background:var(--glass);border:1px solid var(--border-subtle);border-radius:14px;
+  padding:14px;
+}
+.stat-tile .n{font-size:22px;font-weight:700;letter-spacing:-0.4px;}
+.stat-tile .l{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+
+/* recovery bars */
+.rec-row{display:flex;align-items:center;gap:10px;padding:9px 0;}
+.rec-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.rec-name{font-size:14px;flex:1;color:var(--text-primary);}
+.rec-track{width:70px;height:5px;border-radius:99px;background:rgba(255,255,255,0.08);overflow:hidden;}
+.rec-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.rec-pct{font-size:12px;color:var(--text-secondary);width:34px;text-align:right;}
+
+/* exercise list card */
+.ex-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;margin:8px 20px;border-radius:14px;
+  background:var(--glass);border:1px solid var(--border-subtle);
+  cursor:pointer;
+}
+.ex-item:active{transform:scale(0.98);}
+.ex-item.done{border-color:rgba(74,144,226,0.35);background:rgba(74,144,226,0.06);}
+.ex-status{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.ex-status.done{background:var(--recovery-fresh);border-color:var(--recovery-fresh);color:#fff;}
+.ex-status.progress{border-color:var(--recovery-recovering);}
+.ex-main{flex:1;min-width:0;}
+.ex-name{font-size:15px;font-weight:600;letter-spacing:-0.1px;}
+.ex-name-en{font-size:12px;color:var(--text-tertiary);}
+.ex-meta{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+.chev{color:var(--text-tertiary);font-size:16px;}
+
+/* muscle badges */
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.badge{
+  display:flex;align-items:center;gap:5px;font-size:12px;padding:5px 10px;border-radius:99px;
+  background:var(--glass);border:1px solid var(--border-subtle);color:var(--text-secondary);
+}
+.badge .dot{width:7px;height:7px;border-radius:50%;}
+.dot-primary{background:#E24A4A;}
+.dot-secondary{background:#E8A33D;}
+.dot-stabilizer{background:#D9C24A;}
+
+/* bottom nav */
+.navbar{
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;justify-content:center;padding-bottom:calc(14px + env(safe-area-inset-bottom));
+  pointer-events:none;
+}
+.navbar-inner{
+  pointer-events:auto;
+  display:flex;gap:2px;background:rgba(20,20,22,0.85);backdrop-filter:blur(24px);
+  border:1px solid var(--border-subtle);border-radius:22px;padding:6px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.5);
+}
+.nav-btn{
+  width:64px;height:52px;border-radius:16px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--text-tertiary);
+  transition:background .2s, color .2s;
+}
+.nav-btn.active{background:var(--glass);color:var(--text-primary);}
+.nav-btn svg{width:20px;height:20px;}
+.nav-btn span{font-size:10px;font-weight:600;}
+
+/* sheet / detail screen */
+.sheet-header{
+  display:flex;align-items:center;justify-content:space-between;padding:18px 20px 4px;
+}
+.back-btn{font-size:14px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:4px;}
+.section-label{font-size:12px;color:var(--text-tertiary);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin:20px 20px 8px;}
+
+/* set logging */
+.set-row{
+  display:grid;grid-template-columns:32px 1fr 1fr 1fr;gap:8px;align-items:center;
+  padding:10px 20px;
+}
+.set-row .n{color:var(--text-tertiary);font-size:13px;font-weight:600;}
+.set-input{
+  background:var(--glass);border:1px solid var(--border-subtle);border-radius:10px;
+  color:var(--text-primary);font-size:15px;padding:10px 8px;text-align:center;width:100%;
+  font-weight:600;-moz-appearance:textfield;
+}
+.set-input::-webkit-outer-spin-button,.set-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.set-input:focus{outline:none;border-color:var(--border-strong);}
+.set-hint{font-size:10px;color:var(--text-tertiary);text-align:center;margin-top:2px;}
+.rpe-row{display:flex;gap:6px;padding:4px 20px 14px;}
+.rpe-chip{
+  flex:1;text-align:center;padding:9px 0;border-radius:10px;font-size:13px;font-weight:600;
+  background:var(--glass);border:1px solid var(--border-subtle);color:var(--text-secondary);cursor:pointer;
+}
+.rpe-chip.active{background:var(--text-primary);color:#0A0A0B;border-color:var(--text-primary);}
+.add-set-btn{
+  margin:8px 20px 4px;padding:12px;border-radius:12px;border:1px dashed var(--border-strong);
+  background:transparent;color:var(--text-secondary);text-align:center;font-size:14px;font-weight:600;cursor:pointer;
+}
+.suggest-banner{
+  margin:10px 20px;padding:12px 14px;border-radius:12px;
+  background:rgba(232,163,61,0.08);border:1px solid rgba(232,163,61,0.25);
+  font-size:13px;color:#E8A33D;display:flex;justify-content:space-between;align-items:center;
+}
+.info-block{margin:0 20px 12px;font-size:13.5px;color:var(--text-secondary);line-height:1.55;}
+.info-block b{color:var(--text-primary);}
+.primary-btn{
+  margin:16px 20px;padding:15px;border-radius:14px;border:none;width:calc(100% - 40px);
+  background:var(--text-primary);color:#0A0A0B;font-size:15px;font-weight:650;cursor:pointer;
+}
+.primary-btn:disabled{opacity:0.35;}
+.ghost-btn{
+  margin:8px 20px;padding:13px;border-radius:14px;width:calc(100% - 40px);
+  background:transparent;border:1px solid var(--border-subtle);color:var(--text-secondary);
+  font-size:14px;font-weight:600;text-align:center;cursor:pointer;
+}
+
+/* summary reward moment */
+.summary-hero{text-align:center;padding:36px 30px 10px;}
+.summary-hero .check{
+  width:64px;height:64px;border-radius:50%;background:rgba(74,144,226,0.12);
+  border:1px solid rgba(74,144,226,0.4);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;font-size:28px;color:var(--recovery-fresh);
+}
+.summary-hero h2{font-size:22px;margin:0 0 4px;letter-spacing:-0.3px;}
+.summary-hero p{font-size:13.5px;color:var(--text-secondary);margin:0;}
+.stim-item{display:flex;align-items:center;gap:12px;padding:12px 20px;}
+.stim-item .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.stim-name{font-size:14.5px;font-weight:600;flex:1;}
+.stim-role{font-size:12px;color:var(--text-tertiary);}
+
+/* library */
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding:4px 20px 14px;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{
+  flex-shrink:0;padding:8px 14px;border-radius:99px;font-size:13px;font-weight:600;
+  background:var(--glass);border:1px solid var(--border-subtle);color:var(--text-secondary);cursor:pointer;
+  white-space:nowrap;
+}
+.filter-chip.active{background:var(--text-primary);color:#0A0A0B;border-color:var(--text-primary);}
+
+/* empty state */
+.empty{text-align:center;padding:60px 30px;color:var(--text-tertiary);}
+.empty .e-icon{font-size:34px;margin-bottom:10px;}
+.empty p{font-size:14px;line-height:1.5;}
+
+/* settings */
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--border-subtle);
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:14.5px;}
+.setting-select{
+  background:var(--glass);border:1px solid var(--border-subtle);color:var(--text-primary);
+  border-radius:10px;padding:8px 10px;font-size:13px;font-weight:600;
+}
+.day-picker{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:0 20px 4px;}
+.day-cell{
+  aspect-ratio:1;border-radius:12px;background:var(--glass);border:1px solid var(--border-subtle);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;
+  color:var(--text-secondary);gap:3px;
+}
+.day-cell b{font-size:13px;color:var(--text-primary);}
+
+.tier-label{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;
+  margin:18px 20px 6px;
+}
+.tier-label .sq{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
+.tier-note{font-size:11.5px;color:var(--text-tertiary);font-weight:500;text-transform:none;letter-spacing:0;margin-left:2px;}
+.tier-badge{
+  display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+  padding:4px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:0.04em;
+  margin-top:6px;
+}
+.toast{
+  position:fixed;bottom:110px;left:50%;transform:translateX(-50%);
+  background:var(--bg-elevated);border:1px solid var(--border-strong);
+  padding:12px 20px;border-radius:14px;font-size:13.5px;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:999;opacity:0;transition:opacity .3s, transform .3s;
+  pointer-events:none;max-width:80%;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="navbar"><div class="navbar-inner" id="navbar"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ CONSTANTS ============ */
+const MUSCLES = [
+  {id:'chest', vi:'Ngực', en:'Chest', priority:1},
+  {id:'lateral_delt', vi:'Vai giữa', en:'Lateral Deltoid', priority:2},
+  {id:'front_delt', vi:'Vai trước', en:'Front Deltoid', priority:2.4},
+  {id:'lat', vi:'Xô (Lat)', en:'Lat', priority:3},
+  {id:'rear_delt', vi:'Vai sau', en:'Rear Deltoid', priority:4},
+  {id:'biceps', vi:'Tay trước', en:'Biceps', priority:5},
+  {id:'triceps', vi:'Tay sau', en:'Triceps', priority:5.2},
+  {id:'core', vi:'Bụng', en:'Core', priority:6},
+  {id:'lower_back', vi:'Lưng dưới', en:'Lower Back', priority:6.5},
+  {id:'neck', vi:'Cổ', en:'Neck', priority:7},
+  {id:'traps', vi:'Cầu vai', en:'Traps', priority:7.5},
+  {id:'quads', vi:'Đùi trước', en:'Quads', priority:8},
+  {id:'hamstrings', vi:'Đùi sau', en:'Hamstrings', priority:8.2},
+  {id:'glutes', vi:'Mông', en:'Glutes', priority:8.4},
+  {id:'calves', vi:'Bắp chân', en:'Calves', priority:8.6},
+  {id:'forearms', vi:'Cẳng tay', en:'Forearms', priority:5.4},
+];
+const BASE_RECOVERY_HOURS = {
+  chest:60, lat:60, quads:72, hamstrings:60, glutes:60, lower_back:54,
+  lateral_delt:36, front_delt:36, rear_delt:36, traps:36,
+  biceps:36, triceps:36, core:24, neck:24, calves:36, forearms:24
+};
+/* ===== LỊCH TẬP CHUẨN — CỐ ĐỊNH THEO YÊU CẦU NGƯỜI DÙNG =====
+   KHÔNG tự ý đổi sang PPL / Arnold Split / biến thể khác.
+   Chỉ 6 loại buổi tập này tồn tại trong hệ thống. */
+const DAY_TEMPLATES = ['Push A (Chest Focus)','Pull A (Back Width)','Shoulder Specialization','Upper Hybrid (Aesthetic)','Leg Day','Rest'];
+const SCHEDULE_VERSION = 2; // tăng số này khi lịch chuẩn thay đổi theo yêu cầu người dùng -> ép migrate storage cũ
+
+const EXERCISES = [
+  // ===== THỨ HAI — PUSH A (Chest Focus) =====
+  {id:'bb_bench_press',vi:'Đẩy ngực thanh đòn',en:'Barbell Bench Press',day:['Push A (Chest Focus)'],tier:'main',primary:'chest',secondary:['front_delt','triceps'],stabilizer:['core'],equipment:'Thanh đòn',sets:4,reps:'6-8',tempo:'3-1-1',rest:150,rpe:'RPE 8-9 (RIR 1-2)',compound:true,
+    setup:'Chuẩn bị: nằm ngửa trên ghế phẳng sao cho mắt nằm ngay dưới thanh đòn. Cầm thanh rộng hơn vai khoảng 1.5 lần bề rộng vai, hai chân đạp chắc xuống sàn, ép hai bả vai xuống và vào nhau trước khi gỡ thanh khỏi giá đỡ.',
+    cue:'Hạ thanh có kiểm soát về giữa ngực (đường vú), siết bả vai xuống và vào, đẩy thẳng lên theo đường hơi chéo về phía đầu.',
+    mistakes:'Nảy thanh trên ngực; hông rời khỏi ghế (cheat lên); tay quá rộng gây lệch lực sang vai.',
+    tips:'Siết mông và giữ chân đạp chặt sàn để tạo nền lực đẩy ổn định. Đây là bài compound nặng nhất tuần — ưu tiên tập trung nhất vào bài này.',
+    alt:['Machine Chest Press','Dumbbell Bench Press']},
+  {id:'incline_db_press',vi:'Đẩy ngực nghiêng tạ đơn',en:'Incline Dumbbell Press',day:['Push A (Chest Focus)'],tier:'main',primary:'chest',secondary:['front_delt','triceps'],stabilizer:['core'],equipment:'Tạ đơn',sets:4,reps:'8-10',tempo:'3-1-1',rest:120,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: chỉnh ghế nghiêng ở góc 30-45° (không cao hơn để tránh biến thành bài vai). Nằm tựa lưng chắc vào ghế, hai chân đạp sàn giữ ổn định, dùng đùi hỗ trợ đẩy tạ lên vị trí bắt đầu ngang vai.',
+    cue:'Ghế nghiêng 30-45°, đẩy tạ chếch lên theo hướng tự nhiên của khớp vai, không khóa khớp khuỷu ở đỉnh.',
+    mistakes:'Nghiêng ghế quá cao (>45°) khiến bài biến thành bài vai; hạ tạ không đều hai tay.',
+    tips:'Giữ nhịp chậm ở điểm hạ thấp nhất để tăng thời gian căng cơ (TUT) cho ngực trên.',
+    alt:['Incline Machine Press','Incline Barbell Press']},
+  {id:'machine_chest_press',vi:'Đẩy ngực máy',en:'Machine Chest Press',day:['Push A (Chest Focus)'],tier:'main',primary:'chest',secondary:['triceps','front_delt'],stabilizer:['core'],equipment:'Máy',sets:3,reps:'10-12',tempo:'2-1-2',rest:90,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: ngồi vào máy, chỉnh độ cao ghế sao cho tay cầm ngang mức núm vú (giữa ngực). Lưng và đầu tựa chắc vào đệm, hai chân đặt vững trên sàn để không bị trượt người khi đẩy.',
+    cue:'Chỉnh ghế để tay cầm ngang ngực, đẩy hết tay nhưng không khóa cứng khớp khuỷu.',
+    mistakes:'Chỉnh ghế quá thấp/cao làm lệch góc đẩy khỏi ngực sang vai.',
+    tips:'Dùng máy sau các bài tự do để "vắt" nốt sức còn lại của ngực an toàn.',
+    alt:['Cable Chest Press','Dumbbell Flat Press']},
+  {id:'db_lateral_raise',vi:'Nâng vai ngang tạ đơn',en:'Dumbbell Lateral Raise',day:['Push A (Chest Focus)'],tier:'accessory',primary:'lateral_delt',secondary:['front_delt'],stabilizer:['traps'],equipment:'Tạ đơn',sets:3,reps:'12-15',tempo:'2-0-2',rest:75,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: đứng thẳng, hai tay cầm tạ đơn nhẹ để dọc thân, đầu gối hơi chùng, thân giữ ổn định không đung đưa để tránh mượn lực khi nâng.',
+    cue:'Nâng tạ ngang vai theo hướng hơi chéo ra trước, khuỷu tay dẫn động trước cổ tay.',
+    mistakes:'Dùng lực rung thân để nâng cao hơn vai; nâng quá nhanh mất kiểm soát.',
+    tips:'Đây là bài hỗ trợ trong buổi ngực — không cần nặng, ưu tiên kiểm soát vì Thứ Tư đã có buổi vai riêng.',
+    alt:['Cable Lateral Raise','Machine Lateral Raise']},
+  {id:'oh_triceps_ext_pa',vi:'Ép tay sau qua đầu',en:'Overhead Triceps Extension',day:['Push A (Chest Focus)'],tier:'accessory',primary:'triceps',secondary:[],stabilizer:['core'],equipment:'Tạ đơn',sets:3,reps:'10-12',tempo:'3-1-1',rest:75,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: ngồi hoặc đứng thẳng lưng, cầm một tạ đơn bằng hai tay (nắm dưới đĩa tạ) đưa thẳng lên qua đầu, khuỷu tay hướng lên trần và giữ sát hai bên đầu.',
+    cue:'Hạ tạ sau đầu, giữ khuỷu tay cố định hướng lên trần, chỉ duỗi cẳng tay.',
+    mistakes:'Mở khuỷu tay ra hai bên làm giảm tải lên tay sau.',
+    tips:'Dùng một tạ đơn cầm hai tay để ổn định vai hơn khi hạ sâu.',
+    alt:['Cable Overhead Extension','Skull Crusher']},
+  {id:'hanging_leg_raise',vi:'Nâng chân treo xà',en:'Hanging Leg Raise',day:['Push A (Chest Focus)'],tier:'accessory',primary:'core',secondary:[],stabilizer:['lat'],equipment:'Xà đơn',sets:3,reps:'10-15',tempo:'2-0-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: treo người trên xà đơn, tay cầm rộng bằng vai, toàn thân thả lỏng thẳng, siết nhẹ vai xuống (active hang) trước khi bắt đầu nâng chân.',
+    cue:'Treo người, cuộn xương chậu lên trước khi nâng chân, tránh đá chân bằng đà.',
+    mistakes:'Dùng đà lắc toàn thân; chỉ nâng chân bằng hông mà không cuộn bụng dưới.',
+    tips:'Nếu chưa đủ sức, gập gối lại (Hanging Knee Raise) để giảm độ khó mà vẫn giữ đúng cơ.',
+    alt:['Captain\'s Chair Leg Raise','Cable Crunch']},
+  {id:'tyson_pushup',vi:'Chống đẩy kiểu Tyson',en:'Tyson Push-up',day:['Push A (Chest Focus)'],tier:'finisher',primary:'chest',secondary:['triceps','front_delt'],stabilizer:['core'],equipment:'Không dụng cụ (bodyweight)',sets:2,reps:'AMRAP (tối đa số rep có thể)',tempo:'Nhanh — không khóa khớp, không nghỉ giữa rep',rest:60,rpe:'RPE 9-10 (gần thất bại kỹ thuật)',compound:true,
+    setup:'Chuẩn bị: quỳ gối trên thảm hoặc sàn êm, hai tay chống rộng hơn vai một chút, đầu hơi cúi xuống nhìn về phía sau tay — đây là biến thể "lăn người" chứ không phải push-up thẳng thân thông thường.',
+    cue:'Hạ người trượt về phía trước cho đến khi vai gần chạm sàn, sau đó đẩy người trượt ngược lại về vị trí ban đầu theo chuyển động lăn liên tục, không khóa khớp khuỷu và không dừng nghỉ giữa các rep.',
+    mistakes:'Duỗi thẳng khớp khuỷu ở đỉnh làm mất tension liên tục lên ngực; hạ quá thấp/quá nhanh khi chưa quen gây căng khớp vai.',
+    tips:'Vì đây là finisher AMRAP, ưu tiên duy trì tốc độ đều và biên độ nhỏ hơn push-up thường để giữ pump liên tục cho đến khi gần thất bại — mục đích là "bơm" máu vào ngực, không phải sức mạnh tối đa.',
+    alt:['Push-up thường (AMRAP)','Diamond Push-up (AMRAP)']},
+
+  // ===== THỨ BA — PULL A (Back Width) =====
+  {id:'pullup',vi:'Hít xà (có hỗ trợ nếu cần)',en:'Pull-up / Assisted Pull-up',day:['Pull A (Back Width)'],tier:'main',primary:'lat',secondary:['biceps','rear_delt'],stabilizer:['core'],equipment:'Xà đơn / Máy hỗ trợ',sets:4,reps:'6-10',tempo:'2-1-2',rest:150,rpe:'RPE 8-9 (RIR 1-2)',compound:true,
+    setup:'Chuẩn bị: nếu dùng máy Assisted Pull-up, quỳ gối lên bệ đỡ và chọn mức đối trọng hỗ trợ sao cho vừa đủ để hoàn thành đúng số reps mục tiêu; nếu tập xà tự do, nắm xà rộng hơn vai, treo thẳng tay hoàn toàn ở vị trí bắt đầu.',
+    cue:'Bắt đầu từ treo thẳng tay, kéo ngực hướng lên xà, siết xô trước khi dùng tay.',
+    mistakes:'Đu người lấy đà (kipping) khi mục tiêu là hypertrophy; không kéo hết tầm xuống ở đáy.',
+    tips:'Nếu chưa kéo được bodyweight, dùng máy Assisted Pull-up với mức hỗ trợ vừa đủ để đạt đúng số reps mục tiêu.',
+    alt:['Assisted Pull-up Machine','Wide Grip Lat Pulldown']},
+  {id:'wide_lat_pulldown',vi:'Kéo xô tay rộng',en:'Wide Grip Lat Pulldown',day:['Pull A (Back Width)'],tier:'main',primary:'lat',secondary:['biceps','rear_delt'],stabilizer:['core'],equipment:'Cáp',sets:4,reps:'8-10',tempo:'2-1-2',rest:120,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: ngồi vào máy, khóa chặt đùi dưới thanh chặn, cầm thanh rộng hơn vai khoảng 1.5 lần, ngực hơi ưỡn và thân giữ gần như vuông góc với sàn trước khi kéo.',
+    cue:'Cầm rộng hơn vai, kéo khuỷu tay xuống và ra sau, ưỡn ngực nhẹ, không ngả người quá xa.',
+    mistakes:'Ngả người ra sau quá nhiều để mượn lực lưng dưới.',
+    tips:'Tay rộng nhấn nhiều vào chiều rộng xô — đúng mục tiêu "mở lưng" của buổi này.',
+    alt:['Pull-up','Straight Arm Pulldown']},
+  {id:'chest_supported_row',vi:'Kéo lưng tựa ngực',en:'Chest Supported Row',day:['Pull A (Back Width)','Upper Hybrid (Aesthetic)'],tier:'main',primary:'lat',secondary:['rear_delt','biceps'],stabilizer:['traps'],equipment:'Máy / Ghế nghiêng',sets:4,reps:'8-10',tempo:'2-1-2',rest:120,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: chỉnh ghế nghiêng (hoặc máy chest-supported row) sao cho ngực tựa chắc vào đệm ở góc khoảng 30°, hai tay thả thẳng xuống cầm tay cầm/tạ, hai chân trụ vững để đệm không xê dịch khi kéo.',
+    cue:'Ngực tựa chắc vào đệm, kéo tay về hông, ép hai xương bả vai lại với nhau ở cuối.',
+    mistakes:'Nhấc ngực khỏi đệm để mượn lực; kéo bằng tay thay vì lưng.',
+    tips:'Tư thế tựa ngực loại bỏ hoàn toàn việc dùng đà lưng dưới — tập trung 100% vào lưng giữa.',
+    alt:['Seated Cable Row','T-Bar Row']},
+  {id:'face_pull_pecdeck',vi:'Kéo mặt cáp / Bay ngược máy',en:'Face Pull hoặc Reverse Pec Deck',day:['Pull A (Back Width)'],tier:'accessory',primary:'rear_delt',secondary:['lateral_delt'],stabilizer:['traps'],equipment:'Cáp / Máy',sets:3,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị (Face Pull): gắn dây thừng vào ròng rọc cáp ngang tầm mắt hoặc cao hơn một chút, đứng lùi lại cho cáp căng ở tư thế bắt đầu, hai tay cầm hai đầu dây. (Reverse Pec Deck): ngồi quay mặt vào đệm máy, chỉnh tay cầm ngang tầm vai.',
+    cue:'Face Pull: kéo dây về phía mặt, xoay ngoài cẳng tay ở cuối. Reverse Pec Deck: mở tay ra sau theo cung tròn, siết vai sau.',
+    mistakes:'Kéo bằng tay thay vì vai sau; dùng mức tạ quá nặng làm mất kiểm soát tư thế.',
+    tips:'Chọn 1 trong 2 tùy máy nào đang trống — tác động cơ tương đương nhau.',
+    alt:['Cable Rear Delt Fly','Dumbbell Rear Delt Fly']},
+  {id:'incline_db_curl',vi:'Cuốn tay tạ đơn ghế nghiêng',en:'Incline Dumbbell Curl',day:['Pull A (Back Width)'],tier:'accessory',primary:'biceps',secondary:[],stabilizer:['core'],equipment:'Tạ đơn / Ghế nghiêng',sets:3,reps:'10-12',tempo:'3-1-1',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: chỉnh ghế nghiêng 45-60°, ngồi tựa lưng chắc vào đệm, hai tay cầm tạ đơn thả thẳng tự nhiên xuống sau thân (không co sẵn ở khuỷu) trước khi bắt đầu.',
+    cue:'Ngồi ghế nghiêng, tay thả thẳng xuống sau thân, cuộn tạ lên mà không đẩy khuỷu tay ra trước.',
+    mistakes:'Đẩy khuỷu tay ra trước khi cuộn làm giảm độ giãn của bicep.',
+    tips:'Tư thế này kéo giãn bicep tối đa ở đáy — hiệu quả cao cho phần đầu dài của tay trước.',
+    alt:['Cable Curl','Standing Dumbbell Curl']},
+  {id:'hammer_curl_pa',vi:'Cuốn tay búa',en:'Hammer Curl',day:['Pull A (Back Width)'],tier:'accessory',primary:'biceps',secondary:[],stabilizer:['core'],equipment:'Tạ đơn',sets:3,reps:'10-12',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: đứng thẳng, hai tay cầm tạ đơn ở hai bên hông với lòng bàn tay hướng vào trong (cầm kiểu búa), khuỷu tay giữ sát thân suốt bài.',
+    cue:'Giữ cổ tay trung tính (lòng bàn tay hướng trong) suốt bài, cuốn tạ lên có kiểm soát.',
+    mistakes:'Xoay cổ tay giữa chuyển động; dùng đà thân để cuốn.',
+    tips:'Bài này tác động thêm cẳng tay và đầu ngoài bicep — bổ trợ tốt cho Incline Curl ở trên.',
+    alt:['Cable Hammer Curl (rope)','Cross-Body Hammer Curl']},
+  {id:'dead_hang',vi:'Treo xà tĩnh',en:'Dead Hang',day:['Pull A (Back Width)'],tier:'finisher',primary:'lat',secondary:['forearms'],stabilizer:['core'],equipment:'Xà đơn',sets:2,reps:'30-60 giây mỗi set',tempo:'Tĩnh (isometric)',rest:60,rpe:'Giữ đến gần giới hạn cầm nắm',compound:false,
+    setup:'Chuẩn bị: đứng dưới xà đơn, dùng ghế hoặc bục nhảy nếu xà quá cao để nắm xà một cách an toàn thay vì bật nhảy mạnh lên nắm.',
+    cue:'Nắm xà rộng hơn vai một chút, thả lỏng hoàn toàn vai và cột sống để cơ thể treo thẳng tự nhiên, hít thở đều trong suốt thời gian giữ.',
+    mistakes:'Rụt vai lên sát tai (không thả lỏng thực sự làm mất tác dụng giãn cột sống); nín thở khi giữ.',
+    tips:'Bài này chủ yếu tăng sức chịu tải của tay cầm (grip) và kéo giãn nhẹ cột sống/vai sau buổi kéo nặng — không cần gắng sức tối đa, dừng khi tay bắt đầu trượt khỏi xà.',
+    alt:['Active Hang (siết vai xuống, có kiểm soát hơn)','Farmer\'s Carry đứng tại chỗ']},
+
+  // ===== THỨ TƯ — SHOULDER SPECIALIZATION =====
+  {id:'seated_db_shoulder_press',vi:'Đẩy vai tạ đơn ngồi',en:'Seated Dumbbell Shoulder Press',day:['Shoulder Specialization'],tier:'main',primary:'front_delt',secondary:['lateral_delt','triceps'],stabilizer:['core'],equipment:'Tạ đơn',sets:4,reps:'8-10',tempo:'2-1-2',rest:120,rpe:'RPE 8-9 (RIR 1-2)',compound:true,
+    setup:'Chuẩn bị: ngồi vào ghế có tựa lưng gần như thẳng đứng (85-90°), hai tay nâng tạ đơn lên ngang vai với lòng bàn tay hướng ra trước, cổ tay thẳng hàng với khuỷu tay ở vị trí xuất phát.',
+    cue:'Ngồi tựa lưng thẳng, đẩy tạ lên theo đường thẳng qua tai, không khóa cứng khớp khuỷu ở đỉnh.',
+    mistakes:'Ngả lưng ra sau quá nhiều để mượn lực; đẩy tạ ra trước thay vì lên thẳng.',
+    tips:'Đây là bài compound chính của buổi vai — làm khi còn sung sức nhất trong buổi.',
+    alt:['Machine Shoulder Press','Barbell Overhead Press']},
+  {id:'heavy_db_lateral_raise',vi:'Nâng vai ngang tạ đơn (nặng)',en:'Heavy Dumbbell Lateral Raise',day:['Shoulder Specialization'],tier:'main',primary:'lateral_delt',secondary:['front_delt'],stabilizer:['traps'],equipment:'Tạ đơn',sets:4,reps:'8-10',tempo:'2-1-2',rest:90,rpe:'RPE 8-9 (RIR 1-2)',compound:false,
+    setup:'Chuẩn bị: đứng thẳng hoặc hơi nghiêng người nhẹ về phía đối diện tay đang nâng (bám vào giá đỡ nếu cần) để tăng tension lên vai giữa. Chọn mức tạ nặng hơn set Lateral Raise thông thường ở Thứ Hai.',
+    cue:'Nâng tạ ngang vai với mức tạ nặng hơn set thường, cho phép hơi nghiêng người nhẹ để giữ tension trên vai giữa.',
+    mistakes:'Dùng toàn thân rung để nâng tạ quá nặng; nâng cao hơn vai gây căng khớp.',
+    tips:'Đây là bài "specialization" chính cho độ rộng vai — mức tạ nên nặng hơn bài lateral raise thông thường bạn tập ngày Thứ Hai.',
+    alt:['Cable Lateral Raise (heavy)','Leaning Dumbbell Lateral Raise']},
+  {id:'machine_lateral_raise',vi:'Nâng vai ngang máy',en:'Machine Lateral Raise',day:['Shoulder Specialization'],tier:'accessory',primary:'lateral_delt',secondary:['front_delt'],stabilizer:['traps'],equipment:'Máy',sets:3,reps:'12-15',tempo:'2-1-2',rest:75,rpe:'RPE 9 (RIR 1)',compound:false,
+    setup:'Chuẩn bị: ngồi vào máy, chỉnh độ cao ghế sao cho trục xoay của máy ngang bằng khớp vai, hai tay đặt vào đệm tay cầm ở vị trí bắt đầu sát thân.',
+    cue:'Chỉnh ghế để trục xoay ngang khớp vai, nâng tay lên có kiểm soát, không dùng đà.',
+    mistakes:'Chỉnh độ cao ghế sai làm lệch góc tác động khỏi vai giữa.',
+    tips:'Máy cho phép đẩy đến gần thất bại an toàn hơn tạ đơn — dùng để "vắt" nốt vai giữa cuối buổi.',
+    alt:['Cable Lateral Raise','Dumbbell Lateral Raise']},
+  {id:'rear_delt_fly_shoulder',vi:'Bay vai sau',en:'Rear Delt Fly',day:['Shoulder Specialization'],tier:'accessory',primary:'rear_delt',secondary:['lateral_delt'],stabilizer:['traps'],equipment:'Tạ đơn / Máy',sets:3,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: đứng hoặc ngồi gập người về trước khoảng 45°, hai tay cầm tạ đơn nhẹ thả thẳng xuống dưới vai, lưng giữ thẳng tự nhiên (không gù lưng trên).',
+    cue:'Gập người về trước ~45°, mở tay ra hai bên như cánh chim, siết vai sau ở điểm cuối.',
+    mistakes:'Dùng lưng để đẩy thay vì vai sau; đứng quá thẳng làm giảm biên độ.',
+    tips:'Vai sau dày giúp tạo hiệu ứng vai rộng khi nhìn từ sau — đừng bỏ qua bài này.',
+    alt:['Reverse Pec Deck','Face Pull']},
+  {id:'cable_crunch',vi:'Gập bụng cáp',en:'Cable Crunch',day:['Shoulder Specialization'],tier:'accessory',primary:'core',secondary:[],stabilizer:[],equipment:'Cáp',sets:3,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: gắn dây thừng vào ròng rọc cáp cao, quỳ hai gối cách trụ cáp khoảng nửa bước chân, hai tay cầm dây thừng đặt sát hai bên đầu, hông giữ cố định tại chỗ.',
+    cue:'Quỳ trước cáp, cuộn xương sườn về phía xương chậu, giữ hông cố định (không gập hông).',
+    mistakes:'Gập hông thay vì cuộn cột sống — biến bài thành gập người thường.',
+    tips:'Cáp cho phép tăng tải liên tục lên bụng — hiệu quả hơn crunch bodyweight khi đã tập lâu.',
+    alt:['Hanging Leg Raise','Ab Wheel']},
+  {id:'wood_chop_or_twist',vi:'Chop chéo cáp / Xoay người có tạ',en:'Cable Wood Chop hoặc Russian Twist',day:['Shoulder Specialization'],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Cáp (Wood Chop) hoặc tạ đơn/đĩa tạ (Russian Twist)',sets:2,reps:'12 mỗi bên (Wood Chop) hoặc 20 reps (Russian Twist) — chỉ chọn 1 bài',tempo:'2-0-2, xoay có kiểm soát',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị (Wood Chop): gắn tay cầm chữ D vào ròng rọc cáp cao, đứng nghiêng một bên hông với trụ cáp, hai chân rộng bằng vai. (Russian Twist): ngồi trên sàn, gối gập, ngả thân trên ra sau khoảng 45°, hai tay cầm một tạ đơn hoặc đĩa tạ nhẹ trước ngực.',
+    cue:'Wood Chop: kéo tay cầm chéo từ cao xuống thấp qua trước bụng, xoay thân từ hông chứ không phải chỉ tay. Russian Twist: giữ thân ổn định ở góc ngả, xoay tạ chạm sàn hai bên hông luân phiên.',
+    mistakes:'Xoay chỉ bằng tay/vai thay vì xoay từ lõi thân (core); dùng đà lắc mạnh làm mất kiểm soát ở Russian Twist.',
+    tips:'Chỉ cần chọn 1 trong 2 bài — cả hai đều nhắm vào cơ xoay thân (obliques) để hoàn thiện vòng eo săn chắc, không cần làm cả hai.',
+    alt:['Pallof Press','Bicycle Crunch']},
+
+  // ===== THỨ SÁU — UPPER AESTHETIC =====
+  {id:'weighted_dip',vi:'Hít xà kép có tạ',en:'Weighted Dip',day:['Upper Hybrid (Aesthetic)'],tier:'main',primary:'chest',secondary:['triceps','front_delt'],stabilizer:['core'],equipment:'Xà kép + đai tạ',sets:3,reps:'8-10',tempo:'2-1-2',rest:120,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: đeo đai tạ với mức tạ vừa phải (nhẹ hơn mức có thể tối đa), đứng trên bục hoặc nhảy nhẹ lên nắm chắc hai tay cầm xà kép, giữ thân người hơi nghiêng về trước ngay từ tư thế bắt đầu để nhấn vào ngực.',
+    cue:'Nghiêng người về trước để nhấn vào ngực, hạ sâu vừa phải, đẩy lên không khóa cứng khuỷu.',
+    mistakes:'Hạ quá sâu gây căng khớp vai; thẳng người quá mức biến thành bài tay sau.',
+    tips:'Buổi này là "không tập quá nặng" — chỉ thêm tạ nhẹ, ưu tiên kiểm soát biên độ đầy đủ.',
+    alt:['Bodyweight Dip','Machine Assisted Dip']},
+  {id:'incline_machine_press',vi:'Đẩy ngực nghiêng máy',en:'Incline Machine Press',day:['Upper Hybrid (Aesthetic)'],tier:'main',primary:'chest',secondary:['front_delt','triceps'],stabilizer:['core'],equipment:'Máy',sets:3,reps:'10-12',tempo:'2-1-2',rest:90,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: chỉnh ghế của máy sao cho tay cầm ngang mức ngực trên (ngay dưới xương đòn), lưng tựa chắc vào đệm, hai chân đặt vững trên sàn hoặc bệ đỡ của máy.',
+    cue:'Chỉnh ghế để tay cầm ngang phần ngực trên, đẩy theo đường cố định của máy.',
+    mistakes:'Chỉnh góc ghế sai làm lệch tải khỏi ngực trên sang vai.',
+    tips:'Volume bổ sung cho ngực với độ nặng nhẹ hơn Thứ Hai — đúng tinh thần "hybrid, không quá nặng".',
+    alt:['Incline Dumbbell Press','Low-to-High Cable Fly']},
+  {id:'reverse_pec_deck_hybrid',vi:'Bay ngược máy',en:'Reverse Pec Deck',day:['Upper Hybrid (Aesthetic)'],tier:'accessory',primary:'rear_delt',secondary:['lateral_delt'],stabilizer:['traps'],equipment:'Máy',sets:3,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: ngồi quay mặt vào đệm máy, ngực tựa chắc vào đệm, chỉnh tay cầm ngang tầm vai, hai tay đặt vào tay cầm ở vị trí khép trước ngực.',
+    cue:'Ngực tựa đệm, mở tay ra sau theo cung tròn cố định của máy, siết vai sau ở cuối.',
+    mistakes:'Dùng đà lắc người; mở tay quá nhanh mất kiểm soát.',
+    tips:'Volume bổ sung cho vai sau — hỗ trợ mục tiêu lưng chữ V và vai dày từ nhiều góc.',
+    alt:['Face Pull','Dumbbell Rear Delt Fly']},
+  {id:'triceps_pushdown_skull',vi:'Ép tay sau cáp / Skull Crusher',en:'Triceps Pushdown hoặc Skull Crusher',day:['Upper Hybrid (Aesthetic)'],tier:'accessory',primary:'triceps',secondary:[],stabilizer:['core'],equipment:'Cáp / Thanh EZ',sets:3,reps:'10-12',tempo:'2-1-2',rest:75,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị (Pushdown): gắn thanh chữ V hoặc thanh thẳng vào ròng rọc cáp cao, đứng gần trụ cáp, khuỷu tay sát thân ở vị trí bắt đầu. (Skull Crusher): nằm ngửa trên ghế phẳng, cầm thanh EZ đưa thẳng lên trên vai làm điểm xuất phát.',
+    cue:'Pushdown: giữ khuỷu tay sát người, chỉ duỗi cẳng tay. Skull Crusher: hạ thanh về phía trán, giữ khuỷu tay cố định.',
+    mistakes:'Đẩy hông ra trước để mượn lực (Pushdown); mở khuỷu tay ra hai bên (Skull Crusher).',
+    tips:'Chọn bài theo máy/dụng cụ đang trống — cả hai đều nhấn primary vào đầu ngoài + đầu dài tay sau.',
+    alt:['Overhead Triceps Extension','Close-Grip Bench Press']},
+  {id:'bayesian_curl',vi:'Cuốn tay cáp sau lưng / Cable Curl',en:'Bayesian Curl hoặc Cable Curl',day:['Upper Hybrid (Aesthetic)'],tier:'accessory',primary:'biceps',secondary:[],stabilizer:['core'],equipment:'Cáp',sets:3,reps:'10-12',tempo:'3-1-1',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị (Bayesian Curl): gắn tay cầm vào ròng rọc cáp thấp, đứng quay lưng lại trụ cáp, bước một chân ra trước để ổn định, tay thả xuống sau thân ở vị trí bắt đầu để căng bicep tối đa.',
+    cue:'Bayesian Curl: đứng quay lưng lại cáp thấp, tay thả sau thân, cuộn tạ lên để căng bicep tối đa ở đáy.',
+    mistakes:'Đứng quá gần trụ cáp làm mất góc kéo giãn đặc trưng của bài.',
+    tips:'Nếu không có cáp thấp phù hợp, Cable Curl thường (đối diện trụ) vẫn cho hiệu quả tương đương.',
+    alt:['Incline Dumbbell Curl','Standing Barbell Curl']},
+  {id:'pushup_burnout',vi:'Chống đẩy dồn sức',en:'Push-up Burnout',day:['Upper Hybrid (Aesthetic)'],tier:'finisher',primary:'chest',secondary:['triceps','front_delt'],stabilizer:['core'],equipment:'Không dụng cụ',sets:2,reps:'AMRAP (1-2 set)',tempo:'Kiểm soát, không nghỉ giữa rep',rest:60,rpe:'RPE 9-10 (gần thất bại)',compound:true,
+    setup:'Chuẩn bị: nằm sấp, hai tay chống rộng hơn vai một chút, cơ thể thẳng từ đầu đến gót chân, siết bụng và mông trước khi bắt đầu rep đầu tiên.',
+    cue:'Hạ ngực gần chạm sàn, đẩy lên hết tầm nhưng không khóa cứng khuỷu, giữ thân thẳng suốt chuyển động.',
+    mistakes:'Võng lưng dưới hoặc nhô mông lên cao; chỉ hạ nửa biên độ để "ăn gian" thêm rep.',
+    tips:'Đây là bài chốt buổi — thực hiện đến gần thất bại kỹ thuật, nếu hết sức có thể chuyển sang chống đẩy trên gối để hoàn thành đủ set trong cùng hiệp.',
+    alt:['Push-up trên gối (Knee Push-up)','Incline Push-up (tay chống lên ghế)']},
+
+  // ===== THỨ BẢY — LEG DAY =====
+  {id:'rdl_leg',vi:'Deadlift Romania',en:'Romanian Deadlift',day:['Leg Day'],tier:'main',primary:'hamstrings',secondary:['glutes','lower_back'],stabilizer:['core'],equipment:'Thanh đòn',sets:4,reps:'8-10',tempo:'3-1-1',rest:120,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: đứng cầm thanh đòn (hoặc tạ đơn) sát trước đùi, hai chân rộng bằng hông, đầu gối hơi chùng nhẹ và giữ nguyên góc gối đó suốt bài (không gập thêm khi hạ).',
+    cue:'Đẩy hông về sau, giữ lưng thẳng tự nhiên, hạ thanh sát chân đến khi căng đùi sau rõ rệt.',
+    mistakes:'Cong lưng dưới khi hạ thanh; gập gối quá nhiều biến thành squat.',
+    tips:'Cảm nhận căng rõ ở đùi sau trước khi đẩy hông về để đứng lên — đây là bài compound chính của buổi chân.',
+    alt:['Dumbbell RDL','Good Morning']},
+  {id:'leg_press_day',vi:'Đạp đùi',en:'Leg Press',day:['Leg Day'],tier:'main',primary:'quads',secondary:['glutes'],stabilizer:['core'],equipment:'Máy',sets:3,reps:'10-12',tempo:'2-1-2',rest:90,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: ngồi vào máy, lưng và đầu tựa chắc vào đệm, đặt hai chân rộng bằng vai trên bàn đạp, chỉnh vị trí ghế sao cho đầu gối tạo góc khoảng 90° ở điểm hạ sâu nhất.',
+    cue:'Đặt chân rộng bằng vai trên bàn đạp, hạ sâu vừa phải, không khóa gối khi đẩy lên.',
+    mistakes:'Nhấc mông khỏi ghế khi hạ quá sâu; khóa cứng khớp gối ở đỉnh.',
+    tips:'Vì mục tiêu là "chân khỏe, cân đối, không cần quá to", giữ mức tạ vừa phải và tập trung kiểm soát biên độ hơn là dồn tạ tối đa.',
+    alt:['Hack Squat','Goblet Squat']},
+  {id:'leg_extension',vi:'Duỗi chân máy',en:'Leg Extension',day:['Leg Day'],tier:'main',primary:'quads',secondary:[],stabilizer:['core'],equipment:'Máy',sets:3,reps:'12-15',tempo:'2-1-2',rest:75,rpe:'RPE 8-9 (RIR 1-2)',compound:false,
+    setup:'Chuẩn bị: ngồi vào máy, lưng tựa chắc vào đệm, chỉnh đệm chặn ống chân sao cho nằm ngay trên mắt cá chân, đầu gối thẳng hàng với trục xoay của máy.',
+    cue:'Duỗi thẳng chân có kiểm soát, siết chặt đùi trước ở điểm cao nhất, hạ chậm.',
+    mistakes:'Dùng đà đẩy nhanh; nhấc hông khỏi ghế.',
+    tips:'Bài isolation tốt để hoàn thiện đùi trước mà không cần tăng thêm khối lượng compound.',
+    alt:['Sissy Squat','Bodyweight Lunge']},
+  {id:'leg_curl_day',vi:'Gập chân máy',en:'Leg Curl',day:['Leg Day'],tier:'main',primary:'hamstrings',secondary:[],stabilizer:['core'],equipment:'Máy',sets:3,reps:'10-12',tempo:'2-1-2',rest:75,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: nằm sấp hoặc ngồi tùy loại máy, chỉnh đệm chặn sao cho nằm ngay trên gót chân/gân Achilles, đầu gối thẳng hàng với trục xoay của máy.',
+    cue:'Gập gối kéo bàn đạp về mông, kiểm soát khi hạ xuống, siết chặt ở điểm gập tối đa.',
+    mistakes:'Nhấc hông khỏi đệm để mượn lực.',
+    tips:'Cân bằng với RDL để đùi sau phát triển đều, tránh mất cân đối cơ trước/sau đùi.',
+    alt:['Nordic Curl','Stability Ball Leg Curl']},
+  {id:'standing_calf_raise',vi:'Nâng bắp chân đứng',en:'Standing Calf Raise',day:['Leg Day'],tier:'accessory',primary:'calves',secondary:[],stabilizer:['core'],equipment:'Máy',sets:4,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8-9 (RIR 1-2)',compound:false,
+    setup:'Chuẩn bị: đứng vào máy với vai tựa chắc vào đệm, đặt mũi chân lên bệ, để gót chân treo tự do ngoài mép bệ để có thể hạ thấp hơn mặt bệ khi bắt đầu.',
+    cue:'Nhấn mũi chân đẩy cao hết mức, hạ chậm xuống dưới mức bắt đầu để kéo giãn đầy đủ.',
+    mistakes:'Nảy nhanh không kiểm soát; không hạ đủ sâu.',
+    tips:'Dừng 1 giây ở điểm cao nhất mỗi rep để tăng chất lượng co cơ.',
+    alt:['Leg Press Calf Raise','Standing Barbell Calf Raise']},
+  {id:'seated_calf_raise',vi:'Nâng bắp chân ngồi',en:'Seated Calf Raise',day:['Leg Day'],tier:'accessory',primary:'calves',secondary:[],stabilizer:[],equipment:'Máy',sets:3,reps:'15-20',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: ngồi vào máy, đặt đệm gối cố định chắc chắn trên đùi gần gối, mũi chân đặt lên bệ, để gót chân treo tự do ngoài mép bệ.',
+    cue:'Ngồi với đệm gối cố định, nhấn mũi chân đẩy cao, hạ chậm kéo giãn bắp chân trong (soleus).',
+    mistakes:'Đẩy quá nhanh; biên độ quá ngắn.',
+    tips:'Tư thế ngồi nhấn nhiều vào soleus — khác với standing calf raise nhấn gastrocnemius, nên tập cả hai.',
+    alt:['Donkey Calf Raise','Single-Leg Calf Raise']},
+  {id:'ab_wheel',vi:'Bánh xe tập bụng',en:'Ab Wheel',day:['Leg Day'],tier:'accessory',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Ab Wheel',sets:3,reps:'8-12',tempo:'3-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: quỳ gối trên thảm hoặc bề mặt êm, hai tay cầm chắc hai bên tay cầm bánh xe, đặt bánh xe ngay trước gối ở vị trí bắt đầu.',
+    cue:'Quỳ gối, lăn bánh xe ra trước hết mức có thể kiểm soát, siết bụng kéo về vị trí ban đầu.',
+    mistakes:'Võng lưng dưới khi lăn ra quá xa so với khả năng kiểm soát.',
+    tips:'Nếu mới tập, chỉ lăn trong biên độ nhỏ rồi tăng dần — chất lượng quan trọng hơn biên độ.',
+    alt:['Plank','Cable Crunch']},
+  {id:'lunge_or_wallsit',vi:'Lunge bước đi / Squat tựa tường',en:'Walking Lunge (Bodyweight) hoặc Wall Sit',day:['Leg Day'],tier:'finisher',primary:'quads',secondary:['glutes'],stabilizer:['core'],equipment:'Không dụng cụ (Lunge) / Tường (Wall Sit)',sets:2,reps:'2 vòng ~20 bước (Lunge) hoặc giữ tối đa (Wall Sit) — chỉ chọn 1 bài',tempo:'Kiểm soát',rest:45,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị (Walking Lunge): đứng thẳng ở khoảng không gian đủ dài để bước ~10 bước mỗi chiều, hai tay chống hông hoặc thả tự nhiên. (Wall Sit): đứng tựa lưng vào tường, bước hai chân ra trước rồi trượt lưng xuống đến khi đùi song song sàn.',
+    cue:'Lunge: bước dài về trước, hạ gối sau gần chạm sàn, đầu gối trước không vượt quá mũi chân, đẩy lên bước tiếp. Wall Sit: giữ đùi song song sàn, đầu gối tạo góc 90°, lưng áp sát tường suốt thời gian giữ.',
+    mistakes:'Bước quá ngắn làm gối trước lệch ra trước mũi chân (Lunge); trượt lưng khỏi tường hoặc để gối vượt mũi chân (Wall Sit).',
+    tips:'Đây là bài chốt nhẹ nhàng cho buổi chân — chỉ cần chọn 1 trong 2, mục đích là "đốt" nốt sức còn lại của đùi trước và mông chứ không cần thêm tạ.',
+    alt:['Bodyweight Squat (AMRAP nhẹ)','Step-up (bục thấp)']},
+];
+const TIER_INFO = {
+  main:      {label:'Main Lift',  emoji:'🟥', color:'#E24A4A'},
+  accessory: {label:'Accessory',  emoji:'🟧', color:'#E8A33D'},
+  finisher:  {label:'Finisher',   emoji:'🟨', color:'#D9C24A'},
+};
+const TIER_ORDER = ['main','accessory','finisher'];
+const DEFAULT_SPLIT = {
+  Mon:'Push A (Chest Focus)',
+  Tue:'Pull A (Back Width)',
+  Wed:'Shoulder Specialization',
+  Thu:'Rest',
+  Fri:'Upper Hybrid (Aesthetic)',
+  Sat:'Leg Day',
+  Sun:'Rest'
+};
+const DAY_KEYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAY_LABEL_VI = {Sun:'CN',Mon:'T2',Tue:'T3',Wed:'T4',Thu:'T5',Fri:'T6',Sat:'T7'};
+
+/* ============ STATE & STORAGE ============ */
+const STORAGE_KEY = 'stimulus-app-data';
+let state = {
+  profile: null,      // {name, age, height, createdAt} — hồ sơ nhập 1 lần, lưu vĩnh viễn trên máy này
+  split: DEFAULT_SPLIT,
+  sessions: [],       // finished sessions
+  activeSession: null,// {dayLabel, startedAt, sets:[]}
+  measurements: [],   // {date, weight, chest} — nhật ký cân nặng theo ngày
+  settings: {unit:'kg'}
+};
+let view = {name:'home', params:{}};
+
+// Lưu bằng localStorage: dữ liệu ở lại vĩnh viễn trên chính trình duyệt/máy đang mở file,
+// không đồng bộ qua máy khác — đúng như mong muốn "mỗi máy dữ liệu riêng".
+async function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      state = Object.assign(state, parsed);
+    }
+  }catch(e){ /* no data yet — use defaults */ }
+
+  // Ép cập nhật lịch tập chuẩn mới nếu dữ liệu cũ chưa khớp phiên bản lịch hiện tại.
+  // Lịch sử buổi tập (sessions) vẫn được giữ nguyên — chỉ reset split hiện hành.
+  if(state.scheduleVersion !== SCHEDULE_VERSION){
+    state.split = DEFAULT_SPLIT;
+    state.scheduleVersion = SCHEDULE_VERSION;
+    if(state.activeSession && !DAY_TEMPLATES.includes(state.activeSession.dayLabel)){
+      state.activeSession = null; // buổi tập đang dở theo lịch cũ không còn khớp cấu trúc mới
+    }
+    await saveState();
+  }
+}
+async function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){ console.error('save failed', e); showToast('Không thể lưu dữ liệu trên máy này'); }
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ============ HELPERS ============ */
+function todayKey(){ return DAY_KEYS[new Date().getDay()]; }
+function todayTemplate(){ return state.split[todayKey()] || 'Rest'; }
+function exercisesForDay(dayTemplate){ return EXERCISES.filter(e=> Array.isArray(e.day) ? e.day.includes(dayTemplate) : e.day===dayTemplate); }
+function findExercise(id){ return EXERCISES.find(e=>e.id===id); }
+function findMuscle(id){ return MUSCLES.find(m=>m.id===id); }
+function estimateMinutes(dayTemplate){
+  const exs = exercisesForDay(dayTemplate);
+  const secs = exs.reduce((sum,e)=> sum + e.sets*(e.rest+40), 0);
+  return Math.round(secs/60);
+}
+function parseRepRange(reps){
+  const m = reps.match(/(\d+)-(\d+)/);
+  if(m) return [parseInt(m[1]), parseInt(m[2])];
+  return [null,null];
+}
+
+/* --- streak --- */
+function computeStreak(){
+  const dates = new Set(state.sessions.map(s=> new Date(s.endedAt).toDateString()));
+  let streak=0; let d = new Date();
+  // if no session today yet, still count backwards from yesterday
+  if(!dates.has(d.toDateString())) d.setDate(d.getDate()-1);
+  while(dates.has(d.toDateString())){ streak++; d.setDate(d.getDate()-1); }
+  return streak;
+}
+
+/* --- recovery engine ---
+   for each muscle: find most recent session touching it, compute volume_score & avg rpe,
+   derive recovery_hours_needed, then recovery_percent from time elapsed. */
+function roleWeight(role){ return role==='primary'?1:role==='secondary'?0.5:0.25; }
+
+function muscleTouchesInSession(session, muscleId){
+  // returns list of {role, weight(kg), reps, rpe} for sets in session touching this muscle
+  const out = [];
+  session.sets.forEach(set=>{
+    const ex = findExercise(set.exerciseId);
+    if(!ex) return;
+    let role = null;
+    if(ex.primary===muscleId) role='primary';
+    else if(ex.secondary.includes(muscleId)) role='secondary';
+    else if(ex.stabilizer.includes(muscleId)) role='stabilizer';
+    if(role) out.push({role, rpe:set.rpe||7});
+  });
+  return out;
+}
+
+function getMuscleRecovery(muscleId){
+  // find most recent session (finished) touching this muscle
+  let latest=null, latestTouches=null;
+  for(const s of state.sessions){
+    const touches = muscleTouchesInSession(s, muscleId);
+    if(touches.length>0){
+      if(!latest || new Date(s.endedAt) > new Date(latest.endedAt)){ latest=s; latestTouches=touches; }
+    }
+  }
+  if(!latest) return {status:'inactive', percent:100, etaHours:0, lastAt:null};
+
+  const volumeScore = latestTouches.reduce((sum,t)=> sum + roleWeight(t.role), 0);
+  const avgRpe = latestTouches.reduce((sum,t)=> sum + t.rpe, 0) / latestTouches.length;
+  const baselineSets = 8;
+  const volumeMultiplier = Math.min(1.5, Math.max(0.7, volumeScore / baselineSets));
+  const rpeMultiplier = Math.min(1.3, Math.max(0.7, 0.8 + (avgRpe-6)*0.1));
+  const baseHours = BASE_RECOVERY_HOURS[muscleId] || 48;
+  const hoursNeeded = baseHours * volumeMultiplier * rpeMultiplier;
+
+  const lastAt = new Date(latest.endedAt);
+  const hoursElapsed = (Date.now() - lastAt.getTime()) / 3600000;
+  const percent = Math.min(100, Math.max(0, Math.round((hoursElapsed/hoursNeeded)*100)));
+  const isToday = lastAt.toDateString() === new Date().toDateString();
+  const daysElapsed = hoursElapsed/24;
+
+  let status;
+  if(isToday) status='stimulated';
+  else if(percent<100) status='recovering';
+  else if(daysElapsed<=7) status='fresh';
+  else status='inactive';
+
+  return {status, percent, etaHours: Math.max(0, Math.round(hoursNeeded-hoursElapsed)), lastAt};
+}
+function recoveryColor(status){
+  return {stimulated:'var(--recovery-stimulated)', recovering:'var(--recovery-recovering)', fresh:'var(--recovery-fresh)', inactive:'var(--recovery-inactive)'}[status];
+}
+function recoveryLabel(status){
+  return {stimulated:'Vừa tập hôm nay', recovering:'Đang hồi phục', fresh:'Đã hồi phục', inactive:'Chưa tập gần đây'}[status];
+}
+
+/* --- progressive overload suggestion --- */
+function getSuggestion(exerciseId){
+  const ex = findExercise(exerciseId);
+  const past = state.sessions
+    .filter(s=> s.sets.some(set=>set.exerciseId===exerciseId))
+    .sort((a,b)=> new Date(b.endedAt)-new Date(a.endedAt));
+  if(past.length===0) return {previousWeight:null, suggestedWeight:null, note:'Chưa có dữ liệu — bắt đầu với mức tạ bạn cảm thấy kiểm soát tốt ở đúng số rep mục tiêu.'};
+
+  const lastSets = past[0].sets.filter(s=>s.exerciseId===exerciseId);
+  const lastWeight = Math.max(...lastSets.map(s=>s.weight||0));
+  const [repMin, repMax] = parseRepRange(ex.reps);
+  const hitTop = repMax && lastSets.every(s => (s.reps||0) >= repMax);
+  const failedMin = repMin && lastSets.some(s => (s.reps||0) < repMin);
+  const avgRpe = lastSets.reduce((sum,s)=>sum+(s.rpe||7),0)/lastSets.length;
+  const step = ex.compound ? 2.5 : 1.25;
+
+  let suggested = lastWeight, note = '';
+  if(failedMin){
+    suggested = lastWeight;
+    note = `Buổi trước chưa đạt ${repMin} reps ở mọi set — giữ nguyên ${lastWeight}kg, tập trung hoàn thành đủ reps trước.`;
+  } else if(hitTop && avgRpe<=8){
+    suggested = lastWeight + step;
+    note = `Buổi trước đạt trọn ${ex.reps} reps với RPE ổn — tăng lên ${suggested}kg lần này.`;
+  } else if(hitTop && avgRpe>8){
+    suggested = lastWeight;
+    note = `Đạt reps mục tiêu nhưng RPE cao (~${avgRpe.toFixed(1)}) — giữ ${lastWeight}kg, ưu tiên làm chủ trước khi tăng.`;
+  } else {
+    suggested = lastWeight;
+    note = `Giữ nguyên ${lastWeight}kg, mục tiêu buổi này là chạm mốc ${repMax||''} reps ở mọi set.`;
+  }
+  return {previousWeight:lastWeight, suggestedWeight:suggested, note};
+}
+
+/* ============ ICONS ============ */
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5L12 4l8 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  today:'<svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M4 9.5h16" stroke="currentColor" stroke-width="1.7"/><path d="M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  library:'<svg viewBox="0 0 24 24" fill="none"><path d="M5 4.5h5a2 2 0 0 1 2 2V20a2 2 0 0 0-2-2H5V4.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M19 4.5h-5a2 2 0 0 0-2 2V20a2 2 0 0 1 2-2h5V4.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  recovery:'<svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2 6 4-12 2 6h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3-1.5 1.7 1.7 0 0 0-.3-1.5l1-1.7-1.7-1.7-1.7 1a1.7 1.7 0 0 0-1.5-.3l-.7-1.8h-2.4l-.7 1.8a1.7 1.7 0 0 0-1.5.3l-1.7-1-1.7 1.7 1 1.7a1.7 1.7 0 0 0-.3 1.5 1.7 1.7 0 0 0 .3 1.5l-1 1.7 1.7 1.7 1.7-1a1.7 1.7 0 0 0 1.5.3l.7 1.8h2.4l.7-1.8a1.7 1.7 0 0 0 1.5-.3l1.7 1 1.7-1.7-1-1.7Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+
+/* ============ RENDER: ONBOARDING (đăng nhập 1 lần) ============ */
+function renderOnboarding(){
+  return `<div class="screen">
+    <div class="topbar"><div><h1>Daily Gym Check</h1></div></div>
+    <div class="card">
+      <div class="card-title">Thông tin cá nhân</div>
+      <div class="set-row" style="grid-template-columns:1fr;padding:0 0 10px;">
+        <div><input class="set-input" id="obName" type="text"><div class="set-hint">Tên</div></div>
+      </div>
+      <div class="set-row" style="grid-template-columns:1fr 1fr;padding:0 0 10px;">
+        <div><input class="set-input" id="obAge" type="number"><div class="set-hint">Tuổi</div></div>
+        <div><input class="set-input" id="obHeight" type="number"><div class="set-hint">Chiều cao (cm)</div></div>
+      </div>
+      <div class="set-row" style="grid-template-columns:1fr;padding:0 0 10px;">
+        <div><input class="set-input" id="obWeight" type="number"><div class="set-hint">Cân nặng hiện tại (kg)</div></div>
+      </div>
+      <button class="hero-cta" onclick="saveProfile()">Bắt đầu</button>
+    </div>
+  </div>`;
+}
+function saveProfile(){
+  const name = document.getElementById('obName').value.trim();
+  const age = parseFloat(document.getElementById('obAge').value);
+  const height = parseFloat(document.getElementById('obHeight').value);
+  const weight = parseFloat(document.getElementById('obWeight').value);
+  if(!name){ showToast('Vui lòng nhập tên'); return; }
+  if(isNaN(age) || isNaN(height) || isNaN(weight)){ showToast('Vui lòng nhập đủ tuổi, chiều cao, cân nặng'); return; }
+  state.profile = {name, age, height, createdAt:new Date().toISOString()};
+  if(state.measurements.length===0){
+    state.measurements.push({date:new Date().toISOString(), weight, chest:null});
+  }
+  saveState();
+  goTo('home');
+}
+function editProfile(){
+  const name = prompt('Tên', state.profile.name);
+  if(name===null) return;
+  const age = parseFloat(prompt('Tuổi', state.profile.age));
+  const height = parseFloat(prompt('Chiều cao (cm)', state.profile.height));
+  if(!name.trim() || isNaN(age) || isNaN(height)){ showToast('Thông tin không hợp lệ'); return; }
+  state.profile = Object.assign({}, state.profile, {name:name.trim(), age, height});
+  saveState(); render(); showToast('Đã cập nhật hồ sơ');
+}
+
+/* ============ RENDER: NAVBAR ============ */
+function renderNavbar(){
+  const items = [
+    {name:'home', label:'Trang chủ', icon:'home'},
+    {name:'today', label:'Hôm nay', icon:'today'},
+    {name:'library', label:'Thư viện', icon:'library'},
+    {name:'recovery', label:'Hồi phục', icon:'recovery'},
+    {name:'settings', label:'Cài đặt', icon:'settings'},
+  ];
+  document.getElementById('navbar').innerHTML = items.map(it=>`
+    <div class="nav-btn ${view.name===it.name?'active':''}" onclick="goTo('${it.name}')">
+      ${ICONS[it.icon]}<span>${it.label}</span>
+    </div>`).join('');
+}
+function goTo(name, params={}){
+  view = {name, params};
+  render();
+  window.scrollTo(0,0);
+}
+
+/* ============ RENDER: HOME ============ */
+function renderHome(){
+  const dayTemplate = todayTemplate();
+  const exs = exercisesForDay(dayTemplate);
+  const isRest = dayTemplate==='Rest';
+  const doneToday = state.sessions.some(s=> new Date(s.endedAt).toDateString()===new Date().toDateString());
+  const streak = computeStreak();
+  const lastMeasurement = state.measurements[state.measurements.length-1];
+  const topMuscles = [...MUSCLES].sort((a,b)=>a.priority-b.priority).slice(0,5);
+  const todayLogged = lastMeasurement && new Date(lastMeasurement.date).toDateString()===new Date().toDateString();
+
+  const dateStr = new Date().toLocaleDateString('vi-VN', {weekday:'long', day:'numeric', month:'long'});
+
+  return `
+  <div class="screen">
+    <div class="topbar">
+      <div><h1>Xin chào${state.profile? ', '+state.profile.name.split(' ').pop():''} 👋</h1><div class="sub">${dateStr}</div></div>
+      <div class="icon-btn" onclick="goTo('settings')">${ICONS.settings}</div>
+    </div>
+
+    <div class="card glass" style="display:flex;align-items:center;gap:12px;">
+      ${todayLogged? `
+        <div style="flex:1;">
+          <div class="card-title" style="margin-bottom:2px;">Cân nặng hôm nay</div>
+          <div style="font-size:20px;font-weight:700;">${lastMeasurement.weight}kg</div>
+        </div>
+        <div class="ghost-btn" style="margin:0;white-space:nowrap;" onclick="promptTodayWeight()">Sửa</div>
+      ` : `
+        <div style="flex:1;">
+          <div class="card-title" style="margin-bottom:2px;">Chưa cập nhật cân nặng hôm nay</div>
+          <div style="font-size:12.5px;color:var(--text-secondary);">Nhập để theo dõi tiến độ mỗi ngày</div>
+        </div>
+        <div class="ghost-btn" style="margin:0;white-space:nowrap;background:var(--text-primary);color:#0A0A0B;" onclick="promptTodayWeight()">+ Nhập</div>
+      `}
+    </div>
+
+    <div class="hero-card">
+      <div class="hero-eyebrow">${isRest? 'Ngày nghỉ' : 'Buổi tập hôm nay'}</div>
+      <div class="hero-title">${dayTemplate}</div>
+      ${!isRest? `
+        <div class="hero-meta">
+          <div><b>${exs.length}</b> bài tập</div>
+          <div><b>~${estimateMinutes(dayTemplate)}</b> phút</div>
+        </div>
+        <button class="hero-cta" onclick="goTo('today')">${doneToday? 'Xem lại buổi tập' : (state.activeSession? 'Tiếp tục buổi tập' : 'Bắt đầu buổi tập')}</button>
+      ` : `<div class="hero-meta"><div>Cơ bắp cần thời gian để hồi phục và phát triển.</div></div>`}
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="n">🔥 ${streak}</div><div class="l">Ngày liên tiếp</div></div>
+      <div class="stat-tile"><div class="n">${lastMeasurement? lastMeasurement.weight+'kg':'—'}</div><div class="l">Cân nặng gần nhất</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recovery — Nhóm cơ ưu tiên</div>
+      ${topMuscles.map(m=>{
+        const r = getMuscleRecovery(m.id);
+        return `<div class="rec-row">
+          <div class="rec-dot" style="background:${recoveryColor(r.status)}"></div>
+          <div class="rec-name">${m.vi}</div>
+          <div class="rec-track"><div class="rec-fill" style="width:${r.percent}%;background:${recoveryColor(r.status)}"></div></div>
+          <div class="rec-pct">${r.percent}%</div>
+        </div>`;
+      }).join('')}
+      <div class="ghost-btn" style="margin:12px 0 0;" onclick="goTo('recovery')">Xem toàn bộ hồi phục</div>
+    </div>
+  </div>`;
+}
+
+function promptTodayWeight(){
+  const last = state.measurements[state.measurements.length-1];
+  const todayLogged = last && new Date(last.date).toDateString()===new Date().toDateString();
+  const val = prompt('Cân nặng hôm nay (kg)', todayLogged? last.weight : (last? last.weight : ''));
+  if(val===null) return;
+  const w = parseFloat(val);
+  if(isNaN(w)){ showToast('Cân nặng không hợp lệ'); return; }
+  if(todayLogged){ last.weight = w; }
+  else{ state.measurements.push({date:new Date().toISOString(), weight:w, chest:null}); }
+  saveState(); render(); showToast('Đã lưu cân nặng hôm nay');
+}
+
+/* ============ RENDER: TODAY ============ */
+function renderToday(){
+  const dayTemplate = state.activeSession ? state.activeSession.dayLabel : todayTemplate();
+  const exs = exercisesForDay(dayTemplate);
+  const isRest = dayTemplate==='Rest';
+
+  if(isRest && !state.activeSession){
+    return `<div class="screen">
+      <div class="topbar"><div><h1>Hôm nay</h1><div class="sub">Ngày nghỉ</div></div></div>
+      <div class="empty"><div class="e-icon">🌙</div><p>Hôm nay là ngày nghỉ theo lịch tập của bạn.<br>Cơ bắp đang hồi phục để phát triển.</p></div>
+    </div>`;
+  }
+
+  const setsLogged = state.activeSession ? state.activeSession.sets : [];
+  const exStatus = (ex)=>{
+    const logged = setsLogged.filter(s=>s.exerciseId===ex.id).length;
+    if(logged===0) return 'notstarted';
+    if(logged>=ex.sets) return 'done';
+    return 'progress';
+  };
+  const allDone = exs.length>0 && exs.every(ex=>exStatus(ex)==='done');
+
+  return `<div class="screen">
+    <div class="topbar">
+      <div><h1>${dayTemplate}</h1><div class="sub">${exs.length} bài tập · ~${estimateMinutes(dayTemplate)} phút</div></div>
+    </div>
+    ${!state.activeSession? `<div style="margin:0 20px 4px;"><button class="hero-cta" onclick="startSession('${dayTemplate}')">Bắt đầu buổi tập</button></div>`:''}
+    ${TIER_ORDER.map(tier=>{
+      const group = exs.filter(ex=> (ex.tier||'main')===tier);
+      if(group.length===0) return '';
+      const t = TIER_INFO[tier];
+      return `<div class="tier-label" style="color:${t.color}"><div class="sq" style="background:${t.color}"></div>${t.emoji} ${t.label}</div>
+      ${group.map(ex=>{
+        const st = state.activeSession ? exStatus(ex) : 'notstarted';
+        return `<div class="ex-item ${st==='done'?'done':''}" onclick="${state.activeSession? `goTo('exercise',{id:'${ex.id}'})` : `showToast('Bắt đầu buổi tập trước để log bài tập')`}">
+          <div class="ex-status ${st}">${st==='done'? ICONS.check : ''}</div>
+          <div class="ex-main">
+            <div class="ex-name">${ex.vi}</div>
+            <div class="ex-name-en">${ex.en}</div>
+            <div class="ex-meta">${ex.sets} set × ${ex.reps} reps · nghỉ ${ex.rest}s</div>
+          </div>
+          <div class="chev">${ICONS.chev}</div>
+        </div>`;
+      }).join('')}`;
+    }).join('')}
+    ${state.activeSession? `<div style="margin-top:8px;"><button class="primary-btn" ${!allDone?'':''} onclick="finishSession()">Kết thúc buổi tập</button></div>`:''}
+  </div>`;
+}
+
+function startSession(dayTemplate){
+  state.activeSession = {dayLabel:dayTemplate, startedAt:new Date().toISOString(), sets:[]};
+  saveState();
+  render();
+}
+
+/* ============ RENDER: EXERCISE DETAIL ============ */
+let draftSet = {weight:null, reps:null, rpe:7};
+
+function renderExercise(exId){
+  const ex = findExercise(exId);
+  if(!ex) return `<div class="screen"><div class="empty">Không tìm thấy bài tập.</div></div>`;
+  const loggedSets = state.activeSession ? state.activeSession.sets.filter(s=>s.exerciseId===exId) : [];
+  const suggestion = getSuggestion(exId);
+  const [repMin,repMax] = parseRepRange(ex.reps);
+
+  const muscleBadges = [
+    {role:'primary', id:ex.primary},
+    ...ex.secondary.map(id=>({role:'secondary', id})),
+    ...ex.stabilizer.map(id=>({role:'stabilizer', id})),
+  ];
+
+  return `<div class="screen">
+    <div class="sheet-header">
+      <div class="back-btn" onclick="goTo('today')">${ICONS.back} Hôm nay</div>
+    </div>
+    <div style="padding:4px 20px;">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">${ex.vi}</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">${ex.en} · ${ex.equipment}</div>
+      <div class="tier-badge" style="background:${TIER_INFO[ex.tier||'main'].color}22;color:${TIER_INFO[ex.tier||'main'].color};">${TIER_INFO[ex.tier||'main'].emoji} ${TIER_INFO[ex.tier||'main'].label}</div>
+      <div class="badge-row">
+        ${muscleBadges.map(b=>`<div class="badge"><div class="dot dot-${b.role}"></div>${findMuscle(b.id).vi}</div>`).join('')}
+      </div>
+    </div>
+
+    <div class="suggest-banner">
+      <span>${suggestion.previousWeight? `Buổi trước: <b>${suggestion.previousWeight}kg</b>` : 'Chưa có lịch sử'}</span>
+      ${suggestion.suggestedWeight? `<span>Gợi ý: <b>${suggestion.suggestedWeight}kg</b></span>`:''}
+    </div>
+    <div class="info-block" style="margin-top:-4px;">${suggestion.note}</div>
+
+    <div class="section-label">Ghi log — mục tiêu ${ex.sets} set × ${ex.reps}</div>
+    ${loggedSets.map((s,i)=>`
+      <div class="set-row">
+        <div class="n">#${i+1}</div>
+        <div><div class="set-input" style="opacity:0.6;">${s.weight}</div><div class="set-hint">kg</div></div>
+        <div><div class="set-input" style="opacity:0.6;">${s.reps}</div><div class="set-hint">reps</div></div>
+        <div><div class="set-input" style="opacity:0.6;">${s.rpe}</div><div class="set-hint">RPE</div></div>
+      </div>`).join('')}
+
+    ${loggedSets.length < ex.sets ? `
+      <div class="set-row">
+        <div class="n">#${loggedSets.length+1}</div>
+        <div><input class="set-input" id="draftWeight" type="number" inputmode="decimal" placeholder="${suggestion.suggestedWeight||''}" value="${draftSet.weight??''}"><div class="set-hint">kg</div></div>
+        <div><input class="set-input" id="draftReps" type="number" inputmode="numeric" placeholder="${repMax||''}" value="${draftSet.reps??''}"><div class="set-hint">reps</div></div>
+        <div><div class="set-input" id="draftRpeDisplay" style="pointer-events:none;">${draftSet.rpe}</div><div class="set-hint">RPE</div></div>
+      </div>
+      <div class="rpe-row">
+        ${[6,7,8,9,10].map(v=>`<div class="rpe-chip ${draftSet.rpe===v?'active':''}" onclick="setRpe(${v})">${v}</div>`).join('')}
+      </div>
+      <div class="add-set-btn" onclick="logSet('${exId}', ${ex.sets})">+ Lưu set này</div>
+    ` : `<div class="info-block" style="text-align:center;color:var(--recovery-fresh);">✓ Đã hoàn thành đủ set cho bài này.</div>`}
+
+    <div class="section-label">Chuẩn bị (Setup)</div>
+    <div class="info-block">${ex.setup}</div>
+
+    <div class="section-label">Kỹ thuật</div>
+    <div class="info-block"><b>Tempo:</b> ${ex.tempo} · <b>RPE/RIR mục tiêu:</b> ${ex.rpe}</div>
+    <div class="info-block"><b>Cue:</b> ${ex.cue}</div>
+    <div class="info-block"><b>Lỗi thường gặp:</b> ${ex.mistakes}</div>
+    <div class="info-block"><b>Tips:</b> ${ex.tips}</div>
+    <div class="info-block"><b>Bài thay thế (nếu máy bận/không có thiết bị):</b><br>${ex.alt.map((a,i)=>`${i+1}. ${a}`).join('<br>')}</div>
+    <div class="info-block" style="color:var(--text-tertiary);font-size:12px;">Video/GIF minh họa sẽ được bổ sung ở bản cập nhật kế tiếp.</div>
+
+    <button class="ghost-btn" onclick="goTo('today')">Xong, quay lại danh sách</button>
+  </div>`;
+}
+function setRpe(v){ draftSet.rpe=v; render(); }
+function logSet(exId, targetSets){
+  const w = parseFloat(document.getElementById('draftWeight').value);
+  const r = parseInt(document.getElementById('draftReps').value);
+  if(isNaN(w) || isNaN(r)){ showToast('Nhập đầy đủ mức tạ và số reps'); return; }
+  state.activeSession.sets.push({exerciseId:exId, weight:w, reps:r, rpe:draftSet.rpe, completedAt:new Date().toISOString()});
+  draftSet = {weight:null, reps:null, rpe:7};
+  saveState();
+  render();
+  showToast('Đã lưu set 💪');
+}
+
+/* ============ FINISH SESSION -> SUMMARY ============ */
+function finishSession(){
+  if(!state.activeSession || state.activeSession.sets.length===0){ showToast('Hãy log ít nhất 1 set trước khi kết thúc'); return; }
+  const session = Object.assign({}, state.activeSession, {id:'s_'+Date.now(), endedAt:new Date().toISOString()});
+  state.sessions.push(session);
+  state.activeSession = null;
+  saveState();
+  goTo('summary', {sessionId:session.id});
+}
+
+function renderSummary(sessionId){
+  const session = state.sessions.find(s=>s.id===sessionId) || state.sessions[state.sessions.length-1];
+  if(!session) return `<div class="screen"><div class="empty">Không có dữ liệu buổi tập.</div></div>`;
+
+  const muscleRoles = {}; // muscleId -> best role
+  session.sets.forEach(set=>{
+    const ex = findExercise(set.exerciseId);
+    if(!ex) return;
+    const assign = (id,role)=>{
+      const rank = {primary:3,secondary:2,stabilizer:1};
+      if(!muscleRoles[id] || rank[role]>rank[muscleRoles[id]]) muscleRoles[id]=role;
+    };
+    assign(ex.primary,'primary');
+    ex.secondary.forEach(id=>assign(id,'secondary'));
+    ex.stabilizer.forEach(id=>assign(id,'stabilizer'));
+  });
+  const sorted = Object.entries(muscleRoles).sort((a,b)=>{
+    const rank = {primary:3,secondary:2,stabilizer:1};
+    return rank[b[1]]-rank[a[1]];
+  });
+  const totalVolume = session.sets.reduce((sum,s)=> sum + (s.weight*s.reps||0), 0);
+  const durationMin = Math.round((new Date(session.endedAt)-new Date(session.startedAt))/60000);
+  const roleColor = {primary:'#E24A4A', secondary:'#E8A33D', stabilizer:'#D9C24A'};
+  const roleLabel = {primary:'Primary', secondary:'Secondary', stabilizer:'Stabilizer'};
+
+  return `<div class="screen">
+    <div class="summary-hero">
+      <div class="check">${ICONS.check}</div>
+      <h2>Buổi tập hoàn thành</h2>
+      <p>${session.dayLabel} · ${durationMin} phút · ${session.sets.length} set</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="n">${Math.round(totalVolume)}kg</div><div class="l">Tổng volume</div></div>
+      <div class="stat-tile"><div class="n">${sorted.length}</div><div class="l">Nhóm cơ được kích thích</div></div>
+    </div>
+    <div class="section-label">Muscle Stimulation</div>
+    ${sorted.map(([id,role])=>`
+      <div class="stim-item">
+        <div class="dot" style="background:${roleColor[role]}"></div>
+        <div class="stim-name">${findMuscle(id).vi}</div>
+        <div class="stim-role">${roleLabel[role]}</div>
+      </div>`).join('')}
+    <button class="primary-btn" onclick="goTo('home')">Về trang chủ</button>
+  </div>`;
+}
+
+/* ============ RENDER: LIBRARY ============ */
+let libraryFilter = 'all';
+function renderLibrary(){
+  const filters = [{id:'all',label:'Tất cả'}, ...[...MUSCLES].sort((a,b)=>a.priority-b.priority).map(m=>({id:m.id,label:m.vi}))];
+  const list = libraryFilter==='all' ? EXERCISES : EXERCISES.filter(e=> e.primary===libraryFilter || e.secondary.includes(libraryFilter) || e.stabilizer.includes(libraryFilter));
+
+  return `<div class="screen">
+    <div class="topbar"><div><h1>Thư viện bài tập</h1><div class="sub">${EXERCISES.length} bài tập</div></div></div>
+    <div class="filter-row">
+      ${filters.map(f=>`<div class="filter-chip ${libraryFilter===f.id?'active':''}" onclick="setLibraryFilter('${f.id}')">${f.label}</div>`).join('')}
+    </div>
+    ${list.map(ex=>`
+      <div class="ex-item" onclick="goTo('exerciseInfo',{id:'${ex.id}'})">
+        <div class="ex-main">
+          <div class="ex-name">${ex.vi}</div>
+          <div class="ex-name-en">${ex.en} · ${Array.isArray(ex.day)?ex.day.join(' & '):ex.day}</div>
+          <div class="ex-meta">${TIER_INFO[ex.tier||'main'].emoji} ${TIER_INFO[ex.tier||'main'].label} · ${ex.sets} set × ${ex.reps}</div>
+        </div>
+        <div class="chev">${ICONS.chev}</div>
+      </div>`).join('')}
+  </div>`;
+}
+function setLibraryFilter(id){ libraryFilter=id; render(); }
+
+function renderExerciseInfo(exId){
+  const ex = findExercise(exId);
+  const muscleBadges = [{role:'primary', id:ex.primary}, ...ex.secondary.map(id=>({role:'secondary', id})), ...ex.stabilizer.map(id=>({role:'stabilizer', id}))];
+  const dayLabel = Array.isArray(ex.day) ? ex.day.join(' & ') : ex.day;
+  return `<div class="screen">
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('library')">${ICONS.back} Thư viện</div></div>
+    <div style="padding:4px 20px;">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">${ex.vi}</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">${ex.en} · ${ex.equipment} · ${dayLabel}</div>
+      <div class="tier-badge" style="background:${TIER_INFO[ex.tier||'main'].color}22;color:${TIER_INFO[ex.tier||'main'].color};">${TIER_INFO[ex.tier||'main'].emoji} ${TIER_INFO[ex.tier||'main'].label}</div>
+      <div class="badge-row">${muscleBadges.map(b=>`<div class="badge"><div class="dot dot-${b.role}"></div>${findMuscle(b.id).vi}</div>`).join('')}</div>
+    </div>
+    <div class="section-label">Thông số</div>
+    <div class="info-block"><b>Sets/Reps:</b> ${ex.sets} × ${ex.reps} · <b>Nghỉ:</b> ${ex.rest}s</div>
+    <div class="info-block"><b>Tempo:</b> ${ex.tempo} · <b>RPE/RIR mục tiêu:</b> ${ex.rpe}</div>
+    <div class="section-label">Chuẩn bị (Setup)</div>
+    <div class="info-block">${ex.setup}</div>
+    <div class="section-label">Kỹ thuật</div>
+    <div class="info-block"><b>Cue:</b> ${ex.cue}</div>
+    <div class="info-block"><b>Lỗi thường gặp:</b> ${ex.mistakes}</div>
+    <div class="info-block"><b>Tips:</b> ${ex.tips}</div>
+    <div class="info-block"><b>Bài thay thế (nếu máy bận/không có thiết bị):</b><br>${ex.alt.map((a,i)=>`${i+1}. ${a}`).join('<br>')}</div>
+    <div class="info-block" style="color:var(--text-tertiary);font-size:12px;">Video/GIF minh họa sẽ được bổ sung ở bản cập nhật kế tiếp.</div>
+  </div>`;
+}
+
+/* ============ RENDER: RECOVERY ============ */
+function renderRecovery(){
+  const sorted = [...MUSCLES].sort((a,b)=>a.priority-b.priority);
+  return `<div class="screen">
+    <div class="topbar"><div><h1>Hồi phục</h1><div class="sub">Trạng thái từng nhóm cơ</div></div></div>
+    <div class="card">
+      ${sorted.map(m=>{
+        const r = getMuscleRecovery(m.id);
+        return `<div class="rec-row" style="padding:12px 0;">
+          <div class="rec-dot" style="background:${recoveryColor(r.status)}"></div>
+          <div style="flex:1;">
+            <div class="rec-name">${m.vi}</div>
+            <div style="font-size:11.5px;color:var(--text-tertiary);margin-top:1px;">${recoveryLabel(r.status)}${r.status==='recovering'? ` · còn ~${r.etaHours}h`:''}</div>
+          </div>
+          <div class="rec-track"><div class="rec-fill" style="width:${r.percent}%;background:${recoveryColor(r.status)}"></div></div>
+          <div class="rec-pct">${r.percent}%</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card glass">
+      <div class="card-title">Chú giải màu</div>
+      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-stimulated)"></div><div class="rec-name">Vừa tập hôm nay</div></div>
+      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-recovering)"></div><div class="rec-name">Đang hồi phục</div></div>
+      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-fresh)"></div><div class="rec-name">Đã hồi phục (trong 7 ngày)</div></div>
+      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-inactive)"></div><div class="rec-name">Chưa tập gần đây (&gt;7 ngày)</div></div>
+    </div>
+  </div>`;
+}
+
+/* ============ RENDER: SETTINGS ============ */
+function renderSettings(){
+  return `<div class="screen">
+    <div class="topbar"><div><h1>Cài đặt</h1><div class="sub">Lịch tập & thông tin</div></div></div>
+    <div class="section-label">Hồ sơ cá nhân</div>
+    <div class="card">
+      <div class="info-block" style="margin:0 0 6px;"><b>Tên:</b> ${state.profile? state.profile.name : '—'}</div>
+      <div class="info-block" style="margin:0 0 6px;"><b>Tuổi:</b> ${state.profile? state.profile.age : '—'}</div>
+      <div class="info-block" style="margin:0;"><b>Chiều cao:</b> ${state.profile? state.profile.height+'cm' : '—'}</div>
+      <div class="ghost-btn" style="margin:12px 0 0;" onclick="editProfile()">Sửa hồ sơ</div>
+    </div>
+
+    <div class="section-label">Lịch tập theo tuần (Split) — Chuẩn cố định</div>
+    <div class="info-block" style="margin:0 20px 6px;">Đây là lịch tập chuẩn của bạn. Chỉ có 6 loại buổi tập này trong hệ thống — không có PPL, Arnold Split hay biến thể khác.</div>
+    <div class="card">
+      ${DAY_KEYS.filter(k=>k!=='').map(()=>'').join('')}
+      ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day=>`
+        <div class="setting-row">
+          <div class="setting-label">${DAY_LABEL_VI[day]} · ${day}</div>
+          <select class="setting-select" onchange="setSplitDay('${day}', this.value)">
+            ${DAY_TEMPLATES.map(t=>`<option value="${t}" ${state.split[day]===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>`).join('')}
+    </div>
+
+    <div class="section-label">Số đo cơ thể (cập nhật hàng tuần)</div>
+    <div class="card">
+      <div class="set-row" style="grid-template-columns:1fr 1fr;padding:0 0 10px;">
+        <div><input class="set-input" id="mWeight" type="number" placeholder="65"><div class="set-hint">Cân nặng (kg)</div></div>
+        <div><input class="set-input" id="mChest" type="number" placeholder="90"><div class="set-hint">Vòng ngực (cm)</div></div>
+      </div>
+      <div class="add-set-btn" onclick="addMeasurement()">+ Lưu số đo tuần này</div>
+      ${state.measurements.length? `<div class="info-block">Gần nhất: ${state.measurements[state.measurements.length-1].weight}kg, ngực ${state.measurements[state.measurements.length-1].chest||'—'}cm</div>`:''}
+    </div>
+
+    <div class="section-label">Dữ liệu</div>
+    <div class="card">
+      <div class="info-block" style="margin:0;">Tổng số buổi tập đã hoàn thành: <b>${state.sessions.length}</b></div>
+      <div class="ghost-btn" style="margin:12px 0 0;color:var(--recovery-stimulated);" onclick="resetAllData()">Xoá toàn bộ dữ liệu</div>
+    </div>
+  </div>`;
+}
+function setSplitDay(day, template){ state.split[day]=template; saveState(); showToast('Đã lưu lịch tập'); }
+function addMeasurement(){
+  const w = parseFloat(document.getElementById('mWeight').value);
+  const c = parseFloat(document.getElementById('mChest').value);
+  if(isNaN(w)){ showToast('Nhập cân nặng'); return; }
+  state.measurements.push({date:new Date().toISOString(), weight:w, chest:isNaN(c)?null:c});
+  saveState(); render(); showToast('Đã lưu số đo');
+}
+function resetAllData(){
+  if(!confirm('Xoá toàn bộ dữ liệu tập luyện? Không thể hoàn tác.')) return;
+  state = {profile:state.profile, split:DEFAULT_SPLIT, sessions:[], activeSession:null, measurements:[], settings:{unit:'kg'}};
+  saveState(); goTo('home');
+}
+
+/* ============ MAIN RENDER ============ */
+function render(){
+  const el = document.getElementById('app');
+  if(!state.profile){
+    document.getElementById('navbar').innerHTML = '';
+    el.innerHTML = renderOnboarding();
+    return;
+  }
+  renderNavbar();
+  if(view.name==='home') el.innerHTML = renderHome();
+  else if(view.name==='today') el.innerHTML = renderToday();
+  else if(view.name==='exercise') el.innerHTML = renderExercise(view.params.id);
+  else if(view.name==='exerciseInfo') el.innerHTML = renderExerciseInfo(view.params.id);
+  else if(view.name==='summary') el.innerHTML = renderSummary(view.params.sessionId);
+  else if(view.name==='library') el.innerHTML = renderLibrary();
+  else if(view.name==='recovery') el.innerHTML = renderRecovery();
+  else if(view.name==='settings') el.innerHTML = renderSettings();
+}
+
+/* ============ INIT ============ */
+(async function init(){
+  await loadState();
+  render();
+})();
+</script>
+</body>
+</html>
