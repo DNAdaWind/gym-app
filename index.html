@@ -1763,7 +1763,22 @@ function renderSummary(sessionId){
   const roleColor = {primary:'#E24A4A', secondary:'#E8A33D', stabilizer:'#D9C24A'};
   const roleLabel = {primary:'Primary', secondary:'Secondary', stabilizer:'Stabilizer'};
 
+  // Nhật ký sức khỏe & ăn uống của đúng ngày buổi tập này diễn ra — để xem lịch sử luôn thấy
+  // đầy đủ cả buổi tập lẫn đã ăn uống/uống Creatine, viên kẽm gì ngày đó.
+  const dateObj = new Date(session.endedAt);
+  const dStr = dateObj.toDateString();
+  const wm = measurementForDate(dateObj);
+  const sh = sleepHoursForNightOf(dateObj);
+  const rec = sleepRecoveryInfo(sh);
+  const healthCard = (wm || sh!=null) ? `
+    <div class="card">
+      <div class="card-title">Nhật ký sức khỏe ngày này</div>
+      <div class="info-block" style="margin:0;"><b>Cân nặng:</b> ${wm? wm.weight+'kg' : 'Chưa có dữ liệu'}</div>
+      <div class="info-block" style="margin:6px 0 0;"><b>Giờ ngủ đêm đó:</b> ${sh!=null? sh+' tiếng' : 'Chưa có dữ liệu'}${rec? ` <span style="color:${rec.color};font-weight:600;">· ${rec.text}</span>`:''}</div>
+    </div>` : '';
+
   return `<div class="screen">
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('history')">${ICONS.back} Lịch sử tập</div></div>
     <div class="summary-hero">
       <div class="check">${ICONS.check}</div>
       <h2>Buổi tập hoàn thành</h2>
@@ -1781,6 +1796,8 @@ function renderSummary(sessionId){
         <div class="stim-name">${findMuscle(id).vi}</div>
         <div class="stim-role">${roleLabel[role]} · ${muscleCount[id]} bài</div>
       </div>`).join('')}
+    ${healthCard}
+    ${renderDayNutritionBlock(dStr)}
     <button class="primary-btn" onclick="goTo('home')">Về trang chủ</button>
   </div>`;
 }
@@ -2293,6 +2310,48 @@ function resetTodayWater(){
   saveState(); render();
 }
 
+function renderDayNutritionBlock(dStr){
+  const nutri = nutritionTotalsForDate(dStr);
+  const dayEntries = (state.nutritionLogs||{})[dStr] || [];
+  const creatineTaken = isCreatineTakenOn(dStr);
+  return `
+    <div class="card">
+      <div class="card-title">Ăn uống ngày này${nutri.count>0? ` · ~${nutri.calMid} kcal (${nutri.calMin}–${nutri.calMax})` : ''}</div>
+      ${dayEntries.length? dayEntries.map(e=>{
+          const item = findFoodItem(e.foodId);
+          if(!item) return '';
+          const calMid = Math.round((item.per.cal[0]+item.per.cal[1])/2*e.qty);
+          return `<div class="logged-item">
+            <div class="logged-main">
+              <div class="logged-name">${item.vi} · ${e.qty}${item.unit}</div>
+              <div class="logged-sub">~${calMid} kcal</div>
+            </div>
+            <div class="logged-del" onclick="removeFoodEntry('${e.id}','${dStr}')">✕</div>
+          </div>`;
+        }).join('') : `<div class="empty"><p>Chưa có món nào được ghi cho ngày này.</p></div>`}
+      <div style="display:flex;align-items:center;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-subtle);cursor:pointer;" onclick="toggleCreatineForDate('${dStr}')">
+        <div class="ex-status ${creatineTaken?'done':''}">${creatineTaken?'✓':''}</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">💊 Creatine 5g</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">${creatineTaken? 'Đã uống ngày này ✔' : 'Chạm để tick nếu đã uống ngày này'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="section-label">Nhập lại / thêm món ăn cho ngày này</div>
+    ${NUTRITION_DB.map(cat=>`
+      <div class="section-label" style="margin-top:6px;">${cat.label}</div>
+      ${cat.items.map(item=>`
+        <div class="food-item" onclick="promptAddFood('${item.id}','${dStr}')">
+          <div class="food-main">
+            <div class="food-name">${item.vi}</div>
+            <div class="food-sub">Theo ${item.unit} · ~${Math.round(item.per.cal[0]*item.defaultQty)}–${Math.round(item.per.cal[1]*item.defaultQty)} kcal / ${item.defaultQty}${item.unit}</div>
+          </div>
+          <div class="food-add">+</div>
+        </div>`).join('')}
+    `).join('')}
+  `;
+}
+
 /* ============ RENDER: HOÀN THÀNH BÀI TẬP HÔM QUA (backfill) ============ */
 function maxBackfillDateStr(){
   const d = new Date(); d.setDate(d.getDate()-1);
@@ -2335,7 +2394,6 @@ function renderBackfill(){
   const sh = sleepHoursForNightOf(dateObj);
   const rec = sleepRecoveryInfo(sh);
   const dStr = dateObj.toDateString();
-  const nutri = nutritionTotalsForDate(dStr);
   const healthCard = (isPast && (wm || sh!=null)) ? `
     <div class="card">
       <div class="card-title">Nhật ký sức khỏe ngày này</div>
@@ -2345,44 +2403,7 @@ function renderBackfill(){
 
   // Toàn bộ ăn uống của ngày này: liệt kê từng món đã ghi (kể cả Creatine/viên kẽm),
   // và cho phép nhập lại/bổ sung món ăn cho đúng ngày đã chọn (không chỉ hôm nay).
-  const dayEntries = (state.nutritionLogs||{})[dStr] || [];
-  const creatineTaken = isCreatineTakenOn(dStr);
-  const nutriDetailBlock = isPast ? `
-    <div class="card">
-      <div class="card-title">Ăn uống ngày này${nutri.count>0? ` · ~${nutri.calMid} kcal (${nutri.calMin}–${nutri.calMax})` : ''}</div>
-      ${dayEntries.length? dayEntries.map(e=>{
-          const item = findFoodItem(e.foodId);
-          if(!item) return '';
-          const calMid = Math.round((item.per.cal[0]+item.per.cal[1])/2*e.qty);
-          return `<div class="logged-item">
-            <div class="logged-main">
-              <div class="logged-name">${item.vi} · ${e.qty}${item.unit}</div>
-              <div class="logged-sub">~${calMid} kcal</div>
-            </div>
-            <div class="logged-del" onclick="removeFoodEntry('${e.id}','${dStr}')">✕</div>
-          </div>`;
-        }).join('') : `<div class="empty"><p>Chưa có món nào được ghi cho ngày này.</p></div>`}
-      <div style="display:flex;align-items:center;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-subtle);cursor:pointer;" onclick="toggleCreatineForDate('${dStr}')">
-        <div class="ex-status ${creatineTaken?'done':''}">${creatineTaken?'✓':''}</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:600;">💊 Creatine 5g</div>
-          <div style="font-size:12px;color:var(--text-tertiary);">${creatineTaken? 'Đã uống ngày này ✔' : 'Chạm để tick nếu đã uống ngày này'}</div>
-        </div>
-      </div>
-    </div>
-    <div class="section-label">Nhập lại / thêm món ăn cho ngày này</div>
-    ${NUTRITION_DB.map(cat=>`
-      <div class="section-label" style="margin-top:6px;">${cat.label}</div>
-      ${cat.items.map(item=>`
-        <div class="food-item" onclick="promptAddFood('${item.id}','${dStr}')">
-          <div class="food-main">
-            <div class="food-name">${item.vi}</div>
-            <div class="food-sub">Theo ${item.unit} · ~${Math.round(item.per.cal[0]*item.defaultQty)}–${Math.round(item.per.cal[1]*item.defaultQty)} kcal / ${item.defaultQty}${item.unit}</div>
-          </div>
-          <div class="food-add">+</div>
-        </div>`).join('')}
-    `).join('')}
-  ` : '';
+  const nutriDetailBlock = isPast ? renderDayNutritionBlock(dStr) : '';
 
   return `<div class="screen">
     <div class="sheet-header"><div class="back-btn" onclick="goTo('history')">${ICONS.back} Lịch sử tập</div></div>
