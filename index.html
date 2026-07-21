@@ -652,14 +652,15 @@ let state = {
   profile: null,      // {name, age, height, createdAt} — hồ sơ nhập 1 lần, lưu vĩnh viễn trên máy này
   split: DEFAULT_SPLIT,
   sessions: [],       // finished sessions
-  activeSession: null,// {dayLabel, startedAt, sets:[]}
+  activeSession: null,// {dayLabel, startedAt, sets:[], running, lastResumeAt, elapsedMs} — chỉ được đẩy vào sessions (tính chuỗi) khi bấm "Hoàn thành"
   measurements: [],   // {date, weight, chest} — nhật ký cân nặng theo ngày
   settings: {unit:'kg'},
   exerciseProgress: {},// exId -> {weight, reps, sinceDate, timesCompleted}
   restCheckins: [],    // ['toDateString', ...] — tick ngày nghỉ để giữ chuỗi (ngày nghỉ KHÔNG cố định)
   streakSaveDates: [],  // ['toDateString', ...] — những ngày bị hổng được "khôi phục chuỗi" bù vào
   streakSaveLog: [],    // [isoString, ...] — mỗi lần dùng "khôi phục chuỗi" ghi 1 mốc thời gian, để tính giới hạn 3 lần/tháng
-  extraFinisherByDate: {} // {'toDateString': exerciseId} — bài finisher phụ (bụng) người dùng tự chọn thêm mỗi ngày tập
+  extraFinisherByDate: {}, // {'toDateString': exerciseId} — bài finisher phụ (bụng) người dùng tự chọn thêm mỗi ngày tập
+  sleepLogs: {} // {'toDateString của ĐÊM đó': số giờ ngủ} — nhập hôm nay cho giấc ngủ đêm qua, nên khoá lưu theo ngày HÔM QUA
 };
 let view = {name:'home', params:{}};
 
@@ -700,6 +701,84 @@ function showToast(msg){
 function todayKey(){ return DAY_KEYS[new Date().getDay()]; }
 function todayTemplate(){ return state.split[todayKey()] || 'Rest'; }
 function exercisesForDay(dayTemplate){ return EXERCISES.filter(e=> Array.isArray(e.day) ? e.day.includes(dayTemplate) : e.day===dayTemplate); }
+
+/* --- giờ ngủ đêm qua ---
+   Nhập "hôm nay" luôn nói về đêm hôm qua -> lưu theo toDateString của NGÀY HÔM QUA,
+   để khi xem lịch sử ngày hôm qua sẽ thấy đúng số giờ đã ngủ đêm đó. */
+function yesterdayDateObj(){ const d = new Date(); d.setDate(d.getDate()-1); return d; }
+const SLEEP_LOW_THRESHOLD = 6.5;
+function sleepHoursForNightOf(dateObj){ return (state.sleepLogs||{})[dateObj.toDateString()]; }
+function todaySleepHours(){ return sleepHoursForNightOf(yesterdayDateObj()); }
+function sleepRecoveryInfo(hours){
+  if(hours==null) return null;
+  return hours < SLEEP_LOW_THRESHOLD
+    ? {text:'Hồi phục thấp', color:'var(--recovery-stimulated)'}
+    : {text:'Hồi phục tốt', color:'var(--recovery-fresh)'};
+}
+function promptTodaySleep(){
+  const existing = todaySleepHours();
+  const val = prompt('Số giờ ngủ đêm qua (giờ)', existing!=null? existing : '');
+  if(val===null) return;
+  const h = parseFloat(val);
+  if(isNaN(h) || h<0 || h>24){ showToast('Số giờ ngủ không hợp lệ'); return; }
+  state.sleepLogs = state.sleepLogs || {};
+  state.sleepLogs[yesterdayDateObj().toDateString()] = h;
+  saveState(); render(); showToast('Đã lưu giờ ngủ đêm qua');
+}
+function measurementForDate(dateObj){
+  return state.measurements.find(m=> new Date(m.date).toDateString()===dateObj.toDateString());
+}
+
+/* --- timer buổi tập: bắt đầu / tạm ngưng / hoàn thành --- */
+function currentElapsedMs(){
+  if(!state.activeSession) return 0;
+  let ms = state.activeSession.elapsedMs||0;
+  if(state.activeSession.running && state.activeSession.lastResumeAt){
+    ms += Date.now() - new Date(state.activeSession.lastResumeAt).getTime();
+  }
+  return ms;
+}
+function formatElapsed(ms){
+  const totalSec = Math.max(0, Math.floor(ms/1000));
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  const pad = n=>String(n).padStart(2,'0');
+  return h>0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+}
+function startWorkoutSession(){
+  if(state.activeSession) return;
+  const now = new Date().toISOString();
+  state.activeSession = {dayLabel: todayTemplate(), startedAt:now, sets:[], running:true, lastResumeAt:now, elapsedMs:0};
+  saveState(); render(); showToast('Bắt đầu buổi tập 💪');
+}
+function pauseWorkoutSession(){
+  if(!state.activeSession || !state.activeSession.running) return;
+  state.activeSession.elapsedMs = currentElapsedMs();
+  state.activeSession.running = false;
+  state.activeSession.lastResumeAt = null;
+  saveState(); render(); showToast('Đã tạm ngưng ⏸ — giờ tập đã dừng lại');
+}
+function resumeWorkoutSession(){
+  if(!state.activeSession || state.activeSession.running) return;
+  state.activeSession.running = true;
+  state.activeSession.lastResumeAt = new Date().toISOString();
+  saveState(); render(); showToast('Tiếp tục tập ▶');
+}
+function completeWorkoutSession(){
+  if(!state.activeSession || state.activeSession.sets.length===0){ showToast('Hãy log ít nhất 1 bài tập trước khi hoàn thành'); return; }
+  const elapsedMs = currentElapsedMs();
+  const session = Object.assign({}, state.activeSession, {
+    id:'s_'+Date.now(),
+    endedAt:new Date().toISOString(),
+    durationSeconds: Math.round(elapsedMs/1000)
+  });
+  delete session.running; delete session.lastResumeAt; delete session.elapsedMs;
+  state.sessions.push(session);
+  state.activeSession = null;
+  saveState();
+  goTo('summary', {sessionId:session.id});
+}
 
 /* --- finisher phụ (tuỳ chọn), chọn thêm 1 bài mỗi ngày tập --- */
 function extraFinisherIdForToday(){ return (state.extraFinisherByDate||{})[new Date().toDateString()]; }
@@ -1016,6 +1095,9 @@ function renderHome(){
   const lastMeasurement = state.measurements[state.measurements.length-1];
   const topMuscles = [...MUSCLES].sort((a,b)=>a.priority-b.priority).slice(0,5);
   const todayLogged = lastMeasurement && new Date(lastMeasurement.date).toDateString()===new Date().toDateString();
+  const todaySleep = todaySleepHours();
+  const sleepLogged = todaySleep!=null;
+  const sleepRec = sleepRecoveryInfo(todaySleep);
 
   const dateStr = new Date().toLocaleDateString('vi-VN', {weekday:'long', day:'numeric', month:'long'});
 
@@ -1024,25 +1106,36 @@ function renderHome(){
     <div class="topbar">
       <div><h1>Xin chào${state.profile? ', '+state.profile.name.split(' ').pop():''} 👋</h1><div class="sub">${dateStr}</div></div>
       <div style="display:flex;gap:8px;">
-        <div class="icon-btn" onclick="goTo('backfill')" title="Hoàn thành bài tập hôm qua">${ICONS.today}</div>
+        <div class="icon-btn" onclick="goTo('backfill')" title="Lịch sử & hoàn thành bài tập hôm qua">${ICONS.today}</div>
         <div class="icon-btn" onclick="goTo('settings')">${ICONS.settings}</div>
       </div>
     </div>
 
-    <div class="card glass" style="display:flex;align-items:center;gap:12px;">
-      ${todayLogged? `
-        <div style="flex:1;">
+    <div class="card glass" style="display:flex;gap:14px;">
+      <div style="flex:1;">
+        ${todayLogged? `
           <div class="card-title" style="margin-bottom:2px;">Cân nặng hôm nay</div>
-          <div style="font-size:20px;font-weight:700;">${lastMeasurement.weight}kg</div>
-        </div>
-        <div class="ghost-btn" style="margin:0;white-space:nowrap;" onclick="promptTodayWeight()">Sửa</div>
-      ` : `
-        <div style="flex:1;">
-          <div class="card-title" style="margin-bottom:2px;">Chưa cập nhật cân nặng hôm nay</div>
-          <div style="font-size:12.5px;color:var(--text-secondary);">Nhập để theo dõi tiến độ mỗi ngày</div>
-        </div>
-        <div class="ghost-btn" style="margin:0;white-space:nowrap;background:var(--text-primary);color:#0A0A0B;" onclick="promptTodayWeight()">+ Nhập</div>
-      `}
+          <div style="font-size:18px;font-weight:700;">${lastMeasurement.weight}kg</div>
+          <div class="ghost-btn" style="margin:8px 0 0;padding:8px;font-size:12.5px;" onclick="promptTodayWeight()">Sửa</div>
+        ` : `
+          <div class="card-title" style="margin-bottom:2px;">Cân nặng hôm nay</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">Chưa cập nhật</div>
+          <div class="ghost-btn" style="margin:0;padding:8px;font-size:12.5px;background:var(--text-primary);color:#0A0A0B;" onclick="promptTodayWeight()">+ Nhập</div>
+        `}
+      </div>
+      <div style="width:1px;background:var(--border-subtle);flex-shrink:0;"></div>
+      <div style="flex:1;">
+        ${sleepLogged? `
+          <div class="card-title" style="margin-bottom:2px;">Ngủ đêm qua</div>
+          <div style="font-size:18px;font-weight:700;">${todaySleep}h</div>
+          ${sleepRec? `<div style="font-size:11px;font-weight:600;color:${sleepRec.color};margin-top:1px;">${sleepRec.text}</div>`:''}
+          <div class="ghost-btn" style="margin:8px 0 0;padding:8px;font-size:12.5px;" onclick="promptTodaySleep()">Sửa</div>
+        ` : `
+          <div class="card-title" style="margin-bottom:2px;">Ngủ đêm qua</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">Chưa cập nhật</div>
+          <div class="ghost-btn" style="margin:0;padding:8px;font-size:12.5px;background:var(--text-primary);color:#0A0A0B;" onclick="promptTodaySleep()">+ Nhập</div>
+        `}
+      </div>
     </div>
 
     <div class="hero-card">
@@ -1118,6 +1211,7 @@ function renderToday(){
     <div class="topbar">
       <div><h1>${dayTemplate}</h1><div class="sub">${exs.length} bài tập · ~${estimateMinutes(dayTemplate)} phút</div></div>
     </div>
+    ${renderWorkoutControls()}
     ${TIER_ORDER.map(tier=>{
       const group = exs.filter(ex=> (ex.tier||'main')===tier);
       const t = TIER_INFO[tier];
@@ -1157,13 +1251,46 @@ function renderToday(){
       }
       return html;
     }).join('')}
-    ${state.activeSession && !allDone? `<div style="margin-top:8px;"><button class="ghost-btn" onclick="finishSession()">Kết thúc buổi tập sớm</button></div>`:''}
+  </div>`;
+}
+
+/* --- thẻ điều khiển: Bắt đầu / Tạm ngưng / Hoàn thành buổi tập + đồng hồ đếm giờ tập --- */
+function renderWorkoutControls(){
+  const todaySession = [...state.sessions].reverse().find(s=> new Date(s.endedAt).toDateString()===new Date().toDateString());
+  if(todaySession && !state.activeSession){
+    return `<div class="card glass">
+      <div class="card-title">Buổi tập hôm nay</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:18px;font-weight:700;">✔ Đã hoàn thành</div>
+        <div style="font-size:14px;color:var(--text-secondary);font-variant-numeric:tabular-nums;">${todaySession.durationSeconds!=null? '⏱ '+formatElapsed(todaySession.durationSeconds*1000) : ''}</div>
+      </div>
+      <div class="ghost-btn" style="margin:10px 0 0;" onclick="goTo('summary',{sessionId:'${todaySession.id}'})">Xem lại buổi tập</div>
+    </div>`;
+  }
+  if(!state.activeSession){
+    return `<div class="card glass">
+      <div class="card-title">Thời gian tập</div>
+      <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px;">Bấm bắt đầu để tính giờ tập cho buổi hôm nay. Buổi tập chỉ được tính vào chuỗi 🔥 khi bạn bấm Hoàn thành.</div>
+      <button class="hero-cta" style="margin:0;" onclick="startWorkoutSession()">▶ Bắt đầu buổi tập</button>
+    </div>`;
+  }
+  const running = state.activeSession.running;
+  return `<div class="card glass">
+    <div class="card-title">${running? 'Đang tập' : 'Đã tạm ngưng'}</div>
+    <div id="liveTimerText" style="font-size:34px;font-weight:700;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;">${formatElapsed(currentElapsedMs())}</div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      ${running
+        ? `<div class="ghost-btn" style="flex:1;margin:0;" onclick="pauseWorkoutSession()">⏸ Tạm ngưng</div>`
+        : `<div class="ghost-btn" style="flex:1;margin:0;background:var(--text-primary);color:#0A0A0B;" onclick="resumeWorkoutSession()">▶ Tiếp tục</div>`}
+      <div class="ghost-btn" style="flex:1;margin:0;" onclick="completeWorkoutSession()">✔ Hoàn thành</div>
+    </div>
   </div>`;
 }
 
 function toggleExerciseDone(exId){
   if(!state.activeSession){
-    state.activeSession = {dayLabel: todayTemplate(), startedAt:new Date().toISOString(), sets:[]};
+    showToast('Hãy bấm "Bắt đầu buổi tập" trước');
+    return;
   }
   const idx = state.activeSession.sets.findIndex(s=>s.exerciseId===exId);
   if(idx>=0){
@@ -1198,9 +1325,8 @@ function completeExercise(exId, prog){
   saveState();
   const exs = exercisesForDayWithExtra(state.activeSession.dayLabel);
   const allDone = exs.every(e=> state.activeSession.sets.some(s=>s.exerciseId===e.id));
-  if(allDone){ finishSession(); return; }
   render();
-  showToast('Đã hoàn thành ✔');
+  showToast(allDone? 'Đã xong hết bài tập — bấm "Hoàn thành" để lưu buổi tập 🎉' : 'Đã hoàn thành ✔');
 }
 
 /* ============ RENDER: CHỌN NHANH MỨC TẠ (chỉ hiện lần đầu chọn cho 1 bài) ============ */
@@ -1228,25 +1354,13 @@ function renderPickOption(exId){
   </div>`;
 }
 function pickAndComplete(exId, optIndex){
+  if(!state.activeSession){ showToast('Hãy bấm "Bắt đầu buổi tập" trước'); goTo('today'); return; }
   const opts = getOptions(exId);
   const opt = opts[optIndex];
   chooseOption(exId, opt);
   const prog = state.exerciseProgress[exId];
-  if(!state.activeSession){
-    state.activeSession = {dayLabel: todayTemplate(), startedAt:new Date().toISOString(), sets:[]};
-  }
   completeExercise(exId, prog);
   goTo('today');
-}
-
-/* ============ FINISH SESSION -> SUMMARY ============ */
-function finishSession(){
-  if(!state.activeSession || state.activeSession.sets.length===0){ showToast('Hãy log ít nhất 1 set trước khi kết thúc'); return; }
-  const session = Object.assign({}, state.activeSession, {id:'s_'+Date.now(), endedAt:new Date().toISOString()});
-  state.sessions.push(session);
-  state.activeSession = null;
-  saveState();
-  goTo('summary', {sessionId:session.id});
 }
 
 function renderSummary(sessionId){
@@ -1271,7 +1385,10 @@ function renderSummary(sessionId){
     const rank = {primary:3,secondary:2,stabilizer:1};
     return rank[b[1]]-rank[a[1]];
   });
-  const durationMin = Math.max(1, Math.round((new Date(session.endedAt)-new Date(session.startedAt))/60000) || estimateMinutes(session.dayLabel));
+  const durationSeconds = session.durationSeconds!=null
+    ? session.durationSeconds
+    : Math.max(60, Math.round((new Date(session.endedAt)-new Date(session.startedAt))/1000) || estimateMinutes(session.dayLabel)*60);
+  const durationMin = Math.max(1, Math.round(durationSeconds/60));
   const bw = state.measurements.length? state.measurements[state.measurements.length-1].weight : (state.profile? 65 : 65);
   const MET = 6; // cường độ tập kháng lực vừa-cao
   const calories = Math.round(MET * bw * (durationMin/60));
@@ -1284,9 +1401,10 @@ function renderSummary(sessionId){
       <h2>Buổi tập hoàn thành</h2>
       <p>${session.dayLabel} · ${session.sets.length} bài tập</p>
     </div>
-    <div class="stat-grid">
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="stat-tile"><div class="n" style="font-size:17px;">⏱️ ${formatElapsed(durationSeconds*1000)}</div><div class="l">Thời gian tập</div></div>
       <div class="stat-tile"><div class="n">🔥 ${calories}</div><div class="l">Calo ước tính</div></div>
-      <div class="stat-tile"><div class="n">${sorted.length}</div><div class="l">Nhóm cơ được tác động</div></div>
+      <div class="stat-tile"><div class="n">${sorted.length}</div><div class="l">Nhóm cơ</div></div>
     </div>
     <div class="section-label">Muscle Stimulation</div>
     ${sorted.map(([id,role])=>`
@@ -1462,7 +1580,7 @@ function addMeasurement(){
 }
 function resetAllData(){
   if(!confirm('Xoá toàn bộ dữ liệu tập luyện? Không thể hoàn tác.')) return;
-  state = {profile:state.profile, split:DEFAULT_SPLIT, sessions:[], activeSession:null, measurements:[], settings:{unit:'kg'}};
+  state = {profile:state.profile, split:DEFAULT_SPLIT, sessions:[], activeSession:null, measurements:[], settings:{unit:'kg'}, exerciseProgress:{}, restCheckins:[], streakSaveDates:[], streakSaveLog:[], extraFinisherByDate:{}, sleepLogs:{}};
   saveState(); goTo('home');
 }
 
@@ -1512,17 +1630,28 @@ function renderBackfill(){
       <div class="info-block" style="margin:4px 20px;color:var(--text-tertiary);font-size:12px;">Dùng mức tạ/số rep gần nhất đã lưu cho từng bài (nếu có). Buổi tập này sẽ được tính đúng vào ngày đã chọn — hồi phục cơ và chuỗi 🔥 sẽ tự cập nhật lại theo ngày đó.</div>`;
   }
 
+  const wm = measurementForDate(dateObj);
+  const sh = sleepHoursForNightOf(dateObj);
+  const rec = sleepRecoveryInfo(sh);
+  const healthCard = (isPast && (wm || sh!=null)) ? `
+    <div class="card">
+      <div class="card-title">Nhật ký sức khỏe ngày này</div>
+      <div class="info-block" style="margin:0 0 6px;"><b>Cân nặng:</b> ${wm? wm.weight+'kg' : 'Chưa có dữ liệu'}</div>
+      <div class="info-block" style="margin:0;"><b>Giờ ngủ đêm đó:</b> ${sh!=null? sh+' tiếng' : 'Chưa có dữ liệu'}${rec? ` <span style="color:${rec.color};font-weight:600;">· ${rec.text}</span>`:''}</div>
+    </div>` : '';
+
   return `<div class="screen">
     <div class="sheet-header"><div class="back-btn" onclick="goTo('home')">${ICONS.back} Trang chủ</div></div>
     <div style="padding:4px 20px;">
-      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Hoàn thành bài tập hôm qua</div>
-      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Bù lại ngày quên tick để theo dõi hồi phục đúng hơn</div>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Lịch sử & hoàn thành bài tập hôm qua</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Xem lại buổi tập, cân nặng, giấc ngủ của từng ngày — hoặc bù lại ngày quên tick</div>
     </div>
     <div class="card">
       <div class="card-title">Chọn ngày</div>
       <input class="set-input" type="date" id="backfillDateInput" value="${sel}" max="${maxBackfillDateStr()}" onchange="pickBackfillDate(this.value)" style="width:100%;">
       <div class="info-block" style="margin:10px 0 0;"><b>${dateStrDisplay}</b> · ${fixedRest? 'Ngày nghỉ cố định' : template}</div>
     </div>
+    ${healthCard}
     ${body}
   </div>`;
 }
@@ -1572,6 +1701,16 @@ function render(){
   else if(view.name==='backfill') el.innerHTML = renderBackfill();
   else if(view.name==='chooseFinisher') el.innerHTML = renderChooseFinisher();
 }
+
+/* ============ LIVE TIMER TICK ============
+   Cập nhật đồng hồ mỗi giây bằng cách sửa trực tiếp nội dung DOM (không render lại cả trang)
+   để tránh giật/mất focus khi đang xem màn hình Hôm nay lúc buổi tập đang chạy. */
+setInterval(()=>{
+  const el = document.getElementById('liveTimerText');
+  if(el && state.activeSession && state.activeSession.running){
+    el.textContent = formatElapsed(currentElapsedMs());
+  }
+}, 1000);
 
 /* ============ INIT ============ */
 (async function init(){
