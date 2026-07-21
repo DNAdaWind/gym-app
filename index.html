@@ -2200,6 +2200,8 @@ function renderNutrition(){
       </div>
     </div>
 
+    ${renderDayCalorieSummaryCard(todayStr)}
+
     ${overWarnings.length? `<div class="warn-card">${overWarnings.map(w=>`<div class="warn-line">⚠️ ${w}</div>`).join('')}</div>` : ''}
 
     <div class="section-label">Bổ sung hôm nay</div>
@@ -2310,11 +2312,65 @@ function resetTodayWater(){
   saveState(); render();
 }
 
+/* --- Ước tính calo đốt từ buổi tập của 1 ngày cụ thể (dùng chung cho mọi màn hình) --- */
+function estimateSessionCalories(durationSeconds){
+  const durationMin = Math.max(1, Math.round(durationSeconds/60));
+  const bw = state.measurements.length? state.measurements[state.measurements.length-1].weight : (state.profile? 65 : 65);
+  const MET = 6; // cường độ tập kháng lực vừa-cao
+  return Math.round(MET * bw * (durationMin/60));
+}
+function workoutCaloriesForDate(dStr){
+  const session = state.sessions.find(s=> new Date(s.endedAt).toDateString()===dStr);
+  if(!session) return 0;
+  const durationSeconds = session.durationSeconds!=null
+    ? session.durationSeconds
+    : Math.max(60, Math.round((new Date(session.endedAt)-new Date(session.startedAt))/1000) || estimateMinutes(session.dayLabel)*60);
+  return estimateSessionCalories(durationSeconds);
+}
+/* --- Thẻ tổng kết calo trong ngày: gộp cả calo nạp (ăn uống) VÀ calo đốt (mức duy trì + buổi tập nếu có),
+   rồi so với mục tiêu thặng dư lean-gain — để biết ngay hôm đó đã đúng hướng mục tiêu hay chưa. --- */
+function renderDayCalorieSummaryCard(dStr){
+  if(!state.profile) return '';
+  const t = nutritionTotalsForDate(dStr);
+  const tdee = tdeeToday();
+  const surplusTarget = goalDailySurplus();
+  const burnedExtra = workoutCaloriesForDate(dStr);
+  const totalBurn = tdee + burnedExtra;
+  const eaten = t.count? t.calMid : 0;
+  const netDiff = Math.round(eaten - totalBurn); // dư(+)/thiếu(-) so với mức tiêu hao thực tế trong ngày
+  const diffVsTarget = Math.round(netDiff - surplusTarget); // lệch bao nhiêu so với mức dư mong muốn cho lean-gain
+
+  let tag, color, note;
+  if(!t.count){
+    tag = 'Chưa ghi nhận ăn uống'; color = 'var(--text-tertiary)';
+    note = `Ghi lại các món đã ăn ở bên dưới để biết cán cân calo ngày này.`;
+  } else if(diffVsTarget > 250){
+    tag = 'Dư calo nhiều hơn dự kiến'; color = 'var(--recovery-recovering)';
+    note = `Cao hơn mức dư mục tiêu cho lean-gain (~${surplusTarget} kcal/ngày) khoảng ${diffVsTarget} kcal.`;
+  } else if(diffVsTarget < -250){
+    tag = 'Thiếu so với mục tiêu'; color = 'var(--recovery-stimulated)';
+    note = `Thấp hơn mức dư mục tiêu cho lean-gain (~${surplusTarget} kcal/ngày) khoảng ${Math.abs(diffVsTarget)} kcal.`;
+  } else {
+    tag = 'Đúng hướng mục tiêu'; color = 'var(--recovery-fresh)';
+    note = `Cán cân calo ngày này khá sát với mục tiêu tăng cân nhẹ nhàng (lean-gain) đã đặt ra.`;
+  }
+
+  return `<div class="card">
+    <div class="card-title">Tổng kết calo ngày này</div>
+    <div class="info-block" style="margin:0;"><b>Calo nạp (ăn uống):</b> ${t.count? `~${t.calMid} kcal (${t.calMin}–${t.calMax})` : 'Chưa ghi nhận'}</div>
+    <div class="info-block" style="margin:6px 0 0;"><b>Calo tiêu hao ước tính:</b> ~${totalBurn} kcal ${burnedExtra>0? `(mức duy trì ~${tdee} + đốt thêm từ buổi tập ~${burnedExtra})` : `(mức duy trì hàng ngày · không có buổi tập ngày này)`}</div>
+    <div class="info-block" style="margin:6px 0 0;"><b>Cán cân calo:</b> ${netDiff>=0?'+':''}${netDiff} kcal ${netDiff>=0?'(dư)':'(thiếu)'} · mục tiêu dư ~${surplusTarget} kcal/ngày để tăng cân đều
+    </div>
+    <div class="insight-tag" style="background:${color}22;color:${color};">${tag}</div>
+    <div class="info-block" style="margin:8px 0 0;color:var(--text-tertiary);font-size:12px;">${note} Số liệu chỉ mang tính ước lượng tham khảo.</div>
+  </div>`;
+}
 function renderDayNutritionBlock(dStr){
   const nutri = nutritionTotalsForDate(dStr);
   const dayEntries = (state.nutritionLogs||{})[dStr] || [];
   const creatineTaken = isCreatineTakenOn(dStr);
   return `
+    ${renderDayCalorieSummaryCard(dStr)}
     <div class="card">
       <div class="card-title">Ăn uống ngày này${nutri.count>0? ` · ~${nutri.calMid} kcal (${nutri.calMin}–${nutri.calMax})` : ''}</div>
       ${dayEntries.length? dayEntries.map(e=>{
