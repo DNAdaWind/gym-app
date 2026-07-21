@@ -1097,12 +1097,18 @@ function parseRepRange(reps){
 }
 
 /* --- streak ---
-   "covered" = 1 ngày được tính vào chuỗi, gồm: có buổi tập kết thúc trong ngày,
-   ngày nghỉ đã tick thủ công, ngày nghỉ CỐ ĐỊNH (Thứ 5 & Chủ Nhật — tự động, không cần mở app),
-   hoặc ngày đã được bù bằng "khôi phục chuỗi". */
-const FIXED_REST_DOW = [4, 0]; // Thứ 5 (Thu=4) và Chủ Nhật (Sun=0) theo Date.getDay()
+   "covered" = 1 ngày được tính vào chuỗi, gồm: có buổi tập đã bấm "Hoàn thành" (kết thúc tập) trong ngày,
+   HOẶC ngày đó theo lịch tập hiện tại là ngày nghỉ ("Rest") — ngày nghỉ luôn tự động được tính,
+   không cần làm gì cả, mở app hôm đó chỉ để ghi nhận ăn uống cũng không sao.
+   (streakSaveDates vẫn giữ lại để dùng cho tính năng "khôi phục chuỗi" khi lỡ quên tập.) */
+const FIXED_REST_DOW = [4, 0]; // Thứ 5 (Thu=4) và Chủ Nhật (Sun=0) — mặc định là ngày nghỉ trong lịch gốc
 function isFixedRestDOW(dow){ return FIXED_REST_DOW.includes(dow); }
 function isFixedRestDate(date){ return isFixedRestDOW(date.getDay()); }
+// Ngày nghỉ theo LỊCH TẬP HIỆN TẠI (bao gồm cả ngày nghỉ cố định lẫn ngày người dùng tự đặt là "Rest" trong Cài đặt)
+function isScheduledRestDate(date){
+  const dayKey = DAY_KEYS[date.getDay()];
+  return (state.split[dayKey] || 'Rest') === 'Rest';
+}
 
 function coveredDateSet(){
   const s = new Set(state.sessions.map(x=> new Date(x.endedAt).toDateString()));
@@ -1113,7 +1119,7 @@ function coveredDateSet(){
 function isDayCovered(date, coveredSet){
   const set = coveredSet || coveredDateSet();
   if(set.has(date.toDateString())) return true;
-  return isFixedRestDate(date);
+  return isScheduledRestDate(date);
 }
 
 function computeStreak(){
@@ -1557,14 +1563,10 @@ function renderToday(){
   const isRest = dayTemplate==='Rest';
 
   if(isRest && !state.activeSession){
-    const fixedRest = isFixedRestDate(new Date());
-    const checked = isRestCheckedToday();
     return `<div class="screen">
       <div class="topbar"><div><h1>Hôm nay</h1><div class="sub">Ngày nghỉ</div></div></div>
       <div class="empty"><div class="e-icon">🌙</div><p>Hôm nay là ngày nghỉ theo lịch tập của bạn.<br>Cơ bắp đang hồi phục để phát triển.</p></div>
-      ${fixedRest
-        ? `<div class="info-block" style="margin:0 20px;color:var(--text-secondary);">Thứ 5 & Chủ Nhật là ngày nghỉ cố định — chuỗi 🔥 của bạn tự động được giữ, không cần mở app để tick.</div>`
-        : `<button class="hero-cta" style="margin:0 20px;width:calc(100% - 40px);" ${checked?'disabled':''} onclick="checkInRest()">${checked? '✓ Đã tick ngày nghỉ hôm nay' : 'Tick đã nghỉ hôm nay'}</button>`}
+      <div class="info-block" style="margin:0 20px;color:var(--text-secondary);">Ngày nghỉ tự động được tính vào chuỗi 🔥 — không cần làm gì thêm. Bạn có thể vào mục Dinh dưỡng để ghi nhận ăn uống nếu muốn.</div>
     </div>`;
   }
 
@@ -1977,7 +1979,7 @@ function historyDayStatus(dateObj, coveredSet, todayObj, startObj){
   if(cmp.getTime() > todayObj.getTime()) return 'future';
   if(cmp.getTime() === todayObj.getTime()) return state.sessions.some(s=> new Date(s.endedAt).toDateString()===dateObj.toDateString()) ? 'trained-today' : 'today';
   if(state.sessions.some(s=> new Date(s.endedAt).toDateString()===dateObj.toDateString())) return 'trained';
-  if(isFixedRestDate(dateObj) || coveredSet.has(dateObj.toDateString())) return 'rest';
+  if(isScheduledRestDate(dateObj) || coveredSet.has(dateObj.toDateString())) return 'rest';
   if(startObj && cmp.getTime() < startObj.getTime()) return 'before-tracking';
   return 'missed';
 }
@@ -2307,12 +2309,10 @@ function renderBackfill(){
   const dow = dateObj.getDay();
   const dayKey = DAY_KEYS[dow];
   const template = state.split[dayKey] || 'Rest';
-  const fixedRest = isFixedRestDOW(dow);
-  const isRestDay = template==='Rest' || fixedRest;
+  const isRestDay = template==='Rest';
   const dateStrDisplay = dateObj.toLocaleDateString('vi-VN', {weekday:'long', day:'numeric', month:'long'});
 
   const alreadySession = state.sessions.find(s=> new Date(s.endedAt).toDateString()===dateObj.toDateString());
-  const alreadyRestChecked = (state.restCheckins||[]).includes(dateObj.toDateString()) || (state.streakSaveDates||[]).includes(dateObj.toDateString());
 
   let body;
   if(!isPast){
@@ -2321,13 +2321,7 @@ function renderBackfill(){
     body = `<div class="empty"><p>Ngày này đã có buổi tập được ghi nhận rồi ✔</p></div>
       <button class="ghost-btn" style="margin:0 20px;" onclick="goTo('summary',{sessionId:'${alreadySession.id}'})">Xem lại buổi tập này</button>`;
   } else if(isRestDay){
-    if(fixedRest){
-      body = `<div class="empty"><p>Đây là ngày nghỉ cố định (Thứ 5/Chủ Nhật) — đã tự động tính vào chuỗi, không cần làm gì thêm.</p></div>`;
-    } else if(alreadyRestChecked){
-      body = `<div class="empty"><p>Ngày nghỉ này đã được tính vào chuỗi rồi.</p></div>`;
-    } else {
-      body = `<button class="hero-cta" style="margin:12px 20px;width:calc(100% - 40px);" onclick="backfillRest('${dateObj.toISOString()}')">Tick đã nghỉ ngày này</button>`;
-    }
+    body = `<div class="empty"><p>Đây là ngày nghỉ theo lịch tập — đã tự động tính vào chuỗi 🔥, không cần làm gì thêm.</p></div>`;
   } else {
     const exs = exercisesForDay(template);
     body = `
@@ -2399,7 +2393,7 @@ function renderBackfill(){
     <div class="card">
       <div class="card-title">Chọn ngày</div>
       <input class="set-input" type="date" id="backfillDateInput" value="${sel}" max="${maxBackfillDateStr()}" onchange="pickBackfillDate(this.value)" style="width:100%;">
-      <div class="info-block" style="margin:10px 0 0;"><b>${dateStrDisplay}</b> · ${fixedRest? 'Ngày nghỉ cố định' : template}</div>
+      <div class="info-block" style="margin:10px 0 0;"><b>${dateStrDisplay}</b> · ${template==='Rest'? 'Ngày nghỉ' : template}</div>
     </div>
     ${healthCard}
     ${body}
