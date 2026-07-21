@@ -738,6 +738,18 @@ const NUTRITION_DB = [
       per:{cal:[4.8,5.5], protein:[0.09,0.14], fat:[0.45,0.53], carb:[0,0],
         sugar:[0,0], fiber:[0,0], sodium:[0.3,0.5], potassium:[1.5,2.0], satFat:[0.15,0.20], unsatFat:[0.20,0.28],
         calcium:[0.05,0.1], vitD:[0.001,0.003], iron:[0.005,0.008], magnesium:[0.1,0.15], zinc:[0.015,0.02], omega3:[0.02,0.05], water:[0.3,0.4]}},
+    {id:'pork_thigh', vi:'Thịt đùi heo', unit:'g', defaultQty:150,
+      per:{cal:[2.0,2.4], protein:[0.19,0.22], fat:[0.10,0.16], carb:[0,0],
+        sugar:[0,0], fiber:[0,0], sodium:[0.4,0.6], potassium:[2.8,3.3], satFat:[0.04,0.06], unsatFat:[0.05,0.09],
+        calcium:[0.05,0.1], vitD:[0.0005,0.002], iron:[0.006,0.009], magnesium:[0.18,0.24], zinc:[0.02,0.03], omega3:[0.02,0.05], water:[0.55,0.62]}},
+    {id:'beef', vi:'Thịt bò', unit:'g', defaultQty:150,
+      per:{cal:[1.8,2.2], protein:[0.26,0.30], fat:[0.08,0.15], carb:[0,0],
+        sugar:[0,0], fiber:[0,0], sodium:[0.5,0.7], potassium:[3.0,3.6], satFat:[0.03,0.06], unsatFat:[0.04,0.08],
+        calcium:[0.1,0.15], vitD:[0,0.002], iron:[0.023,0.032], magnesium:[0.2,0.25], zinc:[0.04,0.06], omega3:[0.01,0.03], water:[0.55,0.62]}},
+    {id:'boiled_egg', vi:'Trứng luộc', unit:'quả', defaultQty:1,
+      per:{cal:[68,78], protein:[6,6.5], fat:[4.5,5.5], carb:[0.3,0.6],
+        sugar:[0.2,0.4], fiber:[0,0], sodium:[60,70], potassium:[60,70], satFat:[1.5,1.8], unsatFat:[2.5,3.2],
+        calcium:[25,28], vitD:[1,1.2], iron:[0.8,1], magnesium:[5,6], zinc:[0.5,0.7], omega3:[30,40], water:[30,35]}},
   ]},
   {id:'carb', label:'Tinh bột', items:[
     {id:'rice_bowl', vi:'Cơm', unit:'tô', defaultQty:1,
@@ -748,6 +760,10 @@ const NUTRITION_DB = [
       per:{cal:[220,270], protein:[7,9], fat:[1.5,3], carb:[42,50],
         sugar:[3,6], fiber:[2,4], sodium:[400,550], potassium:[90,120], satFat:[0.5,1], unsatFat:[1,2],
         calcium:[50,80], vitD:[0,0], iron:[1.5,2.5], magnesium:[20,30], zinc:[0.6,1], omega3:[10,20], water:[25,35]}},
+    {id:'sweet_potato', vi:'Khoai lang', unit:'củ', defaultQty:1,
+      per:{cal:[110,140], protein:[2,2.5], fat:[0.1,0.3], carb:[24,32],
+        sugar:[6,9], fiber:[3,4.5], sodium:[40,60], potassium:[330,440], satFat:[0,0.1], unsatFat:[0.05,0.15],
+        calcium:[30,40], vitD:[0,0], iron:[0.6,0.9], magnesium:[25,35], zinc:[0.3,0.4], omega3:[1,3], water:[85,100]}},
   ]},
   {id:'veggie', label:'Rau củ', items:[
     {id:'cucumber', vi:'Dưa leo', unit:'quả', defaultQty:1,
@@ -804,6 +820,12 @@ const NUTRITION_DB = [
       per:{cal:[140,220], protein:[3,5], fat:[5,9], carb:[20,30],
         sugar:[15,30], fiber:[0,0], sodium:[40,70], potassium:[150,220], satFat:[2,4], unsatFat:[0.5,1.5],
         calcium:[70,110], vitD:[0.05,0.15], iron:[0.1,0.3], magnesium:[15,25], zinc:[0.2,0.4], omega3:[3,8], water:[190,220]}},
+  ]},
+  {id:'dessert', label:'Tráng miệng', items:[
+    {id:'ice_cream_bar', vi:'Kem', unit:'cây', defaultQty:1,
+      per:{cal:[70,160], protein:[1,3], fat:[2,8], carb:[12,22],
+        sugar:[10,20], fiber:[0,0.5], sodium:[15,40], potassium:[60,120], satFat:[1.5,5], unsatFat:[0.5,2],
+        calcium:[30,70], vitD:[0,0.2], iron:[0,0.3], magnesium:[5,15], zinc:[0.1,0.3], omega3:[0,5], water:[30,45]}},
   ]},
 ];
 /* Danh sách khoá vi chất để tổng hợp/lặp cho gọn ở các hàm tính toán */
