@@ -541,6 +541,99 @@ const TIER_INFO = {
   finisher:  {label:'Finisher',   emoji:'🟨', color:'#D9C24A'},
 };
 const TIER_ORDER = ['main','accessory','finisher'];
+
+/* ===== FINISHER PHỤ (tuỳ chọn) — chọn thêm 1 bài mỗi buổi tập, ngoài finisher cố định =====
+   day:[] cố ý để KHÔNG tự động xuất hiện theo lịch — chỉ hiện khi người dùng chủ động chọn ở màn "Chọn thêm 1 bài Finisher".
+   Vẫn ghi log vào session/exerciseProgress như bài thường -> tính đúng vào hồi phục & chuỗi. */
+const EXTRA_FINISHERS = [
+  {id:'weighted_decline_crunch',vi:'Gập bụng ghế dốc có tạ',en:'Weighted Decline Crunch',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Ghế dốc (Decline Bench) + đĩa tạ/tạ đơn',sets:3,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8-9 (RIR 1-2)',compound:false,
+    setup:'Chuẩn bị: nằm ngửa trên ghế dốc, móc chân chắc vào thanh chặn, giữ đĩa tạ hoặc tạ đơn áp sát ngực (hoặc đưa qua đầu nếu muốn tăng độ khó).',
+    cue:'Gập cong cột sống từ vùng ngực xuống bụng (không phải gập ở hông), siết bụng chặt ở điểm cao nhất, hạ chậm có kiểm soát về vị trí ban đầu.',
+    mistakes:'Gập ở hông giống sit-up thường khiến hông chủ động thay vì cột sống bụng gập; dùng đà bật người lên.',
+    tips:'Độ dốc ghế và mức tạ thêm cho phép tăng tải dần rõ ràng — đây là lựa chọn ưu tiên hàng đầu cho bụng trên vì dễ theo dõi tiến bộ nhất trong nhóm crunch.',
+    alt:['Cable Crunch','Weighted Crunch']},
+  {id:'machine_crunch',vi:'Gập bụng máy',en:'Machine Crunch',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:[],equipment:'Máy (Ab Crunch Machine)',sets:3,reps:'12-15',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: ngồi vào máy, đệm ngực/vai áp sát phần trên thân, chỉnh tay cầm hoặc mức kháng lực phù hợp trước khi bắt đầu.',
+    cue:'Gập người cong bụng kéo đệm xuống, siết chặt bụng ở điểm gập tối đa, thả chậm có kiểm soát về vị trí bắt đầu.',
+    mistakes:'Dùng lực đẩy chân hoặc bám tay quá mạnh thay vì chủ động gập bụng.',
+    tips:'Máy cố định quỹ đạo chuyển động nên phù hợp để tập trung cảm nhận cơ bụng trên mà không phải lo giữ thăng bằng — tốt cho người mới với nhóm crunch.',
+    alt:['Cable Crunch','Weighted Crunch']},
+  {id:'weighted_crunch',vi:'Gập bụng có tạ',en:'Weighted Crunch',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:[],equipment:'Đĩa tạ hoặc tạ đơn',sets:3,reps:'15-20',tempo:'2-1-2',rest:45,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: nằm ngửa, gối gập 90°, giữ đĩa tạ hoặc tạ đơn áp sát ngực (hoặc sau đầu nếu muốn tăng độ khó).',
+    cue:'Gập phần thân trên bằng lực bụng (không kéo cổ bằng tay), siết chặt ở điểm cao nhất, hạ chậm không chạm sàn hoàn toàn để giữ căng cơ liên tục.',
+    mistakes:'Kéo cổ/đầu bằng tay gây mỏi hoặc đau cổ; hạ người chạm hẳn sàn làm mất lực căng giữa các rep.',
+    tips:'Biến thể đơn giản nhất trong nhóm, chỉ cần 1 đĩa tạ hoặc quả tạ đơn — phù hợp tập tại nhà hoặc khi phòng gym đông máy.',
+    alt:['Machine Crunch','Cable Crunch']},
+  {id:'reverse_crunch',vi:'Gập bụng ngược',en:'Reverse Crunch',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:[],equipment:'Không dụng cụ (thảm)',sets:3,reps:'12-15',tempo:'2-1-2',rest:45,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: nằm ngửa, gối gập 90°, hai tay đặt cạnh người hoặc luồn dưới hông để hỗ trợ lưng dưới.',
+    cue:'Dùng lực bụng dưới cuộn hông về phía ngực (không đá chân bằng lực hông), siết ở điểm cao nhất, hạ chậm không để lưng dưới ưỡn quá mức.',
+    mistakes:'Đá chân bằng lực hông thay vì cuộn cột sống bằng bụng; để lưng dưới ưỡn cong quá khi hạ chân xuống.',
+    tips:'Ít áp lực lên lưng dưới hơn Hanging Leg Raise và không cần thiết bị — lựa chọn tốt cho người mới làm quen nhóm bụng dưới.',
+    alt:['Lying Leg Raise','Hanging Leg Raise']},
+  {id:'captains_chair_raise',vi:"Nâng chân ghế tựa (Captain's Chair)",en:"Captain's Chair Leg Raise",day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:[],equipment:"Ghế Captain's Chair (có tựa lưng & tay)",sets:3,reps:'10-12',tempo:'2-0-2',rest:60,rpe:'RPE 8-9 (RIR 1-2)',compound:false,
+    setup:'Chuẩn bị: đứng vào ghế, tựa chắc lưng và cẳng tay vào đệm, giữ thân ổn định không đu người trước khi nâng chân.',
+    cue:'Nâng gối (hoặc chân thẳng nếu đã quen) lên cao bằng lực gập bụng dưới, siết ở điểm cao nhất, hạ chậm có kiểm soát.',
+    mistakes:'Đu người ra sau lấy đà; chỉ nâng bằng lực hông mà không thực sự gập cột sống.',
+    tips:'Có điểm tựa lưng nên ổn định hơn Hanging Leg Raise, phù hợp khi phòng gym không có xà đơn hoặc muốn giảm tải lên vai/cẳng tay.',
+    alt:['Hanging Leg Raise','Reverse Crunch']},
+  {id:'lying_leg_raise',vi:'Nâng chân nằm',en:'Lying Leg Raise',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:[],equipment:'Không dụng cụ (thảm)',sets:3,reps:'12-15',tempo:'2-1-2',rest:45,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: nằm ngửa, hai tay đặt dưới hông hoặc xuôi theo người, hai chân duỗi thẳng khép sát nhau.',
+    cue:'Nâng chân thẳng lên đến khoảng 60-90°, hạ chậm xuống gần sàn nhưng không chạm hẳn để giữ căng cơ bụng dưới liên tục.',
+    mistakes:'Ưỡn lưng dưới quá mức khi hạ chân thấp; dùng đà lăng chân nhanh mất kiểm soát.',
+    tips:'Nếu cảm thấy nhức lưng dưới, giữ hai tay dưới hông để hỗ trợ hoặc giảm biên độ hạ chân; nâng chân lên khỏi sàn khi đã kiểm soát tốt để tăng độ khó.',
+    alt:['Reverse Crunch',"Captain's Chair Leg Raise"]},
+  {id:'dragon_flag',vi:'Cờ rồng (Dragon Flag)',en:'Dragon Flag',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Ghế phẳng (Flat Bench)',sets:3,reps:'5-8',tempo:'3-1-3',rest:90,rpe:'RPE 9 (RIR 1) — bài Advanced',compound:true,
+    setup:'Chuẩn bị: nằm ngửa trên ghế phẳng, hai tay nắm chắc mép ghế phía sau đầu để cố định thân trên, ép chặt vai và bả vai vào ghế làm điểm tựa.',
+    cue:'Giữ thân từ vai đến chân thành một đường thẳng, hạ toàn thân xuống có kiểm soát chỉ để vai chạm ghế, nâng ngược lại bằng lực siết toàn bộ core, không gập ở hông.',
+    mistakes:'Gập ở hông biến bài thành gập bụng thường, mất tác dụng giữ thân thẳng; hạ thân quá nhanh mất kiểm soát dễ gây căng lưng dưới.',
+    tips:'Bài rất khó — người mới nên tập biến thể gập gối (tuck) hoặc chỉ giữ nửa biên độ trước khi tập full range; luôn ưu tiên kiểm soát hơn biên độ chuyển động.',
+    alt:['Hollow Body Hold','Ab Wheel Rollout']},
+  {id:'hollow_body_hold',vi:'Giữ thân lòng chảo (Hollow Body Hold)',en:'Hollow Body Hold',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Không dụng cụ (thảm)',sets:3,reps:'20-40 giây mỗi set (giữ tĩnh)',tempo:'Tĩnh (isometric)',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: nằm ngửa, ép chặt lưng dưới sát sàn, nâng hai chân và vai khỏi mặt sàn tạo hình lòng chảo (hollow), tay duỗi qua đầu hoặc dọc thân tùy mức độ.',
+    cue:'Siết bụng ép lưng dưới sát sàn suốt thời gian giữ, giữ chân và vai nâng ổn định không rung lắc, thở đều không nín hơi.',
+    mistakes:'Để lưng dưới cong tách khỏi sàn (mất vị trí hollow); nâng chân quá cao làm hông gập lại thay vì giữ thân thẳng.',
+    tips:'Nền tảng kiểm soát cột sống cho các bài core nâng cao hơn (Dragon Flag, Hanging Leg Raise) — nên thành thạo isometric này trước khi chuyển sang bài động khó hơn.',
+    alt:['Dragon Flag','Ab Wheel Rollout']},
+  {id:'farmers_carry',vi:"Đi bộ nông dân (Farmer's Carry)",en:"Farmer's Carry",day:[],tier:'finisher',primary:'core',secondary:['traps','forearms'],stabilizer:['lower_back'],equipment:'Tạ đơn hoặc Kettlebell (2 bên)',sets:3,reps:'30-40m hoặc 30-45 giây mỗi set',tempo:'Đi bộ ổn định',rest:75,rpe:'RPE 8 (RIR 2)',compound:true,
+    setup:'Chuẩn bị: cầm 1 tạ đơn/kettlebell nặng ở mỗi tay, đứng thẳng, vai ép xuống, siết chặt bụng trước khi bước đi.',
+    cue:'Đi bước ngắn và ổn định, giữ thân thẳng không nghiêng sang bên nào, siết core toàn bộ quãng đường để chống nghiêng người theo trọng lượng tạ.',
+    mistakes:'Để thân nghiêng theo hướng tạ nặng hơn; bước quá dài làm mất kiểm soát thăng bằng.',
+    tips:'Đây là bài core "chống nghiêng" (anti-lateral-flexion) rất thực dụng, đồng thời tăng sức cầm nắm và sức chịu tải vai — chọn mức tạ đủ nặng để buộc phải chủ động siết core mới giữ thẳng người được.',
+    alt:['Weighted Russian Twist','Side Plank']},
+  {id:'cable_wood_chop',vi:'Chop chéo cáp',en:'Cable Wood Chop',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Cáp (dây kéo cao hoặc thấp)',sets:3,reps:'10-12 mỗi bên',tempo:'2-0-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: đứng nghiêng người so với máy cáp, kéo tay cầm từ vị trí cao chéo xuống thấp phía đối diện (hoặc ngược lại), chân giữ ổn định không xoay theo.',
+    cue:'Xoay thân từ vùng bụng-liên sườn để kéo tay cầm chéo qua người, siết liên sườn ở điểm cuối chuyển động, trở về vị trí ban đầu có kiểm soát.',
+    mistakes:'Xoay chủ yếu bằng tay/vai thay vì xoay thân từ core; dùng đà giật cáp thay vì kiểm soát toàn biên độ.',
+    tips:'Mô phỏng chuyển động xoay thân thực tế (giống chặt củi) — phát triển sức mạnh xoay (rotational power) cho liên sườn, không chỉ cô lập cơ như crunch.',
+    alt:['Weighted Russian Twist','Pallof Press']},
+  {id:'pallof_press',vi:'Đẩy chống xoay (Pallof Press)',en:'Pallof Press',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Cáp hoặc dây kháng lực (resistance band)',sets:3,reps:'10-12 mỗi bên (giữ ép 1-2 giây mỗi rep)',tempo:'2-1-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: đứng nghiêng người so với điểm neo cáp/dây, cầm tay cầm ngang ngực, hai chân rộng bằng hông tạo nền vững.',
+    cue:'Đẩy tay cầm thẳng ra trước ngực và giữ, chống lại lực kéo ngang cố gắng xoay người bạn, siết core toàn thân để giữ thân không xoay, thu tay về có kiểm soát.',
+    mistakes:'Để hông hoặc vai xoay theo lực kéo (mất mục đích "chống xoay" của bài); đẩy tay quá nhanh không giữ đủ lâu ở vị trí đẩy hết.',
+    tips:'Đây là bài core "chống xoay" (anti-rotation) — khác với Wood Chop hay Russian Twist là bài "tạo xoay"; nên có cả hai loại trong chương trình vì bổ trợ lẫn nhau.',
+    alt:['Cable Wood Chop','Side Plank']},
+  {id:'weighted_russian_twist',vi:'Xoay người Nga có tạ',en:'Weighted Russian Twist',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:['lower_back'],equipment:'Đĩa tạ hoặc tạ đơn',sets:3,reps:'16-20 (8-10 mỗi bên)',tempo:'2-0-2',rest:60,rpe:'RPE 8 (RIR 2)',compound:false,
+    setup:'Chuẩn bị: ngồi trên sàn, gối gập, ngả thân về sau khoảng 45°, nâng hai chân khỏi sàn (hoặc giữ chạm sàn nếu mới tập), cầm đĩa tạ/tạ đơn trước ngực.',
+    cue:'Xoay thân đưa tạ chạm sàn hai bên hông thay nhau, xoay chủ động từ vùng bụng-liên sườn, giữ lưng thẳng không gù.',
+    mistakes:'Xoay chỉ bằng tay/vai mà không xoay thân; gù lưng dưới làm mất tác động lên core và tăng áp lực lên cột sống.',
+    tips:'Giữ chân chạm sàn để giảm độ khó nếu mới tập; nâng chân lên khỏi sàn khi đã kiểm soát tốt để tăng độ khó đáng kể.',
+    alt:['Cable Wood Chop',"Farmer's Carry"]},
+  {id:'side_plank',vi:'Plank nghiêng',en:'Side Plank',day:[],tier:'finisher',primary:'core',secondary:[],stabilizer:[],equipment:'Không dụng cụ (thảm)',sets:3,reps:'20-40 giây mỗi bên',tempo:'Tĩnh (isometric)',rest:45,rpe:'RPE 7-8 (RIR 2-3)',compound:false,
+    setup:'Chuẩn bị: nằm nghiêng, chống khuỷu tay thẳng dưới vai, hai chân chồng lên nhau (hoặc chân trước đặt xuống để hỗ trợ nếu mới tập), nâng hông khỏi sàn.',
+    cue:'Giữ thân thành một đường thẳng từ đầu đến gót chân, siết chặt liên sườn bên dưới suốt thời gian giữ, không để hông rơi xuống hoặc nhô lên quá cao.',
+    mistakes:'Để hông rơi thấp làm mất căng cơ liên sườn; vai lệch không thẳng hàng với khuỷu tay gây áp lực sai lên khớp vai.',
+    tips:'Bài cơ bản, mức độ khó thấp nhất trong nhóm liên sườn — phù hợp làm điểm khởi đầu trước khi chuyển sang Pallof Press hoặc Wood Chop nặng hơn.',
+    alt:['Pallof Press','Weighted Russian Twist']},
+];
+EXERCISES.push(...EXTRA_FINISHERS);
+
+// Nhóm hiển thị theo vùng bụng cho màn "Chọn thêm 1 bài Finisher" — tái dùng lại bài Ab Wheel đã có sẵn (cùng 1 động tác, không tạo trùng dữ liệu tiến độ)
+const FINISHER_POOL = [
+  {category:'Bụng trên', ids:['weighted_decline_crunch','cable_crunch','machine_crunch','weighted_crunch']},
+  {category:'Bụng dưới', ids:['hanging_leg_raise','reverse_crunch','captains_chair_raise','lying_leg_raise']},
+  {category:'Toàn bộ Core (Full Core)', ids:['ab_wheel','dragon_flag','hollow_body_hold','farmers_carry']},
+  {category:'Liên sườn (Obliques)', ids:['cable_wood_chop','pallof_press','weighted_russian_twist','side_plank']},
+];
 const DEFAULT_SPLIT = {
   Mon:'Push A (Chest Focus)',
   Tue:'Pull A (Back Width)',
@@ -565,7 +658,8 @@ let state = {
   exerciseProgress: {},// exId -> {weight, reps, sinceDate, timesCompleted}
   restCheckins: [],    // ['toDateString', ...] — tick ngày nghỉ để giữ chuỗi (ngày nghỉ KHÔNG cố định)
   streakSaveDates: [],  // ['toDateString', ...] — những ngày bị hổng được "khôi phục chuỗi" bù vào
-  streakSaveLog: []     // [isoString, ...] — mỗi lần dùng "khôi phục chuỗi" ghi 1 mốc thời gian, để tính giới hạn 3 lần/tháng
+  streakSaveLog: [],    // [isoString, ...] — mỗi lần dùng "khôi phục chuỗi" ghi 1 mốc thời gian, để tính giới hạn 3 lần/tháng
+  extraFinisherByDate: {} // {'toDateString': exerciseId} — bài finisher phụ (bụng) người dùng tự chọn thêm mỗi ngày tập
 };
 let view = {name:'home', params:{}};
 
@@ -606,10 +700,34 @@ function showToast(msg){
 function todayKey(){ return DAY_KEYS[new Date().getDay()]; }
 function todayTemplate(){ return state.split[todayKey()] || 'Rest'; }
 function exercisesForDay(dayTemplate){ return EXERCISES.filter(e=> Array.isArray(e.day) ? e.day.includes(dayTemplate) : e.day===dayTemplate); }
+
+/* --- finisher phụ (tuỳ chọn), chọn thêm 1 bài mỗi ngày tập --- */
+function extraFinisherIdForToday(){ return (state.extraFinisherByDate||{})[new Date().toDateString()]; }
+function setExtraFinisherForToday(exId){
+  state.extraFinisherByDate = state.extraFinisherByDate || {};
+  state.extraFinisherByDate[new Date().toDateString()] = exId;
+  saveState();
+}
+function clearExtraFinisherForToday(){
+  if(state.extraFinisherByDate) delete state.extraFinisherByDate[new Date().toDateString()];
+  saveState();
+}
+// danh sách bài tập của ngày, CỘNG THÊM bài finisher phụ đã chọn cho hôm nay (nếu có) — dùng thay exercisesForDay ở mọi nơi cần đếm/log bài tập của "hôm nay"
+function exercisesForDayWithExtra(dayTemplate){
+  const base = exercisesForDay(dayTemplate);
+  if(dayTemplate==='Rest') return base;
+  const exId = extraFinisherIdForToday();
+  if(exId){
+    const ex = findExercise(exId);
+    // ép tier='finisher' trên bản sao để luôn hiện đúng nhóm Finisher dù bài đó ở ngày khác có tier khác (VD accessory)
+    if(ex && !base.some(b=>b.id===ex.id)) return [...base, Object.assign({}, ex, {tier:'finisher'})];
+  }
+  return base;
+}
 function findExercise(id){ return EXERCISES.find(e=>e.id===id); }
 function findMuscle(id){ return MUSCLES.find(m=>m.id===id); }
 function estimateMinutes(dayTemplate){
-  const exs = exercisesForDay(dayTemplate);
+  const exs = exercisesForDayWithExtra(dayTemplate);
   const secs = exs.reduce((sum,e)=> sum + e.sets*(e.rest+40), 0);
   return Math.round(secs/60);
 }
@@ -891,7 +1009,7 @@ function goTo(name, params={}){
 /* ============ RENDER: HOME ============ */
 function renderHome(){
   const dayTemplate = todayTemplate();
-  const exs = exercisesForDay(dayTemplate);
+  const exs = exercisesForDayWithExtra(dayTemplate);
   const isRest = dayTemplate==='Rest';
   const doneToday = state.sessions.some(s=> new Date(s.endedAt).toDateString()===new Date().toDateString());
   const streak = computeStreak();
@@ -976,7 +1094,7 @@ function promptTodayWeight(){
 /* ============ RENDER: TODAY ============ */
 function renderToday(){
   const dayTemplate = state.activeSession ? state.activeSession.dayLabel : todayTemplate();
-  const exs = exercisesForDay(dayTemplate);
+  const exs = exercisesForDayWithExtra(dayTemplate);
   const isRest = dayTemplate==='Rest';
 
   if(isRest && !state.activeSession){
@@ -994,6 +1112,7 @@ function renderToday(){
   const completed = state.activeSession ? state.activeSession.sets : [];
   const isDone = (exId)=> completed.some(s=>s.exerciseId===exId);
   const allDone = exs.length>0 && exs.every(ex=>isDone(ex.id));
+  const extraFinisherId = extraFinisherIdForToday();
 
   return `<div class="screen">
     <div class="topbar">
@@ -1001,13 +1120,15 @@ function renderToday(){
     </div>
     ${TIER_ORDER.map(tier=>{
       const group = exs.filter(ex=> (ex.tier||'main')===tier);
-      if(group.length===0) return '';
       const t = TIER_INFO[tier];
-      return `<div class="tier-label" style="color:${t.color}"><div class="sq" style="background:${t.color}"></div>${t.emoji} ${t.label}</div>
+      let html = '';
+      if(group.length>0){
+        html += `<div class="tier-label" style="color:${t.color}"><div class="sq" style="background:${t.color}"></div>${t.emoji} ${t.label}</div>
       ${group.map(ex=>{
         const done = isDone(ex.id);
         const prog = state.exerciseProgress[ex.id];
         const showBump = !done && pendingBump(ex.id);
+        const isExtra = ex.id===extraFinisherId;
         const metaText = prog
           ? `${ex.sets} set × ${prog.reps||ex.reps}${prog.weight!=null? ' · '+prog.weight+'kg':''}`
           : `${ex.sets} set × ${ex.reps} reps`;
@@ -1022,13 +1143,19 @@ function renderToday(){
         <div class="ex-item ${done?'done':''}">
           <div class="ex-status ${done?'done':''}" onclick="event.stopPropagation();toggleExerciseDone('${ex.id}')">${done? ICONS.check : ''}</div>
           <div class="ex-main" onclick="goTo('exerciseInfo',{id:'${ex.id}'})">
-            <div class="ex-name">${ex.vi}</div>
+            <div class="ex-name">${ex.vi}${isExtra? ' <span style=\"color:var(--text-tertiary);font-size:11px;\">· tự chọn</span>':''}</div>
             <div class="ex-name-en">${ex.en}</div>
             <div class="ex-meta">${metaText}</div>
           </div>
           <div class="chev" onclick="goTo('exerciseInfo',{id:'${ex.id}'})">${ICONS.chev}</div>
-        </div>`;
+        </div>
+        ${isExtra && !done? `<div class="ghost-btn" style="margin:2px 20px 8px;font-size:12px;padding:8px;" onclick="clearExtraFinisherForToday();render();">Đổi bài finisher khác</div>`:''}`;
       }).join('')}`;
+      }
+      if(tier==='finisher' && !extraFinisherId){
+        html += `<div class="ghost-btn" style="margin:8px 20px;" onclick="goTo('chooseFinisher')">+ Chọn thêm 1 bài Finisher (Bụng)</div>`;
+      }
+      return html;
     }).join('')}
     ${state.activeSession && !allDone? `<div style="margin-top:8px;"><button class="ghost-btn" onclick="finishSession()">Kết thúc buổi tập sớm</button></div>`:''}
   </div>`;
@@ -1069,7 +1196,7 @@ function completeExercise(exId, prog){
   const ex = findExercise(exId);
   state.activeSession.sets.push({exerciseId:exId, weight:prog?prog.weight:null, reps:prog?prog.reps:null, sets:ex.sets, completedAt:new Date().toISOString()});
   saveState();
-  const exs = exercisesForDay(state.activeSession.dayLabel);
+  const exs = exercisesForDayWithExtra(state.activeSession.dayLabel);
   const allDone = exs.every(e=> state.activeSession.sets.some(s=>s.exerciseId===e.id));
   if(allDone){ finishSession(); return; }
   render();
@@ -1251,6 +1378,38 @@ function renderRecovery(){
   </div>`;
 }
 
+/* ============ RENDER: CHỌN THÊM 1 BÀI FINISHER (bụng, tuỳ chọn mỗi ngày tập) ============ */
+function renderChooseFinisher(){
+  return `<div class="screen">
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('today')">${ICONS.back} Hôm nay</div></div>
+    <div style="padding:4px 20px;">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">Chọn thêm 1 bài Finisher</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Chọn 1 bài bụng để tập cùng finisher cố định của hôm nay — chọn lại mỗi ngày tập, sẽ tính vào hồi phục & chuỗi như bài thường.</div>
+    </div>
+    ${FINISHER_POOL.map(group=>`
+      <div class="section-label">${group.category}</div>
+      <div class="card" style="padding:6px 8px;">
+      ${group.ids.map(id=>{
+        const ex = findExercise(id);
+        if(!ex) return '';
+        return `<div class="ex-item" style="margin:6px 6px;" onclick="pickExtraFinisher('${id}')">
+          <div class="ex-main">
+            <div class="ex-name">${ex.vi}</div>
+            <div class="ex-name-en">${ex.en} · ${ex.equipment}</div>
+            <div class="ex-meta">${ex.sets} set × ${ex.reps}</div>
+          </div>
+          <div class="chev">${ICONS.chev}</div>
+        </div>`;
+      }).join('')}
+      </div>`).join('')}
+  </div>`;
+}
+function pickExtraFinisher(exId){
+  setExtraFinisherForToday(exId);
+  goTo('today');
+  showToast('Đã thêm bài finisher: '+findExercise(exId).vi);
+}
+
 /* ============ RENDER: SETTINGS ============ */
 function renderSettings(){
   return `<div class="screen">
@@ -1411,6 +1570,7 @@ function render(){
   else if(view.name==='recovery') el.innerHTML = renderRecovery();
   else if(view.name==='settings') el.innerHTML = renderSettings();
   else if(view.name==='backfill') el.innerHTML = renderBackfill();
+  else if(view.name==='chooseFinisher') el.innerHTML = renderChooseFinisher();
 }
 
 /* ============ INIT ============ */
