@@ -700,6 +700,12 @@ const EXTRA_FINISHERS = [
     mistakes:'Để hông rơi thấp làm mất căng cơ liên sườn; vai lệch không thẳng hàng với khuỷu tay gây áp lực sai lên khớp vai.',
     tips:'Bài cơ bản, mức độ khó thấp nhất trong nhóm liên sườn — phù hợp làm điểm khởi đầu trước khi chuyển sang Pallof Press hoặc Wood Chop nặng hơn.',
     alt:['Pallof Press','Weighted Russian Twist']},
+  {id:'treadmill_cardio',vi:'Cardio máy chạy bộ',en:'Treadmill Cardio',day:[],tier:'finisher',primary:'core',secondary:['quads','glutes'],stabilizer:[],equipment:'Máy chạy bộ (treadmill)',sets:1,reps:'Theo tốc độ, độ dốc & thời gian bạn tự chọn',tempo:'Ổn định theo tốc độ máy',rest:0,rpe:'RPE 6-8 tuỳ tốc độ/độ dốc chọn',compound:true,
+    setup:'Chuẩn bị: bước lên máy chạy, chọn tốc độ (km/h) và độ dốc (%) trên bảng điều khiển máy giống với lựa chọn bạn chọn trong app, khởi động nhẹ ~2-3 phút ở tốc độ thấp trước khi vào mức đã chọn.',
+    cue:'Giữ tư thế thẳng lưng, nhìn về phía trước (không cúi nhìn xuống chân), sải bước đều theo băng chạy, hai tay đánh nhịp tự nhiên hoặc giữ nhẹ tay vịn nếu mới tập.',
+    mistakes:'Bám chặt tay vịn trong lúc chạy làm sai lệch số calo máy hiển thị (giảm tải thật lên cơ thể); tăng tốc độ/độ dốc đột ngột thay vì tăng dần.',
+    tips:'App tính lượng calo tiêu hao theo đúng công thức chuẩn ACSM dựa trên tốc độ, độ dốc, thời gian chạy và cân nặng hiện tại của bạn — chọn tổ hợp bên dưới rồi bấm vào mốc thời gian muốn chạy để hoàn thành bài.',
+    alt:['Đạp xe đạp tại chỗ (Stationary Bike)','Máy elliptical']},
 ];
 EXERCISES.push(...EXTRA_FINISHERS);
 
@@ -709,6 +715,7 @@ const FINISHER_POOL = [
   {category:'Bụng dưới', ids:['hanging_leg_raise','reverse_crunch','captains_chair_raise','lying_leg_raise']},
   {category:'Toàn bộ Core (Full Core)', ids:['ab_wheel','dragon_flag','hollow_body_hold','farmers_carry']},
   {category:'Liên sườn (Obliques)', ids:['cable_wood_chop','pallof_press','weighted_russian_twist','side_plank']},
+  {category:'Cardio (Máy chạy bộ)', ids:['treadmill_cardio']},
 ];
 const DEFAULT_SPLIT = {
   Mon:'Push A (Chest Focus)',
@@ -730,32 +737,6 @@ const DAY_LABEL_VI = {Sun:'CN',Mon:'T2',Tue:'T3',Wed:'T4',Thu:'T5',Fri:'T6',Sat:
    Đơn vị vi chất: sugar/fiber/satFat/unsatFat = g, sodium/potassium/calcium/magnesium = mg,
    vitD = mcg, iron/zinc = mg, omega3 = mg, water = ml (nước có trong thực phẩm/đồ uống đó). */
 const NUTRITION_DB = [
-  {id:'protein', label:'Nguồn đạm', items:[
-    {id:'chicken_breast', vi:'Ức gà (không xương, không da)', unit:'g', defaultQty:150,
-      per:{cal:[1.65,1.9], protein:[0.31,0.35], fat:[0.03,0.06], carb:[0,0],
-        sugar:[0,0], fiber:[0,0], sodium:[0.6,0.9], potassium:[2.5,3.0], satFat:[0.008,0.015], unsatFat:[0.018,0.04],
-        calcium:[0.1,0.2], vitD:[0,0.001], iron:[0.003,0.005], magnesium:[0.25,0.32], zinc:[0.008,0.012], omega3:[0.005,0.01], water:[0.6,0.68]}},
-    {id:'chicken_breast_bone', vi:'Ức gà có xương', unit:'g', defaultQty:200,
-      per:{cal:[1.5,1.75], protein:[0.24,0.28], fat:[0.05,0.08], carb:[0,0],
-        sugar:[0,0], fiber:[0,0], sodium:[0.55,0.85], potassium:[2.2,2.7], satFat:[0.014,0.022], unsatFat:[0.02,0.045],
-        calcium:[0.15,0.3], vitD:[0,0.001], iron:[0.004,0.006], magnesium:[0.22,0.28], zinc:[0.007,0.011], omega3:[0.005,0.01], water:[0.58,0.65]}},
-    {id:'pork_belly', vi:'Thịt ba rọi heo', unit:'g', defaultQty:150,
-      per:{cal:[4.8,5.5], protein:[0.09,0.14], fat:[0.45,0.53], carb:[0,0],
-        sugar:[0,0], fiber:[0,0], sodium:[0.3,0.5], potassium:[1.5,2.0], satFat:[0.15,0.20], unsatFat:[0.20,0.28],
-        calcium:[0.05,0.1], vitD:[0.001,0.003], iron:[0.005,0.008], magnesium:[0.1,0.15], zinc:[0.015,0.02], omega3:[0.02,0.05], water:[0.3,0.4]}},
-    {id:'pork_thigh', vi:'Thịt đùi heo', unit:'g', defaultQty:150,
-      per:{cal:[2.0,2.4], protein:[0.19,0.22], fat:[0.10,0.16], carb:[0,0],
-        sugar:[0,0], fiber:[0,0], sodium:[0.4,0.6], potassium:[2.8,3.3], satFat:[0.04,0.06], unsatFat:[0.05,0.09],
-        calcium:[0.05,0.1], vitD:[0.0005,0.002], iron:[0.006,0.009], magnesium:[0.18,0.24], zinc:[0.02,0.03], omega3:[0.02,0.05], water:[0.55,0.62]}},
-    {id:'beef', vi:'Thịt bò', unit:'g', defaultQty:150,
-      per:{cal:[1.8,2.2], protein:[0.26,0.30], fat:[0.08,0.15], carb:[0,0],
-        sugar:[0,0], fiber:[0,0], sodium:[0.5,0.7], potassium:[3.0,3.6], satFat:[0.03,0.06], unsatFat:[0.04,0.08],
-        calcium:[0.1,0.15], vitD:[0,0.002], iron:[0.023,0.032], magnesium:[0.2,0.25], zinc:[0.04,0.06], omega3:[0.01,0.03], water:[0.55,0.62]}},
-    {id:'boiled_egg', vi:'Trứng luộc', unit:'quả', defaultQty:1,
-      per:{cal:[68,78], protein:[6,6.5], fat:[4.5,5.5], carb:[0.3,0.6],
-        sugar:[0.2,0.4], fiber:[0,0], sodium:[60,70], potassium:[60,70], satFat:[1.5,1.8], unsatFat:[2.5,3.2],
-        calcium:[25,28], vitD:[1,1.2], iron:[0.8,1], magnesium:[5,6], zinc:[0.5,0.7], omega3:[30,40], water:[30,35]}},
-  ]},
   {id:'carb', label:'Tinh bột', items:[
     {id:'rice_bowl', vi:'Cơm', unit:'tô', defaultQty:1,
       per:{cal:[260,330], protein:[5,6], fat:[0.4,0.6], carb:[56,68],
@@ -918,6 +899,8 @@ const METHOD_GROUPS = {"ga": ["song", "luoc", "hap", "ap_chao", "nuong", "chien"
 /* ============ RAW_FOODS: nguyên liệu 2 cấp (chọn món -> chọn cách chế biến) ============ */
 const RAW_FOODS = [
   {id:'ga', label:'Thịt gà (chọn phần rồi chọn cách chế biến)', group:'ga', items:[
+    {id:'uc_ga', vi:'Ức gà (không xương, không da)', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.65,1.9], protein:[0.31,0.35], fat:[0.03,0.06], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.6,0.9], potassium:[2.5,3.0], satFat:[0.008,0.015], unsatFat:[0.018,0.04], calcium:[0.1,0.2], vitD:[0,0.001], iron:[0.003,0.005], magnesium:[0.25,0.32], zinc:[0.008,0.012], omega3:[0.005,0.01], water:[0.6,0.68]}},
+    {id:'uc_ga_xuong', vi:'Ức gà có xương', unit:'g', defaultQty:200, equiv:1, base:{cal:[1.5,1.75], protein:[0.24,0.28], fat:[0.05,0.08], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.55,0.85], potassium:[2.2,2.7], satFat:[0.014,0.022], unsatFat:[0.02,0.045], calcium:[0.15,0.3], vitD:[0,0.001], iron:[0.004,0.006], magnesium:[0.22,0.28], zinc:[0.007,0.011], omega3:[0.005,0.01], water:[0.58,0.65]}},
     {id:'ga_nguyen_con', vi:'Gà nguyên con (nguyên da, chưa chế biến)', unit:'g', defaultQty:300, equiv:1, base:{cal:[1.849,2.451], protein:[0.155,0.205], fat:[0.129,0.171], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.044,0.058], unsatFat:[0.085,0.113], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.009,0.013], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.568,0.752]}},
     {id:'dui_ga', vi:'Đùi gà (nguyên da)', unit:'g', defaultQty:200, equiv:1, base:{cal:[1.763,2.337], protein:[0.146,0.194], fat:[0.129,0.171], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.044,0.058], unsatFat:[0.085,0.113], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.009,0.013], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.576,0.764]}},
     {id:'ma_dui_ga', vi:'Má đùi gà', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.677,2.223], protein:[0.155,0.205], fat:[0.112,0.148], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.038,0.05], unsatFat:[0.074,0.098], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.009,0.013], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.585,0.775]}},
@@ -928,6 +911,8 @@ const RAW_FOODS = [
     {id:'me_ga', vi:'Mề gà (dạ dày gà)', unit:'g', defaultQty:100, equiv:1, base:{cal:[0.808,1.072], protein:[0.152,0.202], fat:[0.015,0.021], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.602,0.798], potassium:[2.236,2.964], satFat:[0.005,0.007], unsatFat:[0.011,0.014], calcium:[0.086,0.114], vitD:[0.003,0.003], iron:[0.022,0.029], magnesium:[0.155,0.205], zinc:[0.018,0.024], omega3:[0.516,0.684], water:[0.684,0.906]}},
   ]},
   {id:'heo', label:'Thịt heo (chọn phần rồi chọn cách chế biến)', group:'heo', items:[
+    {id:'ba_roi_heo', vi:'Thịt ba rọi heo', unit:'g', defaultQty:150, equiv:1, base:{cal:[4.8,5.5], protein:[0.09,0.14], fat:[0.45,0.53], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.3,0.5], potassium:[1.5,2.0], satFat:[0.15,0.20], unsatFat:[0.20,0.28], calcium:[0.05,0.1], vitD:[0.001,0.003], iron:[0.005,0.008], magnesium:[0.1,0.15], zinc:[0.015,0.02], omega3:[0.02,0.05], water:[0.3,0.4]}},
+    {id:'dui_heo', vi:'Thịt đùi heo', unit:'g', defaultQty:150, equiv:1, base:{cal:[2.0,2.4], protein:[0.19,0.22], fat:[0.10,0.16], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.4,0.6], potassium:[2.8,3.3], satFat:[0.04,0.06], unsatFat:[0.05,0.09], calcium:[0.05,0.1], vitD:[0.0005,0.002], iron:[0.006,0.009], magnesium:[0.18,0.24], zinc:[0.02,0.03], omega3:[0.02,0.05], water:[0.55,0.62]}},
     {id:'nac_than_heo', vi:'Nạc thăn heo', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.23,1.63], protein:[0.181,0.239], fat:[0.052,0.068], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.018,0.023], unsatFat:[0.034,0.045], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.009,0.013], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.619,0.821]}},
     {id:'nac_vai_heo', vi:'Nạc vai heo', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.548,2.052], protein:[0.163,0.217], fat:[0.095,0.125], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.032,0.043], unsatFat:[0.062,0.083], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.009,0.013], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.593,0.787]}},
     {id:'suon_non', vi:'Sườn non', unit:'g', defaultQty:200, equiv:1, base:{cal:[2.15,2.85], protein:[0.146,0.194], fat:[0.172,0.228], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.058,0.078], unsatFat:[0.114,0.15], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.009,0.013], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.533,0.707]}},
@@ -942,6 +927,7 @@ const RAW_FOODS = [
     {id:'oc_heo', vi:'Óc heo', unit:'g', defaultQty:100, equiv:1, base:{cal:[1.075,1.425], protein:[0.086,0.114], fat:[0.074,0.098], carb:[0.004,0.006], sugar:[0,0], fiber:[0,0], sodium:[0.602,0.798], potassium:[2.236,2.964], satFat:[0.024,0.031], unsatFat:[0.05,0.067], calcium:[0.086,0.114], vitD:[0.003,0.003], iron:[0.022,0.03], magnesium:[0.103,0.137], zinc:[0.026,0.034], omega3:[0.516,0.684], water:[0.687,0.911]}},
   ]},
   {id:'bo', label:'Thịt bò (chọn phần rồi chọn cách chế biến)', group:'bo', items:[
+    {id:'thit_bo_thuong', vi:'Thịt bò (loại thường, chưa rõ phần)', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.8,2.2], protein:[0.26,0.30], fat:[0.08,0.15], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.5,0.7], potassium:[3.0,3.6], satFat:[0.03,0.06], unsatFat:[0.04,0.08], calcium:[0.1,0.15], vitD:[0,0.002], iron:[0.023,0.032], magnesium:[0.2,0.25], zinc:[0.04,0.06], omega3:[0.01,0.03], water:[0.55,0.62]}},
     {id:'than_noi_bo', vi:'Thăn nội bò (fillet mignon)', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.23,1.63], protein:[0.181,0.239], fat:[0.052,0.068], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.018,0.023], unsatFat:[0.034,0.045], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.022,0.03], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.619,0.821]}},
     {id:'than_ngoai_bo', vi:'Thăn ngoại bò (sirloin)', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.359,1.801], protein:[0.181,0.239], fat:[0.069,0.091], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.023,0.031], unsatFat:[0.045,0.06], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.022,0.03], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.602,0.798]}},
     {id:'bap_bo', vi:'Bắp bò', unit:'g', defaultQty:150, equiv:1, base:{cal:[1.178,1.562], protein:[0.181,0.239], fat:[0.043,0.057], carb:[0,0], sugar:[0,0], fiber:[0,0], sodium:[0.516,0.684], potassium:[2.408,3.192], satFat:[0.015,0.019], unsatFat:[0.028,0.038], calcium:[0.069,0.091], vitD:[0,0.001], iron:[0.024,0.032], magnesium:[0.189,0.251], zinc:[0.015,0.021], omega3:[0.344,0.456], water:[0.628,0.832]}},
@@ -1354,6 +1340,50 @@ function computeSessionCalories(session){
   const breakdown = session.sets.map(s=> computeSetEntryCalories(s, fallbackBw));
   const total = Math.round(breakdown.reduce((sum,b)=> sum+b.caloriesExercise, 0));
   return {total, breakdown};
+}
+
+/* ============ CARDIO MÁY CHẠY BỘ — tính MET & calo theo công thức chuẩn ACSM ============
+   VO2 (ml/kg/phút) tính từ tốc độ (m/phút) & độ dốc (%), sau đó quy đổi ra MET (VO2/3.5) rồi ra calo
+   theo đúng công thức MET chuẩn đang dùng chung toàn app (met*3.5*cân nặng/200 * số phút).
+   Dùng công thức "đi bộ" cho tốc độ <=6.4km/h (~4mph, ngưỡng chuyển từ đi sang chạy bộ trên máy),
+   công thức "chạy" cho tốc độ nhanh hơn — đúng chuẩn ACSM Metabolic Equations. */
+const TREADMILL_SPEED_OPTIONS = [3,4,5,6,7,8,9,10,11,12,14,16]; // km/h — theo đúng nấc thường thấy trên bảng điều khiển máy chạy bộ
+const TREADMILL_INCLINE_OPTIONS = [0,1,2,3,4,5,6,8,10,12,15]; // % độ dốc
+const TREADMILL_DURATION_OPTIONS = [5,10,15,20,25,30,35,40,45,50,55,60]; // phút
+function treadmillMET(speedKmh, inclinePercent){
+  const speedMmin = speedKmh * 1000/60; // quy đổi km/h -> m/phút
+  const grade = inclinePercent/100;
+  const isRunning = speedKmh > 6.4;
+  const vo2 = isRunning
+    ? 0.2*speedMmin + 0.9*speedMmin*grade + 3.5   // ACSM running equation
+    : 0.1*speedMmin + 1.8*speedMmin*grade + 3.5;  // ACSM walking equation
+  return vo2/3.5;
+}
+function treadmillCaloriesForMinutes(speedKmh, inclinePercent, minutes, bodyWeightKg){
+  const met = treadmillMET(speedKmh, inclinePercent);
+  const bw = bodyWeightKg || currentWeight() || 65;
+  return Math.round(met*3.5*bw/200 * minutes);
+}
+/* Hoàn thành bài Cardio máy chạy bộ: log vào buổi tập đang diễn ra bằng đúng "công thức MET chuẩn"
+   sẵn có của app — coi cả buổi chạy là 1 set × 1 rep dài "reps" giây (repSeconds = số phút * 60),
+   không nghỉ giữa set, met = met tính theo tốc độ/độ dốc đã chọn. Không cần sửa gì ở
+   computeSetEntryCalories vì hàm đó đã hỗ trợ sẵn override met/reps/repSeconds/restSeconds theo setEntry. */
+function completeTreadmillCardio(speedKmh, inclinePercent, minutes){
+  if(!state.activeSession){ showToast('Hãy bấm "Bắt đầu buổi tập" trước'); return; }
+  const bw = currentWeight() || (state.profile? state.profile.startWeight : 65) || 65;
+  const met = treadmillMET(speedKmh, inclinePercent);
+  const idx = state.activeSession.sets.findIndex(s=>s.exerciseId==='treadmill_cardio');
+  if(idx>=0) state.activeSession.sets.splice(idx,1);
+  state.activeSession.sets.push({
+    exerciseId:'treadmill_cardio', weight:null, reps:1, sets:1,
+    restSeconds:0, met, repSeconds: minutes*60, bodyWeightKg: bw,
+    cardioSpeedKmh: speedKmh, cardioInclinePercent: inclinePercent, cardioMinutes: minutes,
+    completedAt:new Date().toISOString()
+  });
+  saveState();
+  const cal = treadmillCaloriesForMinutes(speedKmh, inclinePercent, minutes, bw);
+  goTo('today');
+  showToast(`Đã hoàn thành Cardio ${minutes} phút — ~${cal} kcal 🔥`);
 }
 
 /* ============ TỰ ĐỘNG CHỐT BUỔI TẬP BỊ QUÊN KẾT THÚC ============
@@ -1953,9 +1983,12 @@ function renderToday(){
         const prog = state.exerciseProgress[ex.id];
         const showBump = !done && pendingBump(ex.id);
         const isExtra = ex.id===extraFinisherId;
-        const metaText = prog
-          ? `${ex.sets} set × ${prog.reps||ex.reps}${prog.weight!=null? ' · '+prog.weight+'kg':''}`
-          : `${ex.sets} set × ${ex.reps} reps`;
+        const doneEntry = completed.find(s=>s.exerciseId===ex.id);
+        const metaText = ex.id==='treadmill_cardio'
+          ? (doneEntry? `${doneEntry.cardioSpeedKmh}km/h · dốc ${doneEntry.cardioInclinePercent}% · ${doneEntry.cardioMinutes} phút` : 'Chạm để chọn tốc độ, độ dốc & thời gian chạy')
+          : prog
+            ? `${ex.sets} set × ${prog.reps||ex.reps}${prog.weight!=null? ' · '+prog.weight+'kg':''}`
+            : `${ex.sets} set × ${ex.reps} reps`;
         return `
         ${showBump? `<div class="suggest-banner" style="margin:8px 20px;">
             <span>Đã tập ổn ${OVERLOAD_THRESHOLD_DAYS}+ ngày ở ${prog.weight}kg — tăng lên ${(prog.weight+weightStep(ex))}kg?</span>
@@ -2030,6 +2063,10 @@ function toggleExerciseDone(exId){
     // bỏ tick
     state.activeSession.sets.splice(idx,1);
     saveState(); render();
+    return;
+  }
+  if(exId==='treadmill_cardio'){
+    goTo('treadmillCalc');
     return;
   }
   const ex = findExercise(exId);
@@ -2222,6 +2259,48 @@ function renderExerciseInfo(exId){
     <div class="info-block"><b>Tips:</b> ${ex.tips}</div>
     <div class="info-block"><b>Bài thay thế (nếu máy bận/không có thiết bị):</b><br>${ex.alt.map((a,i)=>`${i+1}. ${a}`).join('<br>')}</div>
     <div class="info-block" style="color:var(--text-tertiary);font-size:12px;">Video/GIF minh họa sẽ được bổ sung ở bản cập nhật kế tiếp.</div>
+  </div>`;
+}
+
+/* ============ RENDER: CARDIO MÁY CHẠY BỘ — chọn tốc độ, độ dốc rồi chọn thời gian chạy ============ */
+let treadmillSpeed = 6;
+let treadmillIncline = 1;
+function setTreadmillSpeed(v){ treadmillSpeed = Number(v); render(); }
+function setTreadmillIncline(v){ treadmillIncline = Number(v); render(); }
+function renderTreadmillCalc(){
+  const bw = currentWeight() || (state.profile? state.profile.startWeight : 65) || 65;
+  const met = treadmillMET(treadmillSpeed, treadmillIncline);
+  return `<div class="screen">
+    <div class="sheet-header"><div class="back-btn" onclick="goTo('today')">${ICONS.back} Hôm nay</div></div>
+    <div style="padding:4px 20px;">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-0.3px;">🏃 Cardio máy chạy bộ</div>
+      <div style="font-size:13px;color:var(--text-tertiary);margin-top:2px;">Chọn tốc độ & độ dốc giống trên bảng điều khiển máy, rồi bấm vào mốc thời gian bạn định chạy để hoàn thành bài — app tự tính calo theo cân nặng hiện tại (${bw}kg).</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tốc độ (km/h)</div>
+      <div class="filter-row" style="padding:0;">
+        ${TREADMILL_SPEED_OPTIONS.map(s=>`<div class="filter-chip ${treadmillSpeed===s?'active':''}" onclick="setTreadmillSpeed(${s})">${s}</div>`).join('')}
+      </div>
+      <div class="card-title" style="margin-top:14px;">Độ dốc (%)</div>
+      <div class="filter-row" style="padding:0;">
+        ${TREADMILL_INCLINE_OPTIONS.map(i=>`<div class="filter-chip ${treadmillIncline===i?'active':''}" onclick="setTreadmillIncline(${i})">${i}%</div>`).join('')}
+      </div>
+      <div class="info-block" style="margin:14px 0 0;">Tổ hợp đang chọn: <b>${treadmillSpeed}km/h · dốc ${treadmillIncline}%</b> ≈ <b>${met.toFixed(1)} MET</b> (${treadmillSpeed>6.4? 'mức chạy':'mức đi bộ/đi nhanh'})</div>
+    </div>
+    <div class="section-label">Chọn thời gian chạy để hoàn thành bài</div>
+    <div class="card" style="padding:6px 8px;">
+      ${TREADMILL_DURATION_OPTIONS.map(min=>{
+        const cal = treadmillCaloriesForMinutes(treadmillSpeed, treadmillIncline, min, bw);
+        return `<div class="ex-item" style="margin:6px 6px;" onclick="completeTreadmillCardio(${treadmillSpeed},${treadmillIncline},${min})">
+          <div class="ex-main">
+            <div class="ex-name">${min} phút</div>
+            <div class="ex-name-en">${treadmillSpeed}km/h · dốc ${treadmillIncline}%</div>
+          </div>
+          <div style="font-size:15px;font-weight:700;color:var(--recovery-stimulated,#E24A4A);">~${cal} kcal</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="info-block" style="margin:0 20px 16px;color:var(--text-tertiary);">Số liệu ước tính theo công thức MET chuẩn (ACSM), tính từ tốc độ, độ dốc, thời gian & cân nặng hiện tại — thực tế có thể lệch nhẹ tuỳ máy và thể trạng.</div>
   </div>`;
 }
 
@@ -2673,7 +2752,7 @@ function filterFoodList(rawQuery){
 function renderFoodSearchBar(){
   const esc = (foodSearchQuery||'').replace(/"/g,'&quot;');
   return `<div class="card" style="padding:10px 14px;margin-top:10px;">
-    <input type="text" class="set-input" id="foodSearchInput" placeholder="🔍 Tìm món ăn (VD: cơm, ức gà, sữa...)" value="${esc}" oninput="updateFoodSearch(this.value)" style="width:100%;">
+    <input type="text" class="set-input" id="foodSearchInput" placeholder="🔍 Tìm món ăn" value="${esc}" oninput="updateFoodSearch(this.value)" style="width:100%;">
   </div>`;
 }
 /* Render các nhóm nguyên liệu 2 cấp (Thịt gà/heo/bò/vịt, Cá, Hải sản, Trứng, Rau):
@@ -2692,7 +2771,7 @@ function renderRawFoodSections(dateStr){
         return `<div class="food-row" data-search="${normalizeVN(item.vi)}"><div class="food-item ${expanded?'expanded':''}" onclick="toggleFoodExpand('${item.id}')">
           <div class="food-main">
             <div class="food-name">${item.vi}</div>
-            <div class="food-sub">Sống/thô ~${loKcal}–${hiKcal} kcal / ${item.defaultQty}${item.unit} · chạm để chọn cách chế biến</div>
+            <div class="food-sub">Sống/thô ~${loKcal}–${hiKcal} kcal / ${item.defaultQty}${item.unit}</div>
           </div>
           <div class="food-add">${expanded? '−' : '+'}</div>
         </div>
@@ -3071,6 +3150,7 @@ function render(){
   else if(view.name==='history') el.innerHTML = renderHistory();
   else if(view.name==='nutrition') el.innerHTML = renderNutrition();
   else if(view.name==='chooseFinisher') el.innerHTML = renderChooseFinisher();
+  else if(view.name==='treadmillCalc') el.innerHTML = renderTreadmillCalc();
   if(foodSearchQuery) filterFoodList(foodSearchQuery);
 }
 
