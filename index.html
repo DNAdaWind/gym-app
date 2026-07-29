@@ -144,6 +144,26 @@ body{
 .dot-secondary{background:#E8A33D;}
 .dot-stabilizer{background:#D9C24A;}
 
+/* anatomy body map */
+.bm-toggle-row{display:flex;gap:8px;margin:4px 20px 10px;}
+.bm-toggle{flex:1;text-align:center;padding:10px;border-radius:12px;background:var(--glass);border:1px solid var(--border-subtle);font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+.bm-toggle.active{background:var(--text-primary);color:#0A0A0B;border-color:var(--text-primary);}
+.bm-toggle:active{transform:scale(0.97);}
+.bm-card{position:relative;padding-top:16px;}
+.bm-view-switch{position:absolute;top:14px;right:14px;display:flex;background:var(--glass);border:1px solid var(--border-subtle);border-radius:10px;overflow:hidden;z-index:2;}
+.bm-view-switch div{padding:6px 13px;font-size:12px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+.bm-view-switch div.active{background:var(--text-primary);color:#0A0A0B;}
+.bm-svg-wrap{width:100%;max-width:260px;margin:0 auto;display:block;}
+.bm-torso-base,.bm-skin{fill:var(--bg-elevated);}
+.body-muscle-part{cursor:pointer;transition:opacity .15s,filter .15s;stroke:var(--bg-base);stroke-width:2;stroke-linejoin:round;}
+.body-muscle-part:active{opacity:0.72;}
+.body-muscle-part.selected{filter:brightness(1.25);}
+.bm-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;justify-content:center;}
+.bm-legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-secondary);}
+.bm-legend-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
+.bm-empty-hint{margin:0 0 12px;font-size:12.5px;color:var(--text-tertiary);text-align:center;}
+.bm-detail{margin-top:14px;width:100%;background:var(--glass);border:1px solid var(--border-subtle);border-radius:14px;padding:14px;animation:fadein .2s ease-out;}
+
 /* bottom nav */
 .navbar{
   position:fixed;bottom:0;left:0;right:0;
@@ -1676,6 +1696,189 @@ function recoveryLabel(status){
   return {stimulated:'Vừa tập hôm nay', recovering:'Đang hồi phục', fresh:'Đã hồi phục', inactive:'Chưa tập gần đây'}[status];
 }
 
+/* ============================================================
+   ANATOMY BODY MAP — sơ đồ cơ thể dạng chuẩn giải phẫu (front/back)
+   2 chế độ xem: 'today' (vùng cơ đã tác động hôm nay theo bài đã tick)
+                 'recovery' (trạng thái hồi phục từng nhóm cơ)
+   ============================================================ */
+let bodyMapMode = 'today';   // 'today' | 'recovery'
+let bodyMapView = 'front';   // 'front' | 'back'
+let selectedBodyMuscle = null;
+
+function setBodyMapMode(m){ bodyMapMode = m; selectedBodyMuscle = null; render(); }
+function setBodyMapView(v){ bodyMapView = v; render(); }
+function selectBodyMuscle(id){ selectedBodyMuscle = (selectedBodyMuscle===id ? null : id); render(); }
+
+/* --- tổng hợp các nhóm cơ đã bị tác động HÔM NAY, dựa trên bài đã tick
+   (ưu tiên buổi đang tập; nếu không có buổi đang tập thì dùng buổi đã hoàn thành hôm nay) --- */
+function todaysTickedSets(){
+  if(state.activeSession) return state.activeSession.sets;
+  const finishedToday = [...state.sessions].reverse().find(s=> new Date(s.endedAt).toDateString()===new Date().toDateString());
+  return finishedToday ? finishedToday.sets : [];
+}
+function todaysMuscleTouches(){
+  const rank = {stabilizer:1, secondary:2, primary:3};
+  const roles = {};
+  todaysTickedSets().forEach(entry=>{
+    const ex = findExercise(entry.exerciseId);
+    if(!ex) return;
+    const bump = (id, role)=>{ if(!id) return; if(!roles[id] || rank[role]>rank[roles[id]]) roles[id]=role; };
+    bump(ex.primary,'primary');
+    (ex.secondary||[]).forEach(id=>bump(id,'secondary'));
+    (ex.stabilizer||[]).forEach(id=>bump(id,'stabilizer'));
+  });
+  return roles;
+}
+function bodyMuscleColorToday(muscleId){
+  const role = todaysMuscleTouches()[muscleId];
+  return {primary:'#E24A4A', secondary:'#E8A33D', stabilizer:'#D9C24A'}[role] || 'var(--recovery-inactive)';
+}
+function bodyMuscleColorRecovery(muscleId){
+  return recoveryColor(getMuscleRecovery(muscleId).status);
+}
+function bodyMuscleColor(muscleId){
+  return bodyMapMode==='today' ? bodyMuscleColorToday(muscleId) : bodyMuscleColorRecovery(muscleId);
+}
+
+/* --- SVG shape builders (viewBox 0 0 240 560, đối xứng quanh x=120) --- */
+const BM_CX = 120;
+function bmMirror(pts){ return pts.map(([x,y])=>[2*BM_CX-x, y]); }
+function bmPtsStr(pts){ return pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '); }
+function bmAttrs(muscle){
+  const sel = selectedBodyMuscle===muscle ? ' selected' : '';
+  return `data-muscle="${muscle}" fill="${bodyMuscleColor(muscle)}" class="body-muscle-part${sel}" onclick="selectBodyMuscle('${muscle}')"`;
+}
+function bmPoly(pts, muscle){ return `<polygon points="${bmPtsStr(pts)}" ${bmAttrs(muscle)}/>`; }
+function bmMPoly(pts, muscle){ return bmPoly(pts, muscle) + bmPoly(bmMirror(pts), muscle); }
+function bmRect(x,y,w,h,rx,muscle){ return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" ${bmAttrs(muscle)}/>`; }
+
+function bmTorso(){
+  const pts = [[108,86],[132,86],[166,94],[192,114],[184,150],[168,190],[158,222],[120,228],[82,222],[72,190],[56,150],[48,114],[74,94]];
+  return `<polygon points="${bmPtsStr(pts)}" class="bm-torso-base"/>`;
+}
+function bmHeadNeck(){
+  return `<circle cx="120" cy="44" r="30" class="bm-skin"/>` + bmRect(104,72,32,20,6,'neck');
+}
+function bmArmSegments(deltMuscle){
+  const delt = [[168,94],[196,104],[204,130],[192,150],[172,140],[176,118]];
+  const upper = [[172,140],[192,150],[200,150],[210,212],[196,222],[182,182]];
+  const fore = [[196,222],[210,212],[216,258],[210,306],[196,314],[188,260]];
+  return bmMPoly(delt, deltMuscle) + bmMPoly(upper, deltMuscle==='front_delt'?'biceps':'triceps') + bmMPoly(fore, 'forearms');
+}
+function bmFrontShoulderCap(){
+  const pts = [[178,96],[206,108],[212,132],[200,150],[180,140],[182,116]];
+  return bmMPoly(pts, 'lateral_delt');
+}
+function bmChest(){
+  const pts = [[120,100],[154,96],[166,128],[158,160],[134,168],[120,152]];
+  return bmMPoly(pts, 'chest');
+}
+function bmCore(){
+  let out = '';
+  const abW=22, abH=20, gapX=6, gapY=6, y0=144;
+  for(let row=0; row<3; row++){
+    const ry = y0 + row*(abH+gapY);
+    out += bmRect(BM_CX+gapX/2, ry, abW, abH, 5, 'core');
+    out += bmRect(BM_CX-gapX/2-abW, ry, abW, abH, 5, 'core');
+  }
+  return out;
+}
+function bmTrapsBack(){
+  const pts = [[120,86],[160,100],[178,124],[150,158],[120,166],[90,158],[62,124],[80,100]];
+  return `<polygon points="${bmPtsStr(pts)}" ${bmAttrs('traps')}/>`;
+}
+function bmLat(){
+  const pts = [[158,132],[180,144],[186,178],[174,206],[154,196],[146,160]];
+  return bmMPoly(pts, 'lat');
+}
+function bmLowerBack(){
+  const pts = [[92,196],[148,196],[156,222],[120,232],[84,222]];
+  return `<polygon points="${bmPtsStr(pts)}" ${bmAttrs('lower_back')}/>`;
+}
+function bmGlutes(){
+  const pts = [[130,214],[156,212],[164,240],[154,262],[130,264],[122,240]];
+  return bmMPoly(pts, 'glutes');
+}
+function bmHamstrings(){
+  const pts = [[128,258],[154,256],[160,300],[150,364],[132,368],[124,304]];
+  return bmMPoly(pts, 'hamstrings');
+}
+function bmQuads(){
+  const pts = [[128,224],[158,222],[164,270],[156,364],[134,370],[124,270]];
+  return bmMPoly(pts, 'quads');
+}
+function bmCalves(){
+  const pts = [[130,372],[154,368],[158,420],[148,478],[132,480],[124,422]];
+  return bmMPoly(pts, 'calves');
+}
+function bodyMapSvgInner(view){
+  const parts = view==='front'
+    ? [bmTorso(), bmQuads(), bmCore(), bmChest(), bmArmSegments('front_delt'), bmFrontShoulderCap(), bmCalves(), bmHeadNeck()]
+    : [bmTorso(), bmGlutes(), bmHamstrings(), bmLowerBack(), bmTrapsBack(), bmLat(), bmArmSegments('rear_delt'), bmCalves(), bmHeadNeck()];
+  return parts.join('');
+}
+function renderBodyMapSvg(view){
+  return `<svg class="bm-svg-wrap" viewBox="0 0 240 560" xmlns="http://www.w3.org/2000/svg">${bodyMapSvgInner(view)}</svg>`;
+}
+
+function renderBodyMuscleDetail(muscleId){
+  const m = findMuscle(muscleId);
+  if(!m) return '';
+  if(bodyMapMode==='recovery'){
+    const r = getMuscleRecovery(muscleId);
+    return `<div class="bm-detail">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-weight:700;font-size:15px;">${m.vi}</div>
+        <div style="font-size:12px;color:${recoveryColor(r.status)};font-weight:600;">${recoveryLabel(r.status)}</div>
+      </div>
+      <div class="rec-track" style="width:100%;margin-top:10px;"><div class="rec-fill" style="width:${r.percent}%;background:${recoveryColor(r.status)}"></div></div>
+      <div style="font-size:12px;color:var(--text-tertiary);margin-top:6px;">${r.percent}% hồi phục${r.status==='recovering'? ` · còn ~${r.etaHours}h`:''}${r.lastAt? ` · tập lần cuối ${new Date(r.lastAt).toLocaleDateString('vi-VN')}`:''}</div>
+    </div>`;
+  }
+  const roleLabelMap = {primary:'Cơ chính', secondary:'Cơ phụ', stabilizer:'Cơ ổn định'};
+  const role = todaysMuscleTouches()[muscleId];
+  const exNames = todaysTickedSets().filter(entry=>{
+    const ex = findExercise(entry.exerciseId);
+    if(!ex) return false;
+    return ex.primary===muscleId || (ex.secondary||[]).includes(muscleId) || (ex.stabilizer||[]).includes(muscleId);
+  }).map(entry=>findExercise(entry.exerciseId).vi);
+  return `<div class="bm-detail">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-weight:700;font-size:15px;">${m.vi}</div>
+      ${role? `<div style="font-size:12px;color:${bodyMuscleColorToday(muscleId)};font-weight:600;">${roleLabelMap[role]}</div>` : `<div style="font-size:12px;color:var(--text-tertiary);">Chưa tác động hôm nay</div>`}
+    </div>
+    ${exNames.length? `<div style="margin-top:8px;font-size:12.5px;color:var(--text-secondary);">${exNames.join(', ')}</div>` : `<div style="margin-top:8px;font-size:12.5px;color:var(--text-tertiary);">Chưa có bài tập nào tick hôm nay tác động nhóm cơ này.</div>`}
+  </div>`;
+}
+
+function renderBodyMap(){
+  const touches = todaysMuscleTouches();
+  const noTouchesToday = bodyMapMode==='today' && Object.keys(touches).length===0;
+  const legend = bodyMapMode==='recovery'
+    ? `<div class="bm-legend">
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:var(--recovery-stimulated)"></div>Vừa tập hôm nay</div>
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:var(--recovery-recovering)"></div>Đang hồi phục</div>
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:var(--recovery-fresh)"></div>Đã hồi phục</div>
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:var(--recovery-inactive)"></div>Chưa tập gần đây</div>
+      </div>`
+    : `<div class="bm-legend">
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:#E24A4A"></div>Cơ chính</div>
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:#E8A33D"></div>Cơ phụ</div>
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:#D9C24A"></div>Cơ ổn định</div>
+        <div class="bm-legend-item"><div class="bm-legend-dot" style="background:var(--recovery-inactive)"></div>Chưa tác động</div>
+      </div>`;
+  return `<div class="card bm-card">
+    <div class="bm-view-switch">
+      <div class="${bodyMapView==='front'?'active':''}" onclick="setBodyMapView('front')">Trước</div>
+      <div class="${bodyMapView==='back'?'active':''}" onclick="setBodyMapView('back')">Sau</div>
+    </div>
+    ${noTouchesToday? `<div class="bm-empty-hint">Chưa tick bài tập nào hôm nay — bấm vào từng nhóm cơ để xem chi tiết trạng thái hồi phục.</div>` : ''}
+    ${renderBodyMapSvg(bodyMapView)}
+    ${legend}
+    ${selectedBodyMuscle ? renderBodyMuscleDetail(selectedBodyMuscle) : ''}
+  </div>`;
+}
+
 /* --- chọn nhanh mức tạ: không ghi log từng set, chỉ chọn 1 trong 2 gợi ý --- */
 const BODYWEIGHT_EQUIP = ['Không dụng cụ','Tường'];
 function weightStep(ex){ return ex.compound ? 2.5 : 1.25; }
@@ -2308,12 +2511,18 @@ function renderTreadmillCalc(){
 function renderRecovery(){
   const sorted = [...MUSCLES].sort((a,b)=>a.priority-b.priority);
   return `<div class="screen">
-    <div class="topbar"><div><h1>Hồi phục</h1><div class="sub">Trạng thái từng nhóm cơ · có tính đến giấc ngủ</div></div></div>
+    <div class="topbar"><div><h1>Hồi phục</h1><div class="sub">Sơ đồ giải phẫu · vùng cơ đã tác động &amp; đang hồi phục</div></div></div>
+    <div class="bm-toggle-row">
+      <div class="bm-toggle ${bodyMapMode==='today'?'active':''}" onclick="setBodyMapMode('today')">Hôm nay đã tác động</div>
+      <div class="bm-toggle ${bodyMapMode==='recovery'?'active':''}" onclick="setBodyMapMode('recovery')">Trạng thái hồi phục</div>
+    </div>
+    ${renderBodyMap()}
     <div class="card">
+      <div class="card-title">Chi tiết từng nhóm cơ</div>
       ${sorted.map(m=>{
         const r = getMuscleRecovery(m.id);
         const sleepNote = r.sleepAdjusted ? (r.avgEfficiency>1 ? ' · nhanh hơn nhờ ngủ đủ' : ' · chậm hơn do ngủ thiếu') : '';
-        return `<div class="rec-row" style="padding:12px 0;">
+        return `<div class="rec-row" style="padding:12px 0;cursor:pointer;" onclick="selectBodyMuscle('${m.id}')">
           <div class="rec-dot" style="background:${recoveryColor(r.status)}"></div>
           <div style="flex:1;">
             <div class="rec-name">${m.vi}</div>
@@ -2323,13 +2532,6 @@ function renderRecovery(){
           <div class="rec-pct">${r.percent}%</div>
         </div>`;
       }).join('')}
-    </div>
-    <div class="card glass">
-      <div class="card-title">Chú giải màu</div>
-      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-stimulated)"></div><div class="rec-name">Vừa tập hôm nay</div></div>
-      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-recovering)"></div><div class="rec-name">Đang hồi phục</div></div>
-      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-fresh)"></div><div class="rec-name">Đã hồi phục (trong 7 ngày)</div></div>
-      <div class="rec-row"><div class="rec-dot" style="background:var(--recovery-inactive)"></div><div class="rec-name">Chưa tập gần đây (&gt;7 ngày)</div></div>
       <div class="info-block" style="margin:10px 0 0;">Tốc độ hồi phục được điều chỉnh theo số giờ ngủ mỗi đêm (kể cả ngày nghỉ): ngủ đủ 7-9h giúp hồi phục đúng tiến độ, ngủ ít hơn sẽ làm % hồi phục tăng chậm hơn.</div>
     </div>
   </div>`;
